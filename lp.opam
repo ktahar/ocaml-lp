@@ -1,0 +1,24 @@
+opam-version: "2.0"
+version: "0.0.1"
+synopsis: "LP modeling in OCaml"
+description: """
+This library is a modeling tool for Linear Programming (LP) and Mixed Integer Programming (MIP).
+The model can be exported to CPLEX LP file format, which can be loaded by various solvers.
+Importing models from LP file is also supported.
+"""
+maintainer: "Kosuke Tahara <ksk.tahara@gmail.com>"
+authors: [ "Kosuke Tahara <ksk.tahara@gmail.com>" ]
+license: "MIT"
+homepage: "https://github.com/ktahar/ocaml-lp"
+bug-reports: "https://github.com/ktahar/ocaml-lp"
+dev-repo: "git+https://github.com/ktahar/ocaml-lp"
+depends: [
+    "ocaml" {>= "4.08.0"}
+    "dune"  {>= "2.0.0"}
+    "menhir"
+    "alcotest" {with-test}
+]
+build: [
+    [ "dune" "build" "-p" name "-j" jobs ]
+    [ "dune" "runtest" "-p" name "-j" jobs ] {with-test}
+]
