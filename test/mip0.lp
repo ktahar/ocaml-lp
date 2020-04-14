@@ -1,4 +1,4 @@
-minimize
+maximize
  + 1.00 x + 1.00 y + 1.00 z
 subject to
  + 1.00 x + 2.00 y <= + 5.00

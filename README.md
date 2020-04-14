@@ -13,7 +13,7 @@ let problem =
   let y = var "y" in
   let c0 = [x; c 1.2 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; y] <$ [c 1.2] in
-  let obj = Obj.Min [x; y] in
+  let obj = Obj.Max [x; y] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 

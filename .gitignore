@@ -2,6 +2,9 @@
 *.swp
 tags
 
+# LP solution file
+*.sol
+
 # OCaml
 *.o
 *.cmo

@@ -4,12 +4,12 @@ let lp0 =
   let y = var "y" in
   let c0 = [x; c 1.2 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; y] <$ [c 1.2] in
-  let obj = Obj.Min [x; y] in
+  let obj = Obj.Max [x; y] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
 let lp0s =
-  {|minimize
+  {|maximize
  + 1.000000000000000000e+00 x + 1.000000000000000000e+00 y
 subject to
  + 1.000000000000000000e+00 x + 1.199999999999999956e+00 y <= + 5.000000000000000000e+00
@@ -17,7 +17,7 @@ subject to
 end|}
 
 let lp0s_comment =
-  {|minimize \ bra bra
+  {|maximize \ bra bra
  + 1.000000000000000000e+00 x + 1.000000000000000000e+00 y
 subject to
 \yeah yeah
@@ -38,7 +38,7 @@ let bad0 =
   (obj, cnstrs)
 
 let mip0s =
-  {|minimize
+  {|maximize
  + 1.00 x + 1.00 y + 1.00 z
 subject to
  + 1.00 x + 2.00 y <= + 5.00
@@ -60,7 +60,7 @@ let mip0 =
   let b = binary "b" in
   let c0 = [x; c 2.0 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; b * y; x * z] <$ [c 2.0] in
-  let obj = Obj.Min [x; y; z] in
+  let obj = Obj.Max [x; y; z] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
