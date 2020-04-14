@@ -4,6 +4,14 @@ This library is a modeling tool for Linear Programming (LP) and Mixed Integer Pr
 The model can be exported to CPLEX LP file format, which can be loaded by various solvers.
 Importing models from LP file is also supported.
 
+## Install
+
+```bash
+# optional but recommended to pin dev-repo as it's on quite early stage of development
+opam pin lp --dev-repo
+opam install lp
+```
+
 ## Example
 
 ```OCaml
