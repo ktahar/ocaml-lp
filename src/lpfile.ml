@@ -7,7 +7,7 @@ type section =
   | Sgeneral of string list
   | Sbinary of string list
 
-type problem = section list
+type t = section list
 
 let trans_binary p name =
   match p with
@@ -70,7 +70,7 @@ let rec trans_attrs problem = function
       (* though parser will error in this pattern *)
       failwith "LP file is ill-formed (multiple obj or cnstr sections?)"
 
-let transform = function
+let emit = function
   | Sobj obj :: Scnstr cnstrs :: attrs ->
       trans_attrs (obj, cnstrs) attrs
   | _ ->

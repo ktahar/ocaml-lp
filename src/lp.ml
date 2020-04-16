@@ -17,12 +17,19 @@ let ( * ) = Term.( * )
 
 let ( / ) = Term.( / )
 
+let ( ~- ) = Term.( ~- )
+
 (* export constraint making functions and operators *)
 let ( =$ ) = Constraint.( =$ )
 
 let ( <$ ) = Constraint.( <$ )
 
 let ( >$ ) = Constraint.( >$ )
+
+(* export objective making functions *)
+let maximize = Objective.maximize
+
+let minimize = Objective.minimize
 
 (* model validation *)
 let validate = Problem.validate
@@ -32,7 +39,7 @@ let to_string = Problem.to_string
 
 let of_string s =
   let lexbuf = Lexing.from_string s in
-  Lpfile.transform (Parser.problem Lexer.token lexbuf)
+  Lpfile.emit (Parser.sections Lexer.token lexbuf)
 
 let write file problem =
   let ch = open_out file in
@@ -43,6 +50,6 @@ let load file =
   let ch = open_in file in
   try
     let lexbuf = Lexing.from_channel ch in
-    let problem = Lpfile.transform (Parser.problem Lexer.token lexbuf) in
+    let problem = Lpfile.emit (Parser.sections Lexer.token lexbuf) in
     close_in ch ; problem
   with e -> close_in_noerr ch ; raise e

@@ -1,5 +1,9 @@
 type t = Max of Poly.t | Min of Poly.t | No_obj
 
+let maximize p = Max (Poly.sort p)
+
+let minimize p = Min (Poly.sort p)
+
 let take_vars = function Max p | Min p -> Poly.take_vars p | No_obj -> []
 
 let to_string ?(short = false) o =

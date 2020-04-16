@@ -4,7 +4,7 @@ let lp0 =
   let y = var "y" in
   let c0 = [x; c 1.2 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; y] <$ [c 1.2] in
-  let obj = Obj.Max [x; y] in
+  let obj = maximize [x; y] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -33,21 +33,21 @@ let bad0 =
   let y = var "x" ~integer:true in
   let c0 = [x; c 1.2 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; y] <$ [c 1.2] in
-  let obj = Obj.Min [x; y] in
+  let obj = minimize [x; y] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
 let mip0s =
   {|maximize
- + 1.00 x + 1.00 y + 1.00 z
+ + 1.00 x + 1.00 y + 1.00 z + [ + 3.00 b * w ] / 2
 subject to
- + 1.00 x + 2.00 y <= + 5.00
+ - 1.00 w + 1.00 x + 2.00 y <= + 5.00
  + 2.00 x + [ + 1.00 b * y + 1.00 x * z ] <= + 2.00
 bounds
  2.00 <= y <= 10.00
  0 <= z <= 3
 general
- z
+ w z
 binary
  b
 end|}
@@ -57,10 +57,11 @@ let mip0 =
   let x = var "x" in
   let y = var "y" ~lb:2.0 ~ub:10.0 in
   let z = var ~integer:true ~ub:3.0 "z" in
+  let w = var "w" ~integer:true in
   let b = binary "b" in
-  let c0 = [x; c 2.0 * y] <$ [c 5.0] in
+  let c0 = [~- w; x; c 2.0 * y] <$ [c 5.0] in
   let c1 = [c 2.0 * x; b * y; x * z] <$ [c 2.0] in
-  let obj = Obj.Max [x; y; z] in
+  let obj = maximize [x; y; z; c 3.0 * w * b] in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -84,6 +85,8 @@ module To_test = struct
   let lp0_comment () = Lp.to_string (Lp.of_string lp0s_comment)
 
   let mip0_load_to_string () = Lp.to_string ~short:true (Lp.load "mip0.lp")
+
+  let mip0a_load_to_string () = Lp.to_string ~short:true (Lp.load "mip0a.lp")
 
   let mip0_to_string () = Lp.to_string ~short:true mip0
 end
@@ -130,6 +133,12 @@ let mip0_model_string () =
     (To_test.mip0_to_string ())
     (To_test.mip0_load_to_string ())
 
+let mip0a_model_string () =
+  Alcotest.(check string)
+    "mip0a model string"
+    (To_test.mip0_to_string ())
+    (To_test.mip0a_load_to_string ())
+
 let () =
   let open Alcotest in
   run "Lp"
@@ -148,4 +157,6 @@ let () =
       , [test_case "lp0_model_string" `Quick lp0_model_string] )
     ; ("mip0 to string", [test_case "mip0_to_string" `Quick mip0_to_string])
     ; ( "mip0 model string"
-      , [test_case "mip0_model_string" `Quick mip0_model_string] ) ]
+      , [test_case "mip0_model_string" `Quick mip0_model_string] )
+    ; ( "mip0a model string"
+      , [test_case "mip0a_model_string" `Quick mip0a_model_string] ) ]

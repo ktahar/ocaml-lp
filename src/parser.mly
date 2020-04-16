@@ -5,17 +5,17 @@ module Cnstr = Constraint
 
 %token <float> NUM
 %token <string> ID
-%token MIN MAX ST BOUND GENERAL BINARY FREE
+%token MIN MAX ST BOUND GENERAL BINARY FREE INF
 %token COLON EQ LT GT
 %token PLUS MINUS TIMES SQ
 %token END
 
-%start <Lpfile.problem> problem
+%start <Lpfile.t> sections
 
 %%
 
-problem :
-  o = objective c = cnstrs b = bounds v = vtype END
+sections :
+  o = objective c = cnstrs b = bounds v = vtypes END
     { o @ c @ b @ v }
 
 
@@ -64,24 +64,27 @@ bounds:
 
 bound:
   | v = ID FREE { {name=v; lb=Float.neg_infinity; ub=Float.infinity} }
-  | lb = signed LT v = ID { {name=v; lb; ub=Float.infinity} }
-  | v = ID LT ub = signed { {name=v; lb=Float.zero; ub} }
-  | lb = signed LT v = ID LT ub = signed { {name=v; lb; ub} }
+  | lb = lower LT v = ID { {name=v; lb; ub=Float.infinity} }
+  | v = ID LT ub = upper { {name=v; lb=Float.zero; ub} }
+  | lb = lower LT v = ID LT ub = upper { {name=v; lb; ub} }
+
+lower:
+  | s = signed { s }
+  | MINUS INF { Float.neg_infinity }
+
+upper:
+  | s = signed { s }
+  | INF { Float.infinity }
+  | PLUS INF { Float.infinity }
 
 signed:
   | n = NUM { n }
   | PLUS n = NUM { n }
   | MINUS n = NUM { Float.neg n }
 
+vtypes:
+  l = list(vtype) { l }
+
 vtype:
-  | (*empty*) { [] }
-  | g = general { [g] }
-  | b = binary { [b] }
-  | g = general b = binary { [g; b] }
-  | b = binary g = general { [g; b] }
-
-general:
-  GENERAL l = nonempty_list(ID) { Sgeneral l }
-
-binary:
-  BINARY l = nonempty_list(ID) { Sbinary l }
+  | GENERAL l = nonempty_list(ID) { Sgeneral l }
+  | BINARY l = nonempty_list(ID)  { Sbinary l }

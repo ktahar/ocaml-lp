@@ -80,6 +80,8 @@ let neg = function
   | Quad (c, v0, v1) ->
       Quad (Float.neg c, v0, v1)
 
+let ( ~- ) = neg
+
 let sort = function
   | Quad (c, v0, v1) ->
       if v0 > v1 then Quad (c, v1, v0) else Quad (c, v0, v1)

@@ -1,5 +1,29 @@
 {
 open Parser
+
+let keywords = Hashtbl.create 32
+
+let _ = List.iter (fun (k, v) ->
+  Hashtbl.add keywords k v)
+  [
+    "end", END;
+    "max", MAX;
+    "maximize", MAX;
+    "min", MIN;
+    "minimize", MIN;
+    "bound", BOUND;
+    "bounds", BOUND;
+    "st", ST;
+    "generals", GENERAL;
+    "general", GENERAL;
+    "gen", GENERAL;
+    "binaries", BINARY;
+    "binary", BINARY;
+    "bin", BINARY;
+    "free", FREE;
+    "infinity", INF;
+    "inf", INF;
+  ]
 }
 
 let digit = ['0'-'9']
@@ -15,18 +39,19 @@ let white = ['\t' ' ' '\r' '\n' ']']
 
 rule token = parse
   | '\\' { comment lexbuf; token lexbuf }
-  | "end" { END }
-  | "maximize" | "max" { MAX }
-  | "minimize" | "min" { MIN }
-  | "subject to" | "such that" | "s.t." | "st" { ST }
-  | "bounds" | "bound" { BOUND }
-  | "generals" | "general" | "gen" { GENERAL }
-  | "binaries" | "binary" | "bin" { BINARY }
-  | "free" { FREE }
+  (* keywords including non-alphabets *)
+  | "subject to" | "such that" | "s.t."{ ST }
+  (* symbols including white spaces *)
   | square { SQ }
   | l_bracket | div2 | white+ { token lexbuf }
-  | id as str { ID str }
   | number as n { NUM (float_of_string n ) }
+  | id as str { (* ignore case to find keywords *)
+      let s = String.lowercase_ascii str in
+      match Hashtbl.find_opt keywords s with
+      | Some kw -> kw
+      | None ->
+          ID str
+  }
   | "+"  { PLUS }
   | "-"  { MINUS }
   | "*"  { TIMES }
