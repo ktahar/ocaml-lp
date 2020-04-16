@@ -15,8 +15,8 @@ let to_string ?(short = false) c =
       String.concat " <= " [p_string lhs; p_string rhs]
 
 let simplify_sides lhs rhs =
-  let l = Poly.split lhs in
-  let r = Poly.split rhs in
+  let l = Poly.partition lhs in
+  let r = Poly.partition rhs in
   let newl = Poly.(fst l @ ~-(fst r)) in
   let newr = Poly.(snd r @ ~-(snd l)) in
   (Poly.simplify newl, Poly.simplify newr)

@@ -4,16 +4,10 @@ type classified = {quad: t; linear: t; const: t}
 
 let sort p = List.sort Term.compare (List.map Term.sort p)
 
-let split poly =
-  let rec split_ qls cs = function
-    | [] ->
-        (qls, cs)
-    | (Term.Const _ as c) :: rest ->
-        split_ qls (c :: cs) rest
-    | (_ as ql) :: rest ->
-        split_ (ql :: qls) cs rest
-  in
-  split_ [] [] poly
+let partition poly =
+  List.partition
+    (fun t -> match t with Term.Const _ -> false | _ -> true)
+    poly
 
 let classify poly =
   let rec classify_ qs ls cs = function
@@ -106,9 +100,7 @@ let to_string ?(short = false) p =
          ["["] @ ts_string cp.quad @ ["]"]
      | _ ->
          ts_string (cp.const @ cp.linear)
-         @ ["+"; "["]
-         @ ts_string cp.quad
-         @ ["]"])
+         @ ["+"; "["] @ ts_string cp.quad @ ["]"])
 
 let neg p = List.map Term.neg p
 

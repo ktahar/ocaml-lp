@@ -6,8 +6,8 @@ val sort : t -> t
 
 val to_string : ?short:bool -> t -> string
 
-(* split terms into pair ( quad or linear, const ) *)
-val split : t -> t * t
+(* partition terms into pair ( quad or linear, const ) *)
+val partition : t -> t * t
 
 (* classify terms into three categories {quad, linear, const} *)
 val classify : t -> classified
