@@ -2,6 +2,17 @@ type t = Term.t list
 
 type classified = {quad: t; linear: t; const: t}
 
+let c x = [Term.c x]
+
+let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
+  [Term.var ~integer ~lb ~ub name]
+
+let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
+
+let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
+    =
+  Array.init num (fun i -> [Term.var ~integer ~lb ~ub (name ^ string_of_int i)])
+
 let sort p = List.sort Term.compare (List.map Term.sort p)
 
 let partition poly =
@@ -105,6 +116,15 @@ let to_string ?(short = false) p =
 let neg p = List.map Term.neg p
 
 let ( ~- ) = neg
+
+let ( + ) = ( @ )
+
+let ( * ) pl pr =
+  List.concat (List.map (fun tl -> List.map (fun tr -> Term.( * ) tl tr) pr) pl)
+
+let dot = List.map2 Term.( * )
+
+let ( *@ ) = dot
 
 let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
 

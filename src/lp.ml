@@ -6,18 +6,22 @@ module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
 
-(* export term making functions and operators *)
-let c = Term.c
+(* export polynomial making functions and operators *)
+let c = Poly.c
 
-let var = Term.var
+let var = Poly.var
 
-let binary = Term.binary
+let binary = Poly.binary
 
-let ( * ) = Term.( * )
+let ( + ) = Poly.( + )
 
-let ( / ) = Term.( / )
+let ( * ) = Poly.( * )
 
-let ( ~- ) = Term.( ~- )
+let dot = Poly.dot
+
+let ( *@ ) = Poly.( *@ )
+
+let ( ~- ) = Poly.( ~- )
 
 (* export constraint making functions and operators *)
 let ( =$ ) = Constraint.( =$ )
