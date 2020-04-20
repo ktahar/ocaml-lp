@@ -88,6 +88,8 @@ let sort = function
   | _ as t ->
       t
 
+let degree = function Quad _ -> 2 | Linear _ -> 1 | Const _ -> 0
+
 let near_zero = function
   | Const c ->
       Float.abs c < epsilon_float

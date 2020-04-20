@@ -35,8 +35,8 @@ val collision : t -> bool
 val simplify : t -> t
 (** simplify the polynomial *)
 
-val has_quad : t -> bool
-(** check if the polynomial has any quadratic terms *)
+val degree : t -> int
+(** get the degree of polynomial *)
 
 val take_vars : t -> Var.t list
 (** listup all the variables in the polynomial *)

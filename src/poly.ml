@@ -33,10 +33,8 @@ let classify poly =
   in
   classify_ [] [] [] poly
 
-let has_quad poly =
-  List.exists
-    (fun t -> match t with Term.Quad (_, _, _) -> true | _ -> false)
-    poly
+let degree p =
+  List.fold_left max 0 (List.map Term.degree p)
 
 let take_vars poly =
   let rec take vars = function
