@@ -117,6 +117,8 @@ let ( ~- ) = neg
 
 let ( + ) = ( @ )
 
+let ( - ) pl pr = pl @ neg pr
+
 let ( * ) pl pr =
   List.concat (List.map (fun tl -> List.map (fun tr -> Term.( * ) tl tr) pr) pl)
 

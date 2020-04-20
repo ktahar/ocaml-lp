@@ -13,15 +13,17 @@ let var = Poly.var
 
 let binary = Poly.binary
 
+let ( ~- ) = Poly.( ~- )
+
 let ( + ) = Poly.( + )
+
+let ( - ) = Poly.( - )
 
 let ( * ) = Poly.( * )
 
 let dot = Poly.dot
 
 let ( *@ ) = Poly.( *@ )
-
-let ( ~- ) = Poly.( ~- )
 
 (* export constraint making functions and operators *)
 let ( =$ ) = Constraint.( =$ )

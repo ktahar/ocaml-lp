@@ -50,6 +50,9 @@ val ( ~- ) : t -> t
 val ( + ) : t -> t -> t
 (** add (concatenate) two polynomials *)
 
+val ( - ) : t -> t -> t
+(** subtract two polynomials (concatenate left with negated right ) *)
+
 val ( * ) : t -> t -> t
 (** multiply two polynomials. specifically, performs polynomial expansion. *)
 
