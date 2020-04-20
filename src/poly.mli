@@ -62,6 +62,9 @@ val dot : t -> t -> t
 val ( *@ ) : t -> t -> t
 (** regard two polynomials as {i vectors} and take dot product. *)
 
+val divt : t -> Term.t -> t
+(** divide polynomial by a term. *)
+
 val trans_bound : string -> float -> float -> t -> t
 (** trans_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub] *)
 

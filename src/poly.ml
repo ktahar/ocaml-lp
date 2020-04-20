@@ -26,15 +26,33 @@ let classify poly =
         {quad= List.rev qs; linear= List.rev ls; const= List.rev cs}
     | (Term.Const _ as c) :: rest ->
         classify_ qs ls (c :: cs) rest
-    | (Term.Linear (_, _) as l) :: rest ->
+    | (Term.Linear _ as l) :: rest ->
         classify_ qs (l :: ls) cs rest
-    | (Term.Quad (_, _, _) as q) :: rest ->
+    | (Term.Quad _ as q) :: rest ->
         classify_ (q :: qs) ls cs rest
   in
   classify_ [] [] [] poly
 
-let degree p =
-  List.fold_left max 0 (List.map Term.degree p)
+let classify_by var poly =
+  let rec classify_ qs ls cs = function
+    | [] ->
+        {quad= List.rev qs; linear= List.rev ls; const= List.rev cs}
+    | (Term.Const _ as c) :: rest ->
+        classify_ qs ls (c :: cs) rest
+    | (Term.Linear (_, v) as l) :: rest when v = var ->
+        classify_ qs (l :: ls) cs rest
+    | (Term.Linear _ as c) :: rest ->
+        classify_ qs ls (c :: cs) rest
+    | (Term.Quad (_, v0, v1) as q) :: rest when v0 = var && v1 = var ->
+        classify_ (q :: qs) ls cs rest
+    | (Term.Quad (_, v0, v1) as l) :: rest when v0 = var || v1 = var ->
+        classify_ qs (l :: ls) cs rest
+    | (Term.Quad _ as c) :: rest ->
+        classify_ qs ls (c :: cs) rest
+  in
+  classify_ [] [] [] poly
+
+let degree p = List.fold_left max 0 (List.map Term.degree p)
 
 let take_vars poly =
   let rec take vars = function
@@ -125,6 +143,8 @@ let ( * ) pl pr =
 let dot = List.map2 Term.( * )
 
 let ( *@ ) = dot
+
+let divt poly term = List.map (fun t -> Term.( / ) t term) poly
 
 let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
 
