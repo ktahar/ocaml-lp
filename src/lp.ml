@@ -25,6 +25,8 @@ let dot = Poly.dot
 
 let ( *@ ) = Poly.( *@ )
 
+let ( / ) = Poly.( / )
+
 (* export constraint making functions and operators *)
 let ( =$ ) = Constraint.( =$ )
 

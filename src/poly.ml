@@ -13,6 +13,8 @@ let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
     =
   Array.init num (fun i -> [Term.var ~integer ~lb ~ub (name ^ string_of_int i)])
 
+let zero = []
+
 let sort p = List.sort Term.compare (List.map Term.sort p)
 
 let partition poly =
@@ -66,6 +68,10 @@ let take_vars poly =
         take (v0 :: v1 :: vars) rest
   in
   take [] poly
+
+let uniq_vars poly =
+  let vars = take_vars poly in
+  List.sort_uniq Var.compare vars
 
 let simplify poly =
   let rec simplify_ quads lins const = function
@@ -137,14 +143,76 @@ let ( + ) = ( @ )
 
 let ( - ) pl pr = pl @ neg pr
 
-let ( * ) pl pr =
+let expand pl pr =
   List.concat (List.map (fun tl -> List.map (fun tr -> Term.( * ) tl tr) pr) pl)
+
+let ( * ) = expand
 
 let dot = List.map2 Term.( * )
 
 let ( *@ ) = dot
 
+let equiv pl pr = match simplify (pl - pr) with [] -> true | _ -> false
+
 let divt poly term = List.map (fun t -> Term.( / ) t term) poly
+
+let long_div var n d =
+  let deg p =
+    match classify_by var p with
+    | {quad= []; linear= []; const= _} ->
+        0
+    | {quad= []; linear= _; _} ->
+        1
+    | _ ->
+        2
+  in
+  let lead p =
+    match classify_by var p with
+    | {quad= []; linear= []; const= c} ->
+        c
+    | {quad= []; linear= l; _} ->
+        l
+    | {quad= q; _} ->
+        q
+  in
+  let leadt p =
+    match classify_by var p with
+    | {quad= []; linear= []; const= [c]} ->
+        c
+    | {quad= []; linear= [l]; _} ->
+        l
+    | {quad= [q]; _} ->
+        q
+    | _ ->
+        failwith "multi-variate polynomial is passed to leadt"
+  in
+  let rec loop q r =
+    if equiv r zero || deg r < deg d then (q, r)
+    else
+      let t = divt (lead r) (leadt d) in
+      loop (q + t) (simplify (r - (t * d)))
+  in
+  loop [] n
+
+let div n d =
+  match simplify d with
+  | [] ->
+      failwith "Division by zero"
+  | [t] ->
+      (* single term division *)
+      divt n t
+  | sd -> (
+    match uniq_vars sd with
+    | [v] -> (
+      match long_div v (simplify n) sd with
+      | q, [] ->
+          q
+      | _ ->
+          failwith "Failed to long-divide" )
+    | _ ->
+        failwith "Cannot divide by multi-variate polynomial" )
+
+let ( / ) = div
 
 let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
 

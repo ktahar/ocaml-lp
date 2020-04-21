@@ -6,64 +6,85 @@ type t = Term.t list
 type classified = {quad: t; linear: t; const: t}
 
 val c : float -> t
-(** make monomial of a constant value *)
+(** Make monomial of a constant value *)
 
 val var : ?integer:bool -> ?lb:float -> ?ub:float -> string -> t
-(** make monomial of a variable *)
+(** Make monomial of a variable *)
 
 val binary : string -> t
-(** make monomial of a binary variable *)
+(** Make monomial of a binary variable *)
 
 val range : ?integer:bool -> ?lb:float -> ?ub:float -> string -> int -> t array
-(** make array of monomials of a variable *)
+(** Make array of monomials of a variable *)
+
+val zero : t
+(** Constant zero *)
 
 val sort : t -> t
-(** sort terms in the polynomial *)
+(** Sort terms in the polynomial *)
 
 val to_string : ?short:bool -> t -> string
-(** get string expression of the polynomial *)
+(** Get string expression of the polynomial *)
 
 val partition : t -> t * t
-(** partition terms into pair ( quad or linear, const ) *)
+(** Partition terms into pair ( quad or linear, const ) *)
 
 val classify : t -> classified
-(** classify terms into three categories {quad, linear, const} *)
+(** Classify terms into three categories {quad, linear, const} *)
 
 val collision : t -> bool
-(** check if any variable collision exist in the polynomial *)
+(** Check if any variable collision exist in the polynomial *)
 
 val simplify : t -> t
-(** simplify the polynomial *)
+(** Simplify the polynomial *)
 
 val degree : t -> int
-(** get the degree of polynomial *)
+(** Get the degree of polynomial *)
 
 val take_vars : t -> Var.t list
-(** listup all the variables in the polynomial *)
+(** List up all the variables in the polynomial *)
 
 val neg : t -> t
-(** negate the whole polynomial *)
+(** Negate the whole polynomial *)
 
 val ( ~- ) : t -> t
-(** negate the whole polynomial *)
+(** Negate the whole polynomial *)
 
 val ( + ) : t -> t -> t
-(** add (concatenate) two polynomials *)
+(** Add (concatenate) two polynomials *)
 
 val ( - ) : t -> t -> t
-(** subtract two polynomials (concatenate left with negated right ) *)
+(** Subtract two polynomials (concatenate left with negated right ) *)
+
+val expand : t -> t -> t
+(** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
 val ( * ) : t -> t -> t
-(** multiply two polynomials. specifically, performs polynomial expansion. *)
+(** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
 val dot : t -> t -> t
-(** regard two polynomials as {i vectors} and take dot product. *)
+(** Regard two polynomials as {i vectors} and take dot product. *)
 
 val ( *@ ) : t -> t -> t
-(** regard two polynomials as {i vectors} and take dot product. *)
+(** Regard two polynomials as {i vectors} and take dot product. *)
+
+val equiv : t -> t -> bool
+(** Check if two polynomials are equivalent *)
 
 val divt : t -> Term.t -> t
-(** divide polynomial by a term. *)
+(** Divide polynomial by a term. *)
+
+val div : t -> t -> t
+(** Divide polynomial by a {b univariate} polynomial.
+    Be careful as this function raises exception in following cases.
+    {ul { - failing to divide (without remainder) }
+    { - multivariate polynomial denominator }
+    { - zero division }
+    }
+ *)
+
+val ( / ) : t -> t -> t
+(** equivalent to div *)
 
 val trans_bound : string -> float -> float -> t -> t
 (** trans_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub] *)
