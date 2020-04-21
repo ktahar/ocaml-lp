@@ -6,12 +6,14 @@ module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
 
-(* export polynomial making functions and operators *)
+(* export polynomial builders and operators *)
 let c = Poly.c
 
 let var = Poly.var
 
 let binary = Poly.binary
+
+let range = Poly.range
 
 let ( ~- ) = Poly.( ~- )
 
@@ -19,22 +21,26 @@ let ( + ) = Poly.( + )
 
 let ( - ) = Poly.( - )
 
+let expand = Poly.expand
+
 let ( * ) = Poly.( * )
 
 let dot = Poly.dot
 
 let ( *@ ) = Poly.( *@ )
 
+let div = Poly.div
+
 let ( / ) = Poly.( / )
 
-(* export constraint making functions and operators *)
+(* export constraint builders *)
 let ( =$ ) = Constraint.( =$ )
 
 let ( <$ ) = Constraint.( <$ )
 
 let ( >$ ) = Constraint.( >$ )
 
-(* export objective making functions *)
+(* export objective builders *)
 let maximize = Objective.maximize
 
 let minimize = Objective.minimize
@@ -49,11 +55,6 @@ let of_string s =
   let lexbuf = Lexing.from_string s in
   Lpfile.emit (Parser.sections Lexer.token lexbuf)
 
-let write file problem =
-  let ch = open_out file in
-  Printf.fprintf ch "%s\n" (Problem.to_string problem) ;
-  close_out ch
-
 let read file =
   let ch = open_in file in
   try
@@ -61,3 +62,8 @@ let read file =
     let problem = Lpfile.emit (Parser.sections Lexer.token lexbuf) in
     close_in ch ; problem
   with e -> close_in_noerr ch ; raise e
+
+let write ?(short = false) file problem =
+  let ch = open_out file in
+  Printf.fprintf ch "%s\n" (Problem.to_string ~short problem) ;
+  close_out ch

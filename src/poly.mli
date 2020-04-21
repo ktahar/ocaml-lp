@@ -1,5 +1,7 @@
+(** Module for polynomial expression type *)
+
 (** Type for the polynomial with order up to two (quadratic).
- * Internal representation (Term.t list) is intentionally exposed for now. *)
+    Internal representation (Term.t list) is intentionally exposed for now. *)
 type t = Term.t list
 
 (** Type for the polynomial classified by orders *)
