@@ -76,17 +76,17 @@ module To_test = struct
 
   let lp0_of_to_string () = Lp.to_string (Lp.of_string lp0s)
 
-  let lp0_load_to_string () = Lp.to_string (Lp.load "lp0.lp")
+  let lp0_read_to_string () = Lp.to_string (Lp.read "lp0.lp")
 
-  let lp0_write_load_to_string () =
+  let lp0_write_read_to_string () =
     Lp.write "_lp0.lp" lp0 ;
-    Lp.to_string (Lp.load "_lp0.lp")
+    Lp.to_string (Lp.read "_lp0.lp")
 
   let lp0_comment () = Lp.to_string (Lp.of_string lp0s_comment)
 
-  let mip0_load_to_string () = Lp.to_string ~short:true (Lp.load "mip0.lp")
+  let mip0_read_to_string () = Lp.to_string ~short:true (Lp.read "mip0.lp")
 
-  let mip0a_load_to_string () = Lp.to_string ~short:true (Lp.load "mip0a.lp")
+  let mip0a_read_to_string () = Lp.to_string ~short:true (Lp.read "mip0a.lp")
 
   let mip0_to_string () = Lp.to_string ~short:true mip0
 end
@@ -106,15 +106,15 @@ let lp0_to_string () =
 let lp0_of_to_string () =
   Alcotest.(check string) "lp0_of_to_string" lp0s (To_test.lp0_of_to_string ())
 
-let lp0_load_to_string () =
+let lp0_read_to_string () =
   Alcotest.(check string)
-    "lp0_load_to_string" lp0s
-    (To_test.lp0_load_to_string ())
+    "lp0_read_to_string" lp0s
+    (To_test.lp0_read_to_string ())
 
-let lp0_write_load_to_string () =
+let lp0_write_read_to_string () =
   Alcotest.(check string)
-    "lp0_write_load_to_string" (To_test.lp0_to_string ())
-    (To_test.lp0_write_load_to_string ())
+    "lp0_write_read_to_string" (To_test.lp0_to_string ())
+    (To_test.lp0_write_read_to_string ())
 
 let lp0_comment () =
   Alcotest.(check string) "lp0_comment" lp0s (To_test.lp0_comment ())
@@ -122,7 +122,7 @@ let lp0_comment () =
 let lp0_model_string () =
   Alcotest.(check string)
     "lp0 model string" (To_test.lp0_to_string ())
-    (To_test.lp0_load_to_string ())
+    (To_test.lp0_read_to_string ())
 
 let mip0_to_string () =
   Alcotest.(check string) "mip0 to string" mip0s (To_test.mip0_to_string ())
@@ -131,13 +131,13 @@ let mip0_model_string () =
   Alcotest.(check string)
     "mip0 model string"
     (To_test.mip0_to_string ())
-    (To_test.mip0_load_to_string ())
+    (To_test.mip0_read_to_string ())
 
 let mip0a_model_string () =
   Alcotest.(check string)
     "mip0a model string"
     (To_test.mip0_to_string ())
-    (To_test.mip0a_load_to_string ())
+    (To_test.mip0a_read_to_string ())
 
 let () =
   let open Alcotest in
@@ -146,12 +146,12 @@ let () =
     ; ("bad0 validation", [test_case "validate bad0" `Quick validate_bad0])
     ; ("mip0 validation", [test_case "validate mip0" `Quick validate_mip0])
     ; ("lp0 string format", [test_case "lp0_to_string" `Quick lp0_to_string])
-    ; ("lp0 string load", [test_case "lp0_of_to_string" `Quick lp0_of_to_string])
-    ; ( "lp0 load file"
-      , [test_case "lp0_load_to_string" `Quick lp0_load_to_string] )
-    ; ("lp0 commented string load", [test_case "lp0_comment" `Quick lp0_comment])
-    ; ( "lp0 write load to string"
-      , [test_case "lp0_write_load_to_string" `Quick lp0_write_load_to_string]
+    ; ("lp0 string read", [test_case "lp0_of_to_string" `Quick lp0_of_to_string])
+    ; ( "lp0 read file"
+      , [test_case "lp0_read_to_string" `Quick lp0_read_to_string] )
+    ; ("lp0 commented string read", [test_case "lp0_comment" `Quick lp0_comment])
+    ; ( "lp0 write read to string"
+      , [test_case "lp0_write_read_to_string" `Quick lp0_write_read_to_string]
       )
     ; ( "lp0 model string"
       , [test_case "lp0_model_string" `Quick lp0_model_string] )

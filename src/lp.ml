@@ -54,7 +54,7 @@ let write file problem =
   Printf.fprintf ch "%s\n" (Problem.to_string problem) ;
   close_out ch
 
-let load file =
+let read file =
   let ch = open_in file in
   try
     let lexbuf = Lexing.from_channel ch in
