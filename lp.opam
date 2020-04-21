@@ -1,5 +1,5 @@
 opam-version: "2.0"
-version: "0.0.1"
+version: "0.0.2"
 synopsis: "LP and MIP modeling in OCaml"
 description: """
 This library is a modeling tool for Linear Programming (LP) and Mixed Integer Programming (MIP).
