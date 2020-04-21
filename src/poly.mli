@@ -37,8 +37,12 @@ val classify : t -> classified
 val collision : t -> bool
 (** Check if any variable collision exist in the polynomial *)
 
-val simplify : t -> t
-(** Simplify the polynomial *)
+val simplify : ?epsilon:float -> t -> t
+(** Simplify the polynomial.
+    The polynomial is sorted and terms with same variables are accumulated.
+    After that, near-zero terms are dropped. [epsilon] specifies the threshold
+    of near-zero, defaulting to 10. *. epsilon_float.
+ *)
 
 val degree : t -> int
 (** Get the degree of polynomial *)

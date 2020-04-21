@@ -90,13 +90,13 @@ let sort = function
 
 let degree = function Quad _ -> 2 | Linear _ -> 1 | Const _ -> 0
 
-let near_zero = function
+let near_zero ?(epsilon = 10. *. epsilon_float) = function
   | Const c ->
-      Float.abs c < epsilon_float
+      Float.abs c < epsilon
   | Linear (c, _) ->
-      Float.abs c < epsilon_float
+      Float.abs c < epsilon
   | Quad (c, _, _) ->
-      Float.abs c < epsilon_float
+      Float.abs c < epsilon
 
 let common_var tl tr =
   let stl = sort tl in
