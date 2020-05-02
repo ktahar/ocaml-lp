@@ -1,6 +1,6 @@
 type t = Term.t list
 
-type classified = {quad: t; linear: t; const: t}
+type classified = {const: t; linear: t; quad: t}
 
 let c x = [Term.c x]
 
@@ -23,34 +23,34 @@ let partition poly =
     poly
 
 let classify poly =
-  let rec classify_ qs ls cs = function
+  let rec classify_ cs ls qs = function
     | [] ->
-        {quad= List.rev qs; linear= List.rev ls; const= List.rev cs}
+        {const= List.rev cs; linear= List.rev ls; quad= List.rev qs}
     | (Term.Const _ as c) :: rest ->
-        classify_ qs ls (c :: cs) rest
+        classify_ (c :: cs) ls qs rest
     | (Term.Linear _ as l) :: rest ->
-        classify_ qs (l :: ls) cs rest
+        classify_ cs (l :: ls) qs rest
     | (Term.Quad _ as q) :: rest ->
-        classify_ (q :: qs) ls cs rest
+        classify_ cs ls (q :: qs) rest
   in
   classify_ [] [] [] poly
 
 let classify_by var poly =
-  let rec classify_ qs ls cs = function
+  let rec classify_ cs ls qs = function
     | [] ->
-        {quad= List.rev qs; linear= List.rev ls; const= List.rev cs}
+        {const= List.rev cs; linear= List.rev ls; quad= List.rev qs}
     | (Term.Const _ as c) :: rest ->
-        classify_ qs ls (c :: cs) rest
+        classify_ (c :: cs) ls qs rest
     | (Term.Linear (_, v) as l) :: rest when v = var ->
-        classify_ qs (l :: ls) cs rest
+        classify_ cs (l :: ls) qs rest
     | (Term.Linear _ as c) :: rest ->
-        classify_ qs ls (c :: cs) rest
+        classify_ (c :: cs) ls qs rest
     | (Term.Quad (_, v0, v1) as q) :: rest when v0 = var && v1 = var ->
-        classify_ (q :: qs) ls cs rest
+        classify_ cs ls (q :: qs) rest
     | (Term.Quad (_, v0, v1) as l) :: rest when v0 = var || v1 = var ->
-        classify_ qs (l :: ls) cs rest
+        classify_ cs (l :: ls) qs rest
     | (Term.Quad _ as c) :: rest ->
-        classify_ qs ls (c :: cs) rest
+        classify_ (c :: cs) ls qs rest
   in
   classify_ [] [] [] poly
 
@@ -74,11 +74,11 @@ let uniq_vars poly =
   List.sort_uniq Var.compare_name vars
 
 let simplify ?(epsilon = 10. *. epsilon_float) poly =
-  let rec simplify_ quads lins const = function
+  let rec simplify_ const lins quads = function
     | [] ->
-        List.rev quads @ List.rev lins @ [Term.Const const]
+        (Term.Const const :: List.rev lins) @ List.rev quads
     | Term.Const c :: rest ->
-        simplify_ quads lins (c +. const) rest
+        simplify_ (c +. const) lins quads rest
     | (Term.Linear (newc, _) as newl) :: rest ->
         let simpl_l =
           match lins with
@@ -90,7 +90,7 @@ let simplify ?(epsilon = 10. *. epsilon_float) poly =
           | _ ->
               failwith "simplify_: unexpected pattern"
         in
-        simplify_ quads simpl_l const rest
+        simplify_ const simpl_l quads rest
     | (Term.Quad (newc, _, _) as newq) :: rest ->
         let simpl_q =
           match quads with
@@ -103,12 +103,10 @@ let simplify ?(epsilon = 10. *. epsilon_float) poly =
           | _ ->
               failwith "simplify_: unexpected pattern"
         in
-        simplify_ simpl_q lins const rest
+        simplify_ const lins simpl_q rest
   in
-  let sorted = sort poly in
-  List.filter
-    (fun t -> not (Term.near_zero ~epsilon t))
-    (simplify_ [] [] Float.zero sorted)
+  poly |> sort |> simplify_ Float.zero [] []
+  |> List.filter (fun t -> not (Term.near_zero ~epsilon t))
 
 let collision p =
   let sorted = sort p in
