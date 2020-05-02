@@ -6,6 +6,8 @@ module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
 
+type pclass = Problem.pclass
+
 (* export polynomial builders and operators *)
 let c = Poly.c
 
@@ -45,8 +47,10 @@ let maximize = Objective.maximize
 
 let minimize = Objective.minimize
 
-(* model validation *)
+(* model validation and classification *)
 let validate = Problem.validate
+
+let classify = Problem.classify
 
 (* IO *)
 let to_string = Problem.to_string

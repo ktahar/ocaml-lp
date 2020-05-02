@@ -12,3 +12,5 @@ let to_string ?(short = false) cnstrs =
   "subject to\n" ^ body
 
 let has_constant cs = List.exists Constraint.constant cs
+
+let degree cs = cs |> List.map Constraint.degree |> List.fold_left max 0

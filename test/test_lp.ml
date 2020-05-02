@@ -85,6 +85,12 @@ module To_test = struct
 
   let validate_mip0 () = Lp.validate mip0
 
+  let classify_lp0 () =
+    match Lp.classify lp0 with Lp.Problem.LP -> true | _ -> false
+
+  let classify_mip0 () =
+    match Lp.classify mip0 with Lp.Problem.MIQCP -> true | _ -> false
+
   let lp0_to_string () = Lp.to_string lp0
 
   let lp0_of_to_string () = Lp.to_string (Lp.of_string lp0s)
@@ -115,6 +121,12 @@ let validate_bad1 () =
 
 let validate_mip0 () =
   Alcotest.(check bool) "validate_mip0" true (To_test.validate_mip0 ())
+
+let classify_lp0 () =
+  Alcotest.(check bool) "classify_lp0" true (To_test.classify_lp0 ())
+
+let classify_mip0 () =
+  Alcotest.(check bool) "classify_mip0" true (To_test.classify_mip0 ())
 
 let lp0_to_string () =
   Alcotest.(check string) "lp0_to_string" lp0s (To_test.lp0_to_string ())
@@ -158,10 +170,12 @@ let mip0a_model_string () =
 let () =
   let open Alcotest in
   run "Lp"
-    [ ("lp0 validation", [test_case "validate lp0" `Quick validate_lp0])
-    ; ("bad0 validation", [test_case "validate bad0" `Quick validate_bad0])
-    ; ("bad1 validation", [test_case "validate bad1" `Quick validate_bad1])
-    ; ("mip0 validation", [test_case "validate mip0" `Quick validate_mip0])
+    [ ("lp0 validation", [test_case "validate_lp0" `Quick validate_lp0])
+    ; ("bad0 validation", [test_case "validate_bad0" `Quick validate_bad0])
+    ; ("bad1 validation", [test_case "validate_bad1" `Quick validate_bad1])
+    ; ("mip0 validation", [test_case "validate_mip0" `Quick validate_mip0])
+    ; ("lp0 classification", [test_case "classify_lp0" `Quick classify_lp0])
+    ; ("mip0 classification", [test_case "classify_mip0" `Quick classify_mip0])
     ; ("lp0 string format", [test_case "lp0_to_string" `Quick lp0_to_string])
     ; ("lp0 string read", [test_case "lp0_of_to_string" `Quick lp0_of_to_string])
     ; ( "lp0 read file"

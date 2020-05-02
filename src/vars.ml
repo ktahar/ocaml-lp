@@ -6,14 +6,20 @@ let classify vars =
   let rec classify_ cs gs bs = function
     | [] ->
         {continuous= List.rev cs; general= List.rev gs; binary= List.rev bs}
-    | ({Var.attr= Var.Continuous (_, _); _} as c) :: rest ->
+    | ({Var.attr= Var.Continuous _; _} as c) :: rest ->
         classify_ (c :: cs) gs bs rest
-    | ({Var.attr= Var.General (_, _); _} as g) :: rest ->
+    | ({Var.attr= Var.General _; _} as g) :: rest ->
         classify_ cs (g :: gs) bs rest
     | ({Var.attr= Var.Binary; _} as b) :: rest ->
         classify_ cs gs (b :: bs) rest
   in
   classify_ [] [] [] vars
+
+let has_integer vars =
+  List.exists
+    (fun x ->
+      match x with {Var.attr= Var.Continuous _; _} -> false | _ -> true)
+    vars
 
 let to_vtype_string vars =
   let to_string li = li |> List.map Var.to_string |> String.concat " " in
@@ -35,8 +41,4 @@ let to_bound_string ?(short = false) vars =
     |> List.filter_map (Var.to_bound_string ~short)
     |> List.map (fun s -> " " ^ s)
   in
-  match v with
-  | [] ->
-      None
-  | vs ->
-      Some ("bounds\n" ^ String.concat "\n" vs)
+  match v with [] -> None | vs -> Some ("bounds\n" ^ String.concat "\n" vs)
