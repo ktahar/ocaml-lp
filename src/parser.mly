@@ -20,7 +20,6 @@ sections :
 
 
 objective:
-  | (*empty*) { [Sobj (Objective.No_obj)] }
   | MIN p = poly { [Sobj (Objective.Min p)] }
   | MAX p = poly { [Sobj (Objective.Max p)] }
 

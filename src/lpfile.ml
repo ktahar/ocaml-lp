@@ -14,8 +14,6 @@ let trans_binary p name =
   | obj, cnstrs ->
       let newobj =
         match obj with
-        | Objective.No_obj as n ->
-            n
         | Objective.Max p ->
             Objective.Max (Poly.to_binary name p)
         | Objective.Min p ->
@@ -29,8 +27,6 @@ let trans_general p name =
   | obj, cnstrs ->
       let newobj =
         match obj with
-        | Objective.No_obj as n ->
-            n
         | Objective.Max p ->
             Objective.Max (Poly.to_integer name p)
         | Objective.Min p ->
@@ -44,8 +40,6 @@ let trans_bound p b =
   | obj, cnstrs ->
       let newobj =
         match obj with
-        | Objective.No_obj as n ->
-            n
         | Objective.Max p ->
             Objective.Max (Poly.trans_bound b.name b.lb b.ub p)
         | Objective.Min p ->
