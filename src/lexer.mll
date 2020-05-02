@@ -28,9 +28,10 @@ let _ = List.iter (fun (k, v) ->
 
 let digit = ['0'-'9']
 let alphabet = ['a'-'z' 'A'-'Z' '_']
+let symbol = ['!' '#' '$' '%' '&' '(' ')' ',' '.' '?' '@' '{' '}' '~']
 let number = (digit+ | (digit+ "." digit*) | (digit* "." digit+))
              (['e' 'E'] ['+' '-']? digit+)?
-let id = alphabet (alphabet | digit)*
+let id = alphabet (alphabet | digit | symbol)*
 
 let square = '^' ' '* '2'
 let div2 = '/' ' '* '2'

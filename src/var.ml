@@ -8,7 +8,7 @@ type attr =
 
 type t = {name: string; attr: attr}
 
-let re = Str.regexp "^[a-zA-Z_][a-zA-Z0-9_!#\\$%&(),\\.;\\?@{}~]*$"
+let re = Str.regexp "^[a-zA-Z_][a-zA-Z0-9_!#\\$%&(),\\.\\?@{}~]*$"
 
 let validate_name n = Str.string_match re n 0
 
