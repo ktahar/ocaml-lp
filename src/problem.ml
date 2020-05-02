@@ -1,4 +1,4 @@
-type t = Objective.t * Constraint.t list
+type t = Objective.t * Constraints.t
 
 (* TODO classify problem into pclass *)
 type pclass =
@@ -30,31 +30,21 @@ let collision p =
   let uniql = List.length (uniq_vars_logical p) in
   if uniqn = uniql then false
   else (
-    Printf.printf "collision: uniq vars: %d uniq vars (logical): %d\n" uniqn uniql ;
+    Printf.printf "collision: uniq vars: %d uniq vars (logical): %d\n" uniqn
+      uniql ;
     true )
 
-(* TODO add more validations *)
-let validate p = not (collision p)
-
-let cnstrs_to_string ?(short = false) cnstrs =
-  let c_string = Constraint.to_string ~short in
-  let body =
-    cnstrs
-    |> List.map Constraint.simplify
-    |> List.map c_string
-    |> List.map (fun s -> " " ^ s)
-    |> String.concat "\n"
-  in
-  "subject to\n" ^ body
+let validate p = not (collision p || Constraints.has_constant (snd p))
 
 let to_string ?(short = false) p =
-  let o_string = Objective.to_string ~short in
-  let cs_string = cnstrs_to_string ~short in
+  let o_string = Objective.to_string ~short (fst p) in
+  let cs_string = Constraints.to_string ~short (snd p) in
   let vars = uniq_vars p in
   let bound = Vars.to_bound_string ~short vars in
   let vtype = Vars.to_vtype_string vars in
   String.concat "\n"
-    ( [o_string (fst p); cs_string (snd p)]
+    ( (match o_string with None -> [] | Some o -> [o])
+    @ [cs_string]
     @ (match bound with None -> [] | Some b -> [b])
     @ (match vtype with None -> [] | Some v -> [v])
     @ ["end"] )

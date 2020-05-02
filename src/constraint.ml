@@ -33,6 +33,20 @@ let take_vars = function
   | Eq (_, lhs, rhs) | Ineq (_, lhs, rhs) ->
       Poly.take_vars lhs @ Poly.take_vars rhs
 
+let degree = function
+  | Eq (_, lhs, rhs) | Ineq (_, lhs, rhs) ->
+      max (Poly.degree lhs) (Poly.degree rhs)
+
+let constant c =
+  if degree c > 0 then false
+  else (
+    ( match c with
+    | Eq (Some n, _, _) | Ineq (Some n, _, _) ->
+        Printf.printf "constraint %s is constant\n" n
+    | _ ->
+        print_endline "constraint is constant" ) ;
+    true )
+
 let eq ?(name = None) lhs rhs =
   let s = simplify_sides lhs rhs in
   Eq (name, fst s, snd s)
