@@ -49,19 +49,19 @@ let constant c =
 
 let eq ?(name = "") lhs rhs =
   let s = simplify_sides lhs rhs in
-  if String.length name > 0 then Eq (Some name, fst s, snd s)
+  if String.length name > 0 then
+    if Var.validate_name name then Eq (Some name, fst s, snd s)
+    else failwith ("Invalid name for constraint: " ^ name)
   else Eq (None, fst s, snd s)
 
 let lt ?(name = "") lhs rhs =
   let s = simplify_sides lhs rhs in
-  if String.length name > 0 then Ineq (Some name, fst s, snd s)
+  if String.length name > 0 then
+    if Var.validate_name name then Ineq (Some name, fst s, snd s)
+    else failwith ("Invalid name for constraint: " ^ name)
   else Ineq (None, fst s, snd s)
 
-let gt ?(name = "") lhs rhs =
-  (* swap sides here *)
-  let s = simplify_sides rhs lhs in
-  if String.length name > 0 then Ineq (Some name, fst s, snd s)
-  else Ineq (None, fst s, snd s)
+let gt ?(name = "") lhs rhs = lt ~name rhs lhs
 
 let ( =$ ) l r = eq l r
 
