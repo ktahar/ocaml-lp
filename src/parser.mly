@@ -27,9 +27,9 @@ cnstrs: (* constraints section cannot be empty *)
   ST l = nonempty_list(cnstr) { [Scnstr l] }
 
 cnstr:
-  | l = ID; COLON; p = poly; EQ; rhs = const { Cnstr.eq ~name:(Some l) p rhs }
-  | l = ID; COLON; p = poly; LT; rhs = const { Cnstr.lt ~name:(Some l) p rhs }
-  | l = ID; COLON; p = poly; GT; rhs = const { Cnstr.gt ~name:(Some l) p rhs }
+  | l = ID; COLON; p = poly; EQ; rhs = const { Cnstr.eq ~name:l p rhs }
+  | l = ID; COLON; p = poly; LT; rhs = const { Cnstr.lt ~name:l p rhs }
+  | l = ID; COLON; p = poly; GT; rhs = const { Cnstr.gt ~name:l p rhs }
   | p = poly; EQ; rhs = const { Cnstr.eq p rhs }
   | p = poly; LT; rhs = const { Cnstr.lt p rhs }
   | p = poly; GT; rhs = const { Cnstr.gt p rhs }

@@ -36,9 +36,15 @@ let div = Poly.div
 let ( / ) = Poly.( / )
 
 (* export constraint builders *)
+let eq = Constraint.eq
+
 let ( =$ ) = Constraint.( =$ )
 
+let lt = Constraint.lt
+
 let ( <$ ) = Constraint.( <$ )
+
+let gt = Constraint.gt
 
 let ( >$ ) = Constraint.( >$ )
 

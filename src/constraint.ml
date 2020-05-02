@@ -47,17 +47,21 @@ let constant c =
         print_endline "a constraint is constant" ) ;
     true )
 
-let eq ?(name = None) lhs rhs =
+let eq ?(name = "") lhs rhs =
   let s = simplify_sides lhs rhs in
-  Eq (name, fst s, snd s)
+  if String.length name > 0 then Eq (Some name, fst s, snd s)
+  else Eq (None, fst s, snd s)
 
-let lt ?(name = None) lhs rhs =
+let lt ?(name = "") lhs rhs =
   let s = simplify_sides lhs rhs in
-  Ineq (name, fst s, snd s)
+  if String.length name > 0 then Ineq (Some name, fst s, snd s)
+  else Ineq (None, fst s, snd s)
 
-let gt ?(name = None) lhs rhs =
+let gt ?(name = "") lhs rhs =
+  (* swap sides here *)
   let s = simplify_sides rhs lhs in
-  Ineq (name, fst s, snd s)
+  if String.length name > 0 then Ineq (Some name, fst s, snd s)
+  else Ineq (None, fst s, snd s)
 
 let ( =$ ) l r = eq l r
 

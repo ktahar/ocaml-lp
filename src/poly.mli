@@ -1,11 +1,11 @@
 (** Module for polynomial expression type *)
 
+type t = Term.t list
 (** Type for the polynomial with order up to two (quadratic).
     Internal representation (Term.t list) is intentionally exposed for now. *)
-type t = Term.t list
 
-(** Type for the polynomial classified by orders *)
 type classified = {quad: t; linear: t; const: t}
+(** Type for the polynomial classified by orders *)
 
 val c : float -> t
 (** Make monomial of a constant value *)

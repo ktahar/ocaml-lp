@@ -1,7 +1,7 @@
 (tests
-  (names test_poly test_lp)
-  (libraries alcotest lp)
-  (deps
-    (glob_files *.lp))
-  (action
-    (run %{test} --color=always)))
+ (names test_poly test_lp)
+ (libraries alcotest lp)
+ (deps
+  (glob_files *.lp))
+ (action
+  (run %{test} --color=always)))

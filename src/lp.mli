@@ -57,14 +57,23 @@ val div : Poly.t -> Poly.t -> Poly.t
 val ( / ) : Poly.t -> Poly.t -> Poly.t
 (** Equivalent to div *)
 
+val eq : ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an equality constraint. Optinal name can be given. Polynomials are simplified on build. *)
+
 val ( =$ ) : Poly.t -> Poly.t -> Constraint.t
-(** Build an equality constraint. Polynomials are simplified on build. *)
+(** Build an unnamed equality constraint. Polynomials are simplified on build. *)
+
+val lt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
 
 val ( <$ ) : Poly.t -> Poly.t -> Constraint.t
-(** Build an inequality constraint. Polynomials are simplified on build. *)
+(** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
+
+val gt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
 
 val ( >$ ) : Poly.t -> Poly.t -> Constraint.t
-(** Build an inequality constraint. Polynomials are simplified on build. *)
+(** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
 val maximize : Poly.t -> Objective.t
 (** Build an objective to maximize a polynomial. The polynomial is simplified on build. *)
