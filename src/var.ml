@@ -8,12 +8,16 @@ type attr =
 
 type t = {name: string; attr: attr}
 
+let re = Str.regexp "^[a-zA-Z_][a-zA-Z0-9_!#\\$%&(),\\.;\\?@{}~]*$"
+
+let validate_name n = Str.string_match re n 0
+
 (* compare only names to sort terms correctly even when collision exists *)
-let compare l r = String.compare l.name r.name
+let compare_name l r = String.compare l.name r.name
 
 (* collision means same names
  * with different attributes (not equal logically) *)
-let collision l r = compare l r = 0 && l <> r
+let collision l r = compare_name l r = 0 && l <> r
 
 let make ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
   let attr =
@@ -21,7 +25,8 @@ let make ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
     else if lb = Float.zero && ub = Float.one then Binary
     else General (lb, ub)
   in
-  {name; attr}
+  if validate_name name then {name; attr}
+  else failwith ("Invalid name for variable: " ^ name)
 
 let make_binary name = make ~integer:true ~lb:Float.zero ~ub:Float.one name
 

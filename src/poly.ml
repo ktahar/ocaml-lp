@@ -71,7 +71,7 @@ let take_vars poly =
 
 let uniq_vars poly =
   let vars = take_vars poly in
-  List.sort_uniq Var.compare vars
+  List.sort_uniq Var.compare_name vars
 
 let simplify ?(epsilon = 10. *. epsilon_float) poly =
   let rec simplify_ quads lins const = function
@@ -197,7 +197,7 @@ let long_div var n d =
 let div n d =
   match simplify d with
   | [] ->
-      failwith "Division by zero"
+      raise Division_by_zero
   | [t] ->
       (* single term division *)
       divt n t

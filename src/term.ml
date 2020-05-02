@@ -125,11 +125,14 @@ let compare tl tr =
   | Const cl, Const cr ->
       Float.compare cl cr
   | Linear (cl, vl), Linear (cr, vr) ->
-      if vl <> vr then Var.compare vl vr else Float.compare cl cr
+      let n = Var.compare_name vl vr in
+      if n <> 0 then n else Float.compare cl cr
   | Quad (cl, vl0, vl1), Quad (cr, vr0, vr1) ->
-      if vl0 <> vr0 then Var.compare vl0 vr0
-      else if vl1 <> vr1 then Var.compare vl1 vr1
-      else Float.compare cl cr
+      let n0 = Var.compare_name vl0 vr0 in
+      if n0 <> 0 then n0
+      else
+        let n1 = Var.compare_name vl1 vr1 in
+        if n1 <> 0 then n1 else Float.compare cl cr
   | Linear _, Const _ ->
       1
   | Const _, Linear _ ->

@@ -19,7 +19,7 @@ let take_vars p =
 
 let uniq_vars p =
   let vars = take_vars p in
-  List.sort_uniq Var.compare vars
+  List.sort_uniq Var.compare_name vars
 
 let uniq_vars_logical p =
   let vars = take_vars p in
@@ -30,7 +30,7 @@ let collision p =
   let uniql = List.length (uniq_vars_logical p) in
   if uniqn = uniql then false
   else (
-    Printf.printf "collision: uniq var names: %d uniq vars: %d\n" uniqn uniql ;
+    Printf.printf "collision: uniq vars: %d uniq vars (logical): %d\n" uniqn uniql ;
     true )
 
 (* TODO add more validations *)
