@@ -38,17 +38,17 @@ const :
   n = signed { [Term.Const n] }
 
 poly :
-  | p = pl { p }
-  | PLUS p = pl { p }
-  | MINUS p = pl
-  { match p with
+  | p = poly_rev { List.rev p }
+  | PLUS p = poly_rev { List.rev p }
+  | MINUS p = poly_rev
+  { match List.rev p with
     | hd :: rest -> Term.neg hd :: rest
     | _-> failwith "empty polynomial expression" }
 
-pl :
-  | p = pl PLUS  t = term { p @ [t] }
-  | p = pl MINUS t = term { p @ [Term.neg t] }
+poly_rev :
   | t = term { [t] }
+  | p = poly_rev PLUS  t = term { t :: p }
+  | p = poly_rev MINUS t = term { Term.neg t :: p }
 
 term:
   | v = ID { Term.Linear (1.0, Var.make v) }
