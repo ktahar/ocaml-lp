@@ -29,8 +29,6 @@ let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
     =
   Array.init num (fun i -> make ~integer ~lb ~ub (name ^ string_of_int i))
 
-let null = make ""
-
 let to_string v = v.name
 
 let to_bound_string ?(short = false) v =
@@ -46,23 +44,23 @@ let to_bound_string ?(short = false) v =
       None
 
 let trans_bound lb ub = function
-  | {attr= Continuous _; name= _ as n} ->
-      {name= n; attr= Continuous (lb, ub)}
-  | {attr= General _; name= _ as n} ->
-      {name= n; attr= General (lb, ub)}
-  | _ as org ->
+  | {name; attr= Continuous _} ->
+      {name; attr= Continuous (lb, ub)}
+  | {name; attr= General _} ->
+      {name; attr= General (lb, ub)}
+  | org ->
       org
 
 let to_binary = function
-  | {attr= Continuous _; name= _ as n} ->
-      {name= n; attr= Binary}
-  | {attr= General _; name= _ as n} ->
-      {name= n; attr= Binary}
-  | _ as org ->
+  | {name; attr= Continuous _} ->
+      {name; attr= Binary}
+  | {name; attr= General _} ->
+      {name; attr= Binary}
+  | org ->
       org
 
 let to_integer = function
-  | {attr= Continuous (lb, ub); name= _ as n} ->
-      {name= n; attr= General (lb, ub)}
-  | _ as org ->
+  | {name; attr= Continuous (lb, ub)} ->
+      {name; attr= General (lb, ub)}
+  | org ->
       org

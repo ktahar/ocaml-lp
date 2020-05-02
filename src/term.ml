@@ -85,7 +85,7 @@ let ( ~- ) = neg
 let sort = function
   | Quad (c, v0, v1) ->
       if v0 > v1 then Quad (c, v1, v0) else Quad (c, v0, v1)
-  | _ as t ->
+  | t ->
       t
 
 let degree = function Quad _ -> 2 | Linear _ -> 1 | Const _ -> 0
@@ -153,7 +153,7 @@ let trans_bound name lb ub = function
       Quad (c, Var.trans_bound lb ub v0, v1)
   | Quad (c, v0, v1) when v1.name = name ->
       Quad (c, v0, Var.trans_bound lb ub v1)
-  | _ as org ->
+  | org ->
       org
 
 let to_binary name = function
@@ -166,7 +166,7 @@ let to_binary name = function
       Quad (c, Var.to_binary v0, v1)
   | Quad (c, v0, v1) when v1.name = name ->
       Quad (c, v0, Var.to_binary v1)
-  | _ as org ->
+  | org ->
       org
 
 let to_integer name = function
@@ -179,5 +179,5 @@ let to_integer name = function
       Quad (c, Var.to_integer v0, v1)
   | Quad (c, v0, v1) when v1.name = name ->
       Quad (c, v0, Var.to_integer v1)
-  | _ as org ->
+  | org ->
       org

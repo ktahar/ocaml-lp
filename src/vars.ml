@@ -22,12 +22,12 @@ let to_vtype_string vars =
   match classify vars with
   | {general= []; binary= []; _} ->
       None
-  | {general= _ as gs; binary= []; _} ->
-      Some (gsec gs)
-  | {general= []; binary= _ as bs; _} ->
-      Some (bsec bs)
-  | {general= _ as gs; binary= _ as bs; _} ->
-      Some (gsec gs ^ "\n" ^ bsec bs)
+  | {general; binary= []; _} ->
+      Some (gsec general)
+  | {general= []; binary; _} ->
+      Some (bsec binary)
+  | {general; binary; _} ->
+      Some (gsec general ^ "\n" ^ bsec binary)
 
 let to_bound_string ?(short = false) vars =
   let v =
@@ -38,5 +38,5 @@ let to_bound_string ?(short = false) vars =
   match v with
   | [] ->
       None
-  | _ as vs ->
+  | vs ->
       Some ("bounds\n" ^ String.concat "\n" vs)
