@@ -44,7 +44,7 @@ let constant c =
     | Eq (Some n, _, _) | Ineq (Some n, _, _) ->
         Printf.printf "constraint %s is constant\n" n
     | _ ->
-        print_endline "constraint is constant" ) ;
+        print_endline "a constraint is constant" ) ;
     true )
 
 let eq ?(name = None) lhs rhs =

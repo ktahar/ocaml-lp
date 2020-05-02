@@ -10,12 +10,12 @@ let to_string ?(short = false) o =
   let p_string = Poly.to_string ~short in
   match o with
   | Max p when Poly.degree p >= 2 ->
-      Some ("maximize\n " ^ p_string p ^ " / 2")
+      "maximize\n " ^ p_string p ^ " / 2"
   | Max p ->
-      Some ("maximize\n " ^ p_string p)
+      "maximize\n " ^ p_string p
   | Min p when Poly.degree p >= 2 ->
-      Some ("minimize\n " ^ p_string p ^ " / 2")
+      "minimize\n " ^ p_string p ^ " / 2"
   | Min p ->
-      Some ("minimize\n " ^ p_string p)
+      "minimize\n " ^ p_string p
 
 let degree = function Max p | Min p -> Poly.degree p

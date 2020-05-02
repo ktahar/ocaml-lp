@@ -2,8 +2,8 @@ let lp0 =
   let open Lp in
   let x = var "x" in
   let y = var "y" in
-  let c0 = x + c 1.2 * y <$ c 5.0 in
-  let c1 = c 2.0 * x + y <$ c 1.2 in
+  let c0 = x + (c 1.2 * y) <$ c 5.0 in
+  let c1 = (c 2.0 * x) + y <$ c 1.2 in
   let obj = maximize (x + y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
@@ -31,8 +31,19 @@ let bad0 =
   let open Lp in
   let x = var "x" in
   let y = var "x" ~integer:true in
-  let c0 = x + c 1.2 * y <$ c 5.0 in
-  let c1 = c 2.0 * x + y <$ c 1.2 in
+  let c0 = x + (c 1.2 * y) <$ c 5.0 in
+  let c1 = (c 2.0 * x) + y <$ c 1.2 in
+  let obj = minimize (x + y) in
+  let cnstrs = [c0; c1] in
+  (obj, cnstrs)
+
+let bad1 =
+  (* invalid model with constant constraint *)
+  let open Lp in
+  let x = var "x" in
+  let y = var "y" in
+  let c0 = x + (c 1.2 * y) <$ c 5.0 in
+  let c1 = c 2.0 <$ c 3.0 in
   let obj = minimize (x + y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
@@ -59,9 +70,9 @@ let mip0 =
   let z = var ~integer:true ~ub:3.0 "z" in
   let w = var "w" ~integer:true in
   let b = binary "b" in
-  let c0 = ~- w + x + c 2.0 * y <$ c 5.0 in
-  let c1 = c 2.0 * x + b * y + x * z <$ c 2.0 in
-  let obj = maximize (x + y + z + c 3.0 * w * b) in
+  let c0 = ~-w + x + (c 2.0 * y) <$ c 5.0 in
+  let c1 = (c 2.0 * x) + (b * y) + (x * z) <$ c 2.0 in
+  let obj = maximize (x + y + z + (c 3.0 * w * b)) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -69,6 +80,8 @@ module To_test = struct
   let validate_lp0 () = Lp.validate lp0
 
   let validate_bad0 () = Lp.validate bad0
+
+  let validate_bad1 () = Lp.validate bad1
 
   let validate_mip0 () = Lp.validate mip0
 
@@ -96,6 +109,9 @@ let validate_lp0 () =
 
 let validate_bad0 () =
   Alcotest.(check bool) "validate_bad0" false (To_test.validate_bad0 ())
+
+let validate_bad1 () =
+  Alcotest.(check bool) "validate_bad1" false (To_test.validate_bad1 ())
 
 let validate_mip0 () =
   Alcotest.(check bool) "validate_mip0" true (To_test.validate_mip0 ())
@@ -144,6 +160,7 @@ let () =
   run "Lp"
     [ ("lp0 validation", [test_case "validate lp0" `Quick validate_lp0])
     ; ("bad0 validation", [test_case "validate bad0" `Quick validate_bad0])
+    ; ("bad1 validation", [test_case "validate bad1" `Quick validate_bad1])
     ; ("mip0 validation", [test_case "validate mip0" `Quick validate_mip0])
     ; ("lp0 string format", [test_case "lp0_to_string" `Quick lp0_to_string])
     ; ("lp0 string read", [test_case "lp0_of_to_string" `Quick lp0_of_to_string])

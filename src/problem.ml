@@ -43,8 +43,7 @@ let to_string ?(short = false) p =
   let bound = Vars.to_bound_string ~short vars in
   let vtype = Vars.to_vtype_string vars in
   String.concat "\n"
-    ( (match o_string with None -> [] | Some o -> [o])
-    @ [cs_string]
+    ( [o_string; cs_string]
     @ (match bound with None -> [] | Some b -> [b])
     @ (match vtype with None -> [] | Some v -> [v])
     @ ["end"] )
