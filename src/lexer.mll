@@ -43,8 +43,8 @@ let id = (alphabet | '_') (alphabet | digit | symbol)*
 
 let subj = ['s' 'S'] ['u' 'U'] ['b' 'B'] ['j' 'J'] ['e' 'E'] ['c' 'C'] ['t' 'T']
 let such = ['s' 'S'] ['u' 'U'] ['c' 'C'] ['h' 'H']
-let to_that = ['t' 'T'] (['o' 'O'] | ['h' 'H'] ['a' 'A'] ['t' 'T'])
-let st = (subj | such) ' '+ to_that
+let that = ['t' 'T'] ['h' 'H'] ['a' 'A'] ['t' 'T']
+let st = subj ' '+ ['t' 'T'] ['o' 'O'] | such ' '+ that
 let square = '^' ' '* '2'
 let div2 = '/' ' '* '2'
 let l_bracket = ('+' ' '*)? '['
