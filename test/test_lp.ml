@@ -86,10 +86,10 @@ module To_test = struct
   let validate_mip0 () = Lp.validate mip0
 
   let classify_lp0 () =
-    match Lp.classify lp0 with Lp.Problem.LP -> true | _ -> false
+    match Lp.classify lp0 with Lp.Pclass.LP -> true | _ -> false
 
   let classify_mip0 () =
-    match Lp.classify mip0 with Lp.Problem.MIQCP -> true | _ -> false
+    match Lp.classify mip0 with Lp.Pclass.MIQCP -> true | _ -> false
 
   let lp0_to_string () = Lp.to_string lp0
 

@@ -5,8 +5,7 @@ module Poly = Poly
 module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
-
-type pclass = Problem.pclass
+module Pclass = Problem.Pclass
 
 (* export polynomial builders and operators *)
 let c = Poly.c

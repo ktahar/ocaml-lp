@@ -6,8 +6,7 @@ module Poly = Poly
 module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
-
-type pclass = Problem.pclass
+module Pclass = Problem.Pclass
 
 (* polynomial builders and operators *)
 
@@ -86,8 +85,8 @@ val minimize : Poly.t -> Objective.t
 val validate : Problem.t -> bool
 (** Validate the problem *)
 
-val classify : Problem.t -> pclass
-(** Classify the problem into pclass *)
+val classify : Problem.t -> Pclass.t
+(** Classify the problem into Pclass *)
 
 (* IO *)
 

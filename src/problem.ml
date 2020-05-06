@@ -1,32 +1,34 @@
+module Pclass = struct
+  type t =
+    (* Linear *)
+    | LP
+    (* Quadratic *)
+    | QP
+    (* Quadratically Constrained; aka QCQP *)
+    | QCP
+    (* Mixed Integer Linear *)
+    | MILP
+    (* Mixed Integer Quadratic *)
+    | MIQP
+    (* Mixed Integer Quadratically Constrained *)
+    | MIQCP
+
+  let to_string = function
+    | LP ->
+        "LP"
+    | QP ->
+        "QP"
+    | QCP ->
+        "QCP"
+    | MILP ->
+        "MILP"
+    | MIQP ->
+        "MIQP"
+    | MIQCP ->
+        "MIQCP"
+end
+
 type t = Objective.t * Constraints.t
-
-type pclass =
-  (* Linear *)
-  | LP
-  (* Quadratic *)
-  | QP
-  (* Quadratically Constrained; aka QCQP *)
-  | QCP
-  (* Mixed Integer Linear *)
-  | MILP
-  (* Mixed Integer Quadratic *)
-  | MIQP
-  (* Mixed Integer Quadratically Constrained *)
-  | MIQCP
-
-let pprint_class = function
-  | LP ->
-      "LP"
-  | QP ->
-      "QP"
-  | QCP ->
-      "QCP"
-  | MILP ->
-      "MILP"
-  | MIQP ->
-      "MIQP"
-  | MIQCP ->
-      "MIQCP"
 
 let take_vars p =
   Objective.take_vars (fst p)
@@ -53,10 +55,12 @@ let classify p =
   let odeg = Objective.degree (fst p) in
   let cdeg = Constraints.degree (snd p) in
   if Vars.has_integer (uniq_vars p) then
-    if cdeg = 2 then MIQCP else if odeg = 2 then MIQP else MILP
-  else if cdeg = 2 then QCP
-  else if odeg = 2 then QP
-  else LP
+    if cdeg = 2 then Pclass.MIQCP
+    else if odeg = 2 then Pclass.MIQP
+    else Pclass.MILP
+  else if cdeg = 2 then Pclass.QCP
+  else if odeg = 2 then Pclass.QP
+  else Pclass.LP
 
 let validate p = not (collision p || Constraints.has_constant (snd p))
 
