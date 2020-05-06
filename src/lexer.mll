@@ -11,48 +11,54 @@ let _ = List.iter (fun (k, v) ->
     "maximize", MAX;
     "min", MIN;
     "minimize", MIN;
+    "st", ST;
+    "s.t.", ST;
     "bound", BOUND;
     "bounds", BOUND;
-    "st", ST;
-    "generals", GENERAL;
-    "general", GENERAL;
     "gen", GENERAL;
-    "binaries", BINARY;
-    "binary", BINARY;
+    "general", GENERAL;
+    "generals", GENERAL;
     "bin", BINARY;
+    "binary", BINARY;
+    "binaries", BINARY;
     "free", FREE;
     "infinity", INF;
     "inf", INF;
   ]
+
+let kw_or_id str = (* ignore case to find keywords *)
+  let s = String.lowercase_ascii str in
+  match Hashtbl.find_opt keywords s with
+  | Some kw -> kw
+  | None ->
+      ID str
 }
 
 let digit = ['0'-'9']
-let alphabet = ['a'-'z' 'A'-'Z' '_']
-let symbol = ['!' '#' '$' '%' '&' '(' ')' ',' '.' '?' '@' '{' '}' '~']
+let alphabet = ['a'-'z' 'A'-'Z']
+let symbol = ['_' '!' '#' '$' '%' '&' '(' ')' ',' '.' '?' '@' '{' '}' '~']
 let number = (digit+ | (digit+ "." digit*) | (digit* "." digit+))
              (['e' 'E'] ['+' '-']? digit+)?
-let id = alphabet (alphabet | digit | symbol)*
+let id = (alphabet | '_') (alphabet | digit | symbol)*
 
+let subj = ['s' 'S'] ['u' 'U'] ['b' 'B'] ['j' 'J'] ['e' 'E'] ['c' 'C'] ['t' 'T']
+let such = ['s' 'S'] ['u' 'U'] ['c' 'C'] ['h' 'H']
+let to_that = ['t' 'T'] (['o' 'O'] | ['h' 'H'] ['a' 'A'] ['t' 'T'])
+let st = (subj | such) ' '+ to_that
 let square = '^' ' '* '2'
 let div2 = '/' ' '* '2'
 let l_bracket = ('+' ' '*)? '['
-let white = ['\t' ' ' '\r' '\n' ']']
+let white = ['\t' ' ' '\r' '\n']
 
 rule token = parse
   | '\\' { comment lexbuf; token lexbuf }
-  (* keywords including non-alphabets *)
-  | "subject to" | "such that" | "s.t."{ ST }
-  (* symbols including white spaces *)
+  (* keywords and symbols including whitespaces *)
   | square { SQ }
-  | l_bracket | div2 | white+ { token lexbuf }
+  | st { ST }
+  (* eat up whitespaces and unnecessary symbols *)
+  | l_bracket | div2 | ']' | white+ { token lexbuf }
   | number as n { NUM (float_of_string n ) }
-  | id as str { (* ignore case to find keywords *)
-      let s = String.lowercase_ascii str in
-      match Hashtbl.find_opt keywords s with
-      | Some kw -> kw
-      | None ->
-          ID str
-  }
+  | id as s { kw_or_id s }
   | "+"  { PLUS }
   | "-"  { MINUS }
   | "*"  { TIMES }
