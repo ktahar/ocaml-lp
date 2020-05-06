@@ -45,9 +45,11 @@ let subj = ['s' 'S'] ['u' 'U'] ['b' 'B'] ['j' 'J'] ['e' 'E'] ['c' 'C'] ['t' 'T']
 let such = ['s' 'S'] ['u' 'U'] ['c' 'C'] ['h' 'H']
 let that = ['t' 'T'] ['h' 'H'] ['a' 'A'] ['t' 'T']
 let st = subj ' '+ ['t' 'T'] ['o' 'O'] | such ' '+ that
+
 let square = '^' ' '* '2'
 let div2 = '/' ' '* '2'
-let l_bracket = ('+' ' '*)? '['
+let minus_lb = '-' ' '* '['
+let plus_lb = ('+' ' '*)? '['
 let white = ['\t' ' ' '\r' '\n']
 
 rule token = parse
@@ -55,17 +57,18 @@ rule token = parse
   (* keywords and symbols including whitespaces *)
   | square { SQ }
   | st { ST }
+  | minus_lb { MLB }
   (* eat up whitespaces and unnecessary symbols *)
-  | l_bracket | div2 | ']' | white+ { token lexbuf }
+  | div2 | plus_lb | ']' | white+ { token lexbuf }
   | number as n { NUM (float_of_string n ) }
   | id as s { kw_or_id s }
   | "+"  { PLUS }
   | "-"  { MINUS }
   | "*"  { TIMES }
   | ":"  { COLON }
-  | "="  { EQ }
   | "<" | "<=" | "=<" { LT }
   | ">" | ">=" | "=>" { GT }
+  | "="  { EQ }
 and comment = parse
   | ('\n' | eof) { () }
   | _ { comment lexbuf }

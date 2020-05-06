@@ -1,14 +1,16 @@
 %{
 open Lpfile
 module Cnstr = Constraint
+let rev_neg_head poly = match List.rev poly with
+    | hd :: rest -> Term.neg hd :: rest
+    | _-> failwith "empty polynomial expression"
 %}
 
 %token <float> NUM
 %token <string> ID
-%token MIN MAX ST BOUND GENERAL BINARY FREE INF
+%token MIN MAX ST BOUND GENERAL BINARY FREE INF END
 %token COLON EQ LT GT
-%token PLUS MINUS TIMES SQ
-%token END
+%token PLUS MINUS TIMES SQ MLB
 
 %start <Lpfile.t> sections
 
@@ -19,7 +21,7 @@ sections :
     { o @ c @ b @ v }
 
 
-objective:
+objective: (* objective section cannot be empty *)
   | MIN p = poly { [Sobj (Objective.Min p)] }
   | MAX p = poly { [Sobj (Objective.Max p)] }
 
@@ -27,32 +29,34 @@ cnstrs: (* constraints section cannot be empty *)
   ST l = nonempty_list(cnstr) { [Scnstr l] }
 
 cnstr:
-  | l = ID; COLON; p = poly; EQ; rhs = const { Cnstr.eq ~name:l p rhs }
-  | l = ID; COLON; p = poly; LT; rhs = const { Cnstr.lt ~name:l p rhs }
-  | l = ID; COLON; p = poly; GT; rhs = const { Cnstr.gt ~name:l p rhs }
-  | p = poly; EQ; rhs = const { Cnstr.eq p rhs }
-  | p = poly; LT; rhs = const { Cnstr.lt p rhs }
-  | p = poly; GT; rhs = const { Cnstr.gt p rhs }
+  | l = ID COLON p = poly EQ rhs = const { Cnstr.eq ~name:l p rhs }
+  | l = ID COLON p = poly LT rhs = const { Cnstr.lt ~name:l p rhs }
+  | l = ID COLON p = poly GT rhs = const { Cnstr.gt ~name:l p rhs }
+  | p = poly EQ rhs = const { Cnstr.eq p rhs }
+  | p = poly LT rhs = const { Cnstr.lt p rhs }
+  | p = poly GT rhs = const { Cnstr.gt p rhs }
 
 const :
   n = signed { [Term.Const n] }
 
 poly :
+  | p = poly_in { p }
+  | MLB p = poly_in { List.map Term.neg p }
+  | p0 = poly_in MLB p1 = poly_in { p0 @ List.map Term.neg p1 }
+
+poly_in :
   | p = poly_rev { List.rev p }
   | PLUS p = poly_rev { List.rev p }
-  | MINUS p = poly_rev
-  { match List.rev p with
-    | hd :: rest -> Term.neg hd :: rest
-    | _-> failwith "empty polynomial expression" }
+  | MINUS p = poly_rev { rev_neg_head p }
 
 poly_rev :
   | t = term { [t] }
   | p = poly_rev PLUS  t = term { t :: p }
   | p = poly_rev MINUS t = term { Term.neg t :: p }
 
-term:
-  | v = ID { Term.Linear (1.0, Var.make v) }
+term :
   | n = NUM { Term.Const n }
+  | v = ID { Term.Linear (Float.one, Var.make v) }
   | n = NUM  v = ID { Term.Linear (n, Var.make v) }
   | n = NUM v0 = ID TIMES v1 = ID { Term.Quad (n, Var.make v0, Var.make v1) }
   | n = NUM  v = ID SQ { Term.Quad (n, Var.make v, Var.make v) }
