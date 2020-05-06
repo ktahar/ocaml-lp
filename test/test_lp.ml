@@ -72,7 +72,7 @@ let mip0 =
   let b = binary "b" in
   let c0 = ~-w + x + (c 2.0 * y) <$ c 5.0 in
   let c1 = (c 2.0 * x) + (b * y) - (x * z) <$ c 2.0 in
-  let obj = maximize (x + y + z + (c 3.0 * w * b)) in
+  let obj = maximize (x + y + z + (c 1.5 * w * b)) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 

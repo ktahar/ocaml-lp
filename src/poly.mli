@@ -100,3 +100,9 @@ val to_integer : string -> t -> t
 
 val to_binary : string -> t -> t
 (** to_integer [name] transforms the variable [name] into binary variable *)
+
+val double_quad : t -> t
+(** double the coefficients in all quadratic terms in the polynomial *)
+
+val half_quad : t -> t
+(** half the coefficients in all quadratic terms in the polynomial *)

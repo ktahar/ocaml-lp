@@ -184,3 +184,15 @@ let to_integer name = function
       Quad (c, v0, Var.to_integer v1)
   | org ->
       org
+
+let double_quad = function
+  | Quad (c, v0, v1) ->
+      Quad (c *. 2.0, v0, v1)
+  | org ->
+      org
+
+let half_quad = function
+  | Quad (c, v0, v1) ->
+      Quad (c /. 2.0, v0, v1)
+  | org ->
+      org

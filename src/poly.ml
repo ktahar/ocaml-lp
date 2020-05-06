@@ -217,3 +217,7 @@ let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
 let to_binary name p = List.map (Term.to_binary name) p
 
 let to_integer name p = List.map (Term.to_integer name) p
+
+let double_quad p = List.map Term.double_quad p
+
+let half_quad p = List.map Term.half_quad p

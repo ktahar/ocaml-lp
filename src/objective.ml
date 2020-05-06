@@ -7,7 +7,7 @@ let minimize p = Min (Poly.sort p)
 let take_vars = function Max p | Min p -> Poly.take_vars p
 
 let to_string ?(short = false) o =
-  let p_string = Poly.to_string ~short in
+  let p_string p = Poly.to_string ~short (Poly.double_quad p) in
   match o with
   | Max p when Poly.degree p >= 2 ->
       "maximize\n " ^ p_string p ^ " / 2"
