@@ -8,9 +8,33 @@ type attr =
 
 type t = {name: string; attr: attr}
 
-let re = Str.regexp "^[a-zA-Z_][a-zA-Z0-9_!#\\$%&(),\\.\\?@{}~]*$"
+let pattern = Str.regexp "^[a-zA-Z_][a-zA-Z0-9_!#\\$%&(),\\.\\?@{}~]*$"
 
-let validate_name n = Str.string_match re n 0
+let keywords =
+  [ "end"
+  ; "max"
+  ; "maximize"
+  ; "min"
+  ; "minimize"
+  ; "st"
+  ; "s.t."
+  ; "subject"
+  ; "such"
+  ; "bound"
+  ; "bounds"
+  ; "gen"
+  ; "general"
+  ; "generals"
+  ; "bin"
+  ; "binary"
+  ; "binaries"
+  ; "free"
+  ; "infinity"
+  ; "inf" ]
+
+let validate_name n =
+  Str.string_match pattern n 0
+  && not (List.mem (String.lowercase_ascii n) keywords)
 
 (* compare only names to sort terms correctly even when collision exists *)
 let compare_name l r = String.compare l.name r.name
