@@ -2,9 +2,9 @@ let lp0 =
   let open Lp in
   let x = var "x" in
   let y = var "y" in
-  let c0 = x + (c 1.2 * y) <$ c 5.0 in
-  let c1 = lt ~name:"c1" ((c 2.0 * x) + y) (c 1.2) in
-  let obj = maximize (x + y) in
+  let c0 = x ++ (c 1.2 *~ y) <~ c 5.0 in
+  let c1 = lt ~name:"c1" ((c 2.0 *~ x) ++ y) (c 1.2) in
+  let obj = maximize (x ++ y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -31,9 +31,9 @@ let bad0 =
   let open Lp in
   let x = var "x" in
   let y = var "x" ~integer:true in
-  let c0 = x + (c 1.2 * y) <$ c 5.0 in
-  let c1 = (c 2.0 * x) + y <$ c 1.2 in
-  let obj = minimize (x + y) in
+  let c0 = x ++ (c 1.2 *~ y) <~ c 5.0 in
+  let c1 = (c 2.0 *~ x) ++ y <~ c 1.2 in
+  let obj = minimize (x ++ y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -42,9 +42,9 @@ let bad1 =
   let open Lp in
   let x = var "x" in
   let y = var "y" in
-  let c0 = x + (c 1.2 * y) <$ c 5.0 in
-  let c1 = c 2.0 <$ c 3.0 in
-  let obj = minimize (x + y) in
+  let c0 = x ++ (c 1.2 *~ y) <~ c 5.0 in
+  let c1 = c 2.0 <~ c 3.0 in
+  let obj = minimize (x ++ y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
@@ -70,9 +70,9 @@ let mip0 =
   let z = var ~integer:true ~ub:3.0 "z" in
   let w = var "w" ~integer:true in
   let b = binary "b" in
-  let c0 = ~-w + x + (c 2.0 * y) <$ c 5.0 in
-  let c1 = (c 2.0 * x) + (b * y) - (x * z) <$ c 2.0 in
-  let obj = maximize (x + y + z + (c 1.5 * w * b)) in
+  let c0 = ~-- w ++ x ++ (c 2.0 *~ y) <~ c 5.0 in
+  let c1 = (c 2.0 *~ x) ++ (b *~ y) -- (x *~ z) <~ c 2.0 in
+  let obj = maximize (x ++ y ++ z ++ (c 1.5 *~ w *~ b)) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 

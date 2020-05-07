@@ -173,24 +173,24 @@ let to_string ?(short = false) p =
 
 let neg p = List.map Term.neg p
 
-let ( ~- ) = neg
+let ( ~-- ) = neg
 
-let ( + ) = ( @ )
+let ( ++ ) = List.append
 
-let ( - ) pl pr = pl @ neg pr
+let ( -- ) pl pr = pl @ neg pr
 
 let expand pl pr =
-  List.concat (List.map (fun tl -> List.map (fun tr -> Term.( * ) tl tr) pr) pl)
+  List.concat (List.map (fun tl -> List.map (fun tr -> Term.mul tl tr) pr) pl)
 
-let ( * ) = expand
+let ( *~ ) = expand
 
-let dot = List.map2 Term.( * )
+let dot = List.map2 Term.mul
 
 let ( *@ ) = dot
 
-let equiv pl pr = match simplify (pl - pr) with [] -> true | _ -> false
+let equiv pl pr = match simplify (pl -- pr) with [] -> true | _ -> false
 
-let divt poly term = List.map (fun t -> Term.( / ) t term) poly
+let divt poly term = List.map (fun t -> Term.div t term) poly
 
 let long_div var n d =
   let deg p =
@@ -226,7 +226,7 @@ let long_div var n d =
     if equiv r zero || deg r < deg d then (q, r)
     else
       let t = divt (lead r) (leadt d) in
-      loop (q + t) (simplify (r - (t * d)))
+      loop (q ++ t) (simplify (r -- (t *~ d)))
   in
   loop zero n
 
@@ -248,7 +248,7 @@ let div n d =
     | _ ->
         failwith "Cannot divide by multi-variate polynomial" )
 
-let ( / ) = div
+let ( /~ ) = div
 
 let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
 

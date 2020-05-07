@@ -125,19 +125,19 @@ val take_vars : t -> Var.t list
 val neg : t -> t
 (** Negate the whole polynomial *)
 
-val ( ~- ) : t -> t
+val ( ~-- ) : t -> t
 (** Negate the whole polynomial *)
 
-val ( + ) : t -> t -> t
+val ( ++ ) : t -> t -> t
 (** Add (concatenate) two polynomials *)
 
-val ( - ) : t -> t -> t
+val ( -- ) : t -> t -> t
 (** Subtract two polynomials (concatenate left with negated right ) *)
 
 val expand : t -> t -> t
 (** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
-val ( * ) : t -> t -> t
+val ( *~ ) : t -> t -> t
 (** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
 val dot : t -> t -> t
@@ -161,7 +161,7 @@ val div : t -> t -> t
     }
  *)
 
-val ( / ) : t -> t -> t
+val ( /~ ) : t -> t -> t
 (** equivalent to div *)
 
 val trans_bound : string -> float -> float -> t -> t

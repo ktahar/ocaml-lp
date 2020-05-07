@@ -17,8 +17,8 @@ let to_string ?(short = false) c =
 let simplify_sides lhs rhs =
   let l = Poly.partition lhs in
   let r = Poly.partition rhs in
-  let newl = Poly.(fst l @ ~-(fst r)) in
-  let newr = Poly.(snd r @ ~-(snd l)) in
+  let newl = Poly.(fst l -- (fst r)) in
+  let newr = Poly.(snd r -- (snd l)) in
   (Poly.simplify newl, Poly.simplify newr)
 
 let simplify = function
@@ -63,11 +63,11 @@ let lt ?(name = "") lhs rhs =
 
 let gt ?(name = "") lhs rhs = lt ~name rhs lhs
 
-let ( =$ ) l r = eq l r
+let ( =~ ) l r = eq l r
 
-let ( <$ ) l r = lt l r
+let ( <~ ) l r = lt l r
 
-let ( >$ ) l r = gt l r
+let ( >~ ) l r = gt l r
 
 let trans_bound name lb ub = function
   | Eq (n, l, r) ->

@@ -97,19 +97,19 @@ val of_array : Poly.t array -> Poly.t
 val zero : Poly.t
 (** Constant zero *)
 
-val ( ~- ) : Poly.t -> Poly.t
+val ( ~-- ) : Poly.t -> Poly.t
 (** Negate the whole polynomial *)
 
-val ( + ) : Poly.t -> Poly.t -> Poly.t
+val ( ++ ) : Poly.t -> Poly.t -> Poly.t
 (** Add (concatenate) two polynomials *)
 
-val ( - ) : Poly.t -> Poly.t -> Poly.t
+val ( -- ) : Poly.t -> Poly.t -> Poly.t
 (** Subtract two polynomials (concatenate left with negated right ) *)
 
 val expand : Poly.t -> Poly.t -> Poly.t
 (** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
-val ( * ) : Poly.t -> Poly.t -> Poly.t
+val ( *~ ) : Poly.t -> Poly.t -> Poly.t
 (** Multiply two polynomials. specifically, performs polynomial expansion. *)
 
 val dot : Poly.t -> Poly.t -> Poly.t
@@ -127,25 +127,25 @@ val div : Poly.t -> Poly.t -> Poly.t
     }
  *)
 
-val ( / ) : Poly.t -> Poly.t -> Poly.t
+val ( /~ ) : Poly.t -> Poly.t -> Poly.t
 (** Equivalent to div *)
 
 val eq : ?name:string -> Poly.t -> Poly.t -> Constraint.t
 (** Build an equality constraint. Optinal name can be given. Polynomials are simplified on build. *)
 
-val ( =$ ) : Poly.t -> Poly.t -> Constraint.t
+val ( =~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed equality constraint. Polynomials are simplified on build. *)
 
 val lt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
 (** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
 
-val ( <$ ) : Poly.t -> Poly.t -> Constraint.t
+val ( <~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
 val gt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
 (** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
 
-val ( >$ ) : Poly.t -> Poly.t -> Constraint.t
+val ( >~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
 val maximize : Poly.t -> Objective.t

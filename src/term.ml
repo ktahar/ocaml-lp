@@ -39,7 +39,7 @@ let to_string ?(short = false) t =
   | Quad (c, v0, v1) ->
       fmt c ^ " " ^ Var.to_string v0 ^ " * " ^ Var.to_string v1
 
-let ( * ) x y =
+let mul x y =
   match (x, y) with
   | Const c0, Const c1 ->
       Const (c0 *. c1)
@@ -56,7 +56,7 @@ let ( * ) x y =
   | _ ->
       failwith "Unsupported operation (trying to create Cubic or Quartic ?)"
 
-let ( / ) x y =
+let div x y =
   match (x, y) with
   | Const c0, Const c1 ->
       Const (c0 /. c1)
@@ -82,8 +82,6 @@ let neg = function
       Linear (Float.neg c, v)
   | Quad (c, v0, v1) ->
       Quad (Float.neg c, v0, v1)
-
-let ( ~- ) = neg
 
 let sort = function
   | Quad (c, v0, v1) ->

@@ -19,9 +19,9 @@ let problem =
   let open Lp in
   let x = var "x" in
   let y = var "y" in
-  let c0 = x + c 1.2 * y <$ c 5.0 in
-  let c1 = c 2.0 * x + y <$ c 1.2 in
-  let obj = maximize (x + y) in
+  let c0 = x ++ c 1.2 *~ y <~ c 5.0 in
+  let c1 = c 2.0 *~ x ++ y <~ c 1.2 in
+  let obj = maximize (x ++ y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 

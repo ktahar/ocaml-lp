@@ -30,15 +30,15 @@ let of_array = Poly.of_array
 
 let zero = Poly.zero
 
-let ( ~- ) = Poly.( ~- )
+let ( ~-- ) = Poly.( ~-- )
 
-let ( + ) = Poly.( + )
+let ( ++ ) = Poly.( ++ )
 
-let ( - ) = Poly.( - )
+let ( -- ) = Poly.( -- )
 
 let expand = Poly.expand
 
-let ( * ) = Poly.( * )
+let ( *~ ) = Poly.( *~ )
 
 let dot = Poly.dot
 
@@ -46,20 +46,20 @@ let ( *@ ) = Poly.( *@ )
 
 let div = Poly.div
 
-let ( / ) = Poly.( / )
+let ( /~ ) = Poly.( /~ )
 
 (* export constraint builders *)
 let eq = Constraint.eq
 
-let ( =$ ) = Constraint.( =$ )
+let ( =~ ) = Constraint.( =~ )
 
 let lt = Constraint.lt
 
-let ( <$ ) = Constraint.( <$ )
+let ( <~ ) = Constraint.( <~ )
 
 let gt = Constraint.gt
 
-let ( >$ ) = Constraint.( >$ )
+let ( >~ ) = Constraint.( >~ )
 
 (* export objective builders *)
 let maximize = Objective.maximize
