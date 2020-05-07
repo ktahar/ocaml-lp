@@ -38,18 +38,21 @@ let uniq_vars p =
   let vars = take_vars p in
   List.sort_uniq Var.compare_name vars
 
-let uniq_vars_logical p =
+let uniq_vars_struct p =
   let vars = take_vars p in
   List.sort_uniq compare vars
 
 let collision p =
   let uniqn = List.length (uniq_vars p) in
-  let uniql = List.length (uniq_vars_logical p) in
+  let uniql = List.length (uniq_vars_struct p) in
   if uniqn = uniql then false
   else (
-    Printf.printf "collision: uniq vars: %d uniq vars (logical): %d\n" uniqn
+    Printf.printf "collision: uniq vars: %d uniq vars (struct): %d\n" uniqn
       uniql ;
     true )
+
+let vname_list p =
+  List.map Var.to_string (uniq_vars p)
 
 let classify p =
   let odeg = Objective.degree (fst p) in

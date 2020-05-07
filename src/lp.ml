@@ -79,6 +79,8 @@ let validate = Problem.validate
 
 let classify = Problem.classify
 
+let vname_list = Problem.vname_list
+
 (* IO *)
 let to_string = Problem.to_string
 

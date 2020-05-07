@@ -108,6 +108,8 @@ module To_test = struct
   let mip0a_read_to_string () = Lp.to_string ~short:true (Lp.read "mip0a.lp")
 
   let mip0_to_string () = Lp.to_string ~short:true mip0
+
+  let mip0_vname_list () = Lp.vname_list mip0
 end
 
 let validate_lp0 () =
@@ -167,6 +169,11 @@ let mip0a_model_string () =
     (To_test.mip0_to_string ())
     (To_test.mip0a_read_to_string ())
 
+let mip0_vname_list () =
+  Alcotest.(check (list string))
+    "mip0 vname list" ["b"; "w"; "x"; "y"; "z"]
+    (To_test.mip0_vname_list ())
+
 let () =
   let open Alcotest in
   run "Lp"
@@ -190,4 +197,6 @@ let () =
     ; ( "mip0 model string"
       , [test_case "mip0_model_string" `Quick mip0_model_string] )
     ; ( "mip0a model string"
-      , [test_case "mip0a_model_string" `Quick mip0a_model_string] ) ]
+      , [test_case "mip0a_model_string" `Quick mip0a_model_string] )
+    ; ("mip0 vname list", [test_case "mip0_vname_list" `Quick mip0_vname_list])
+    ]

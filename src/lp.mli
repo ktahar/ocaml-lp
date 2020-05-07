@@ -175,13 +175,16 @@ val maximize : Poly.t -> Objective.t
 val minimize : Poly.t -> Objective.t
 (** Build an objective to minimize a polynomial. The polynomial is simplified on build. *)
 
-(* model validation *)
+(* model validation and manipulation *)
 
 val validate : Problem.t -> bool
 (** Validate the problem *)
 
 val classify : Problem.t -> Pclass.t
 (** Classify the problem into Pclass *)
+
+val vname_list : Problem.t -> string list
+(** Make (unique and sorted) list of the variables in a problem. *)
 
 (* IO *)
 
