@@ -24,7 +24,7 @@ val range :
   -> int
   -> string
   -> t array
-(** Make an array of monomials of a variable *)
+(** Make an array of monomials of a variable with uniform bounds *)
 
 val range2 :
      ?integer:bool
@@ -36,7 +36,7 @@ val range2 :
   -> int
   -> string
   -> t array array
-(** Make 2D array of monomials of a variable *)
+(** Make 2D array of monomials of a variable with uniform bounds *)
 
 val range3 :
      ?integer:bool
@@ -50,7 +50,43 @@ val range3 :
   -> int
   -> string
   -> t array array array
-(** Make 3D array of monomials of a variable *)
+(** Make 3D array of monomials of a variable with uniform bounds *)
+
+val rangev :
+     ?integer:bool
+  -> ?lb:float array
+  -> ?ub:float array
+  -> ?start:int
+  -> int
+  -> string
+  -> t array
+(** Make an array of monomials of a variable with different bounds *)
+
+val range2v :
+     ?integer:bool
+  -> ?lb:float array array
+  -> ?ub:float array array
+  -> ?start0:int
+  -> ?start1:int
+  -> int
+  -> int
+  -> string
+  -> t array array
+(** Make 2D array of monomials of a variable with different bounds *)
+
+val range3v :
+     ?integer:bool
+  -> ?lb:float array array array
+  -> ?ub:float array array array
+  -> ?start0:int
+  -> ?start1:int
+  -> ?start2:int
+  -> int
+  -> int
+  -> int
+  -> string
+  -> t array array array
+(** Make 3D array of monomials of a variable with different bounds *)
 
 val of_array : t array -> t
 (** Convert an array of monomials into a polynomial *)

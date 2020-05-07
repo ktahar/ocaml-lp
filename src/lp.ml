@@ -20,6 +20,12 @@ let range2 = Poly.range2
 
 let range3 = Poly.range3
 
+let rangev = Poly.rangev
+
+let range2v = Poly.range2v
+
+let range3v = Poly.range3v
+
 let of_array = Poly.of_array
 
 let zero = Poly.zero
