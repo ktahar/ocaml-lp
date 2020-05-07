@@ -40,6 +40,9 @@ val range3 :
   -> t array array array
 (** Make 3D array of monomials of a variable *)
 
+val of_array : t array -> t
+(** Convert an array of monomials into a polynomial *)
+
 val zero : t
 (** Constant zero *)
 

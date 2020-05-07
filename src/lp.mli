@@ -44,6 +44,12 @@ val range3 :
   -> Poly.t array array array
 (** Make 3D array of monomials of a variable *)
 
+val of_array : Poly.t array -> Poly.t
+(** Convert an array of monomials into a polynomial *)
+
+val zero : Poly.t
+(** Constant zero *)
+
 val ( ~- ) : Poly.t -> Poly.t
 (** Negate the whole polynomial *)
 

@@ -26,6 +26,8 @@ let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name
         (String.concat "_" [name; string_of_int i])
         num1 num2)
 
+let of_array = Array.fold_left List.append []
+
 let zero = []
 
 let sort p = List.sort Term.compare (List.map Term.sort p)
