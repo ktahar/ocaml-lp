@@ -1,5 +1,5 @@
 (tests
- (names test_poly test_lp)
+ (names test_var test_poly test_lp)
  (libraries alcotest lp)
  (deps
   (glob_files *.lp))

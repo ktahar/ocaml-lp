@@ -36,8 +36,29 @@ let validate_name n =
   Str.string_match pattern n 0
   && not (List.mem (String.lowercase_ascii n) keywords)
 
+let delim = Str.regexp "_"
+
 (* compare only names to sort terms correctly even when collision exists *)
-let compare_name l r = String.compare l.name r.name
+let compare_name vl vr =
+  let ls = Str.split delim vl.name in
+  let rs = Str.split delim vr.name in
+  if List.length ls <> List.length rs then String.compare vl.name vr.name
+  else
+    let rec comp left right =
+      match (left, right) with
+      | [], [] ->
+          0
+      | l :: lrest, r :: rrest -> (
+        match (int_of_string_opt l, int_of_string_opt r) with
+        | Some li, Some ri ->
+            Int.compare li ri
+        | _ ->
+            let c = String.compare l r in
+            if c <> 0 then c else comp lrest rrest )
+      | _ ->
+          failwith "comp: unexpected pattern"
+    in
+    comp ls rs
 
 (* collision means same names
  * with different attributes (not equal logically) *)
