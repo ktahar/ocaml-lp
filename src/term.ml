@@ -14,7 +14,10 @@ let binary name =
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
     =
   Array.init num (fun i ->
-      Linear (Float.one, Var.make ~integer ~lb ~ub (name ^ string_of_int i)))
+      Linear
+        ( Float.one
+        , Var.make ~integer ~lb ~ub (String.concat "_" [name; string_of_int i])
+        ))
 
 let format_float f =
   let s = Printf.sprintf "%+.18e" f in

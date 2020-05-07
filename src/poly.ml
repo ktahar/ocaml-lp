@@ -11,7 +11,20 @@ let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
 
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
     =
-  Array.init num (fun i -> [Term.var ~integer ~lb ~ub (name ^ string_of_int i)])
+  Array.init num (fun i ->
+      var ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]))
+
+let range2 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name
+    num0 num1 =
+  Array.init num0 (fun i ->
+      range ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]) num1)
+
+let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name
+    num0 num1 num2 =
+  Array.init num0 (fun i ->
+      range2 ~integer ~lb ~ub
+        (String.concat "_" [name; string_of_int i])
+        num1 num2)
 
 let zero = []
 

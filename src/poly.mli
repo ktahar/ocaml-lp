@@ -17,7 +17,28 @@ val binary : string -> t
 (** Make monomial of a binary variable *)
 
 val range : ?integer:bool -> ?lb:float -> ?ub:float -> string -> int -> t array
-(** Make array of monomials of a variable *)
+(** Make an array of monomials of a variable *)
+
+val range2 :
+     ?integer:bool
+  -> ?lb:float
+  -> ?ub:float
+  -> string
+  -> int
+  -> int
+  -> t array array
+(** Make 2D array of monomials of a variable *)
+
+val range3 :
+     ?integer:bool
+  -> ?lb:float
+  -> ?ub:float
+  -> string
+  -> int
+  -> int
+  -> int
+  -> t array array array
+(** Make 3D array of monomials of a variable *)
 
 val zero : t
 (** Constant zero *)
