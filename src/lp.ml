@@ -34,6 +34,8 @@ let range3v = Poly.range3v
 
 let of_array = Poly.of_array
 
+let of_list = Poly.of_list
+
 let zero = Poly.zero
 
 let one = Poly.one

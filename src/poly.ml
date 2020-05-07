@@ -57,6 +57,8 @@ let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
 
 let of_array = Array.fold_left List.append []
 
+let of_list = List.concat
+
 let zero = []
 
 let one = [Term.one]

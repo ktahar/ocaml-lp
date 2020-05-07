@@ -112,6 +112,9 @@ val range3v :
 val of_array : Poly.t array -> Poly.t
 (** Convert an array of monomials into a polynomial *)
 
+val of_list : Poly.t list -> Poly.t
+(** Convert a list of monomials into a polynomial *)
+
 val zero : Poly.t
 (** Constant zero *)
 
