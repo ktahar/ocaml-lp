@@ -30,6 +30,8 @@ let of_array = Poly.of_array
 
 let zero = Poly.zero
 
+let one = Poly.one
+
 let ( ~-- ) = Poly.( ~-- )
 
 let ( ++ ) = Poly.( ++ )

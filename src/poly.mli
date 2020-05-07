@@ -94,6 +94,9 @@ val of_array : t array -> t
 val zero : t
 (** Constant zero *)
 
+val one : t
+(** Constant one *)
+
 val sort : t -> t
 (** Sort terms in the polynomial *)
 

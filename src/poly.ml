@@ -53,6 +53,8 @@ let of_array = Array.fold_left List.append []
 
 let zero = []
 
+let one = [Term.one]
+
 let sort p = List.sort Term.compare (List.map Term.sort p)
 
 let partition poly =

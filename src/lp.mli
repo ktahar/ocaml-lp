@@ -97,6 +97,9 @@ val of_array : Poly.t array -> Poly.t
 val zero : Poly.t
 (** Constant zero *)
 
+val one : Poly.t
+(** Constant one *)
+
 val ( ~-- ) : Poly.t -> Poly.t
 (** Negate the whole polynomial *)
 

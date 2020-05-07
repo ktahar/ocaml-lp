@@ -75,6 +75,8 @@ let div x y =
 
 let zero = Const Float.zero
 
+let one = Const Float.one
+
 let neg = function
   | Const c ->
       Const (Float.neg c)
