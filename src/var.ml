@@ -17,6 +17,7 @@ let keywords =
   ; "min"
   ; "minimize"
   ; "st"
+  ; "st."
   ; "s.t."
   ; "subject"
   ; "such"

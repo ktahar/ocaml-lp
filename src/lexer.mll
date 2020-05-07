@@ -12,6 +12,7 @@ let _ = List.iter (fun (k, v) ->
     "min", MIN;
     "minimize", MIN;
     "st", ST;
+    "st.", ST;
     "s.t.", ST;
     "bound", BOUND;
     "bounds", BOUND;
