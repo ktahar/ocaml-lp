@@ -21,7 +21,28 @@ val binary : string -> Poly.t
 
 val range :
   ?integer:bool -> ?lb:float -> ?ub:float -> string -> int -> Poly.t array
-(** Make array of monomials of a variable *)
+(** Make an array of monomials of a variable *)
+
+val range2 :
+     ?integer:bool
+  -> ?lb:float
+  -> ?ub:float
+  -> string
+  -> int
+  -> int
+  -> Poly.t array array
+(** Make 2D array of monomials of a variable *)
+
+val range3 :
+     ?integer:bool
+  -> ?lb:float
+  -> ?ub:float
+  -> string
+  -> int
+  -> int
+  -> int
+  -> Poly.t array array array
+(** Make 3D array of monomials of a variable *)
 
 val ( ~- ) : Poly.t -> Poly.t
 (** Negate the whole polynomial *)

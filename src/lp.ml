@@ -16,6 +16,10 @@ let binary = Poly.binary
 
 let range = Poly.range
 
+let range2 = Poly.range2
+
+let range3 = Poly.range3
+
 let ( ~- ) = Poly.( ~- )
 
 let ( + ) = Poly.( + )
