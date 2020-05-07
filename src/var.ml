@@ -51,7 +51,8 @@ let compare_name vl vr =
       | l :: lrest, r :: rrest -> (
         match (int_of_string_opt l, int_of_string_opt r) with
         | Some li, Some ri ->
-            Int.compare li ri
+            let c = Int.compare li ri in
+            if c <> 0 then c else comp lrest rrest
         | _ ->
             let c = String.compare l r in
             if c <> 0 then c else comp lrest rrest )
