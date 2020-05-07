@@ -9,22 +9,22 @@ let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
 
 let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
 
-let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
-    =
-  Array.init num (fun i ->
-      var ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]))
+let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
+    ?(start = 0) stop name =
+  Array.init (stop - start) (fun i ->
+      var ~integer ~lb ~ub (String.concat "_" [name; string_of_int (start + i)]))
 
-let range2 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name
-    num0 num1 =
-  Array.init num0 (fun i ->
-      range ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]) num1)
+let range2 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
+    ?(start0 = 0) ?(start1 = 0) stop0 stop1 name =
+  Array.init (stop0 - start0) (fun i ->
+      range ~integer ~lb ~ub ~start:start1 stop1
+        (String.concat "_" [name; string_of_int (start0 + i)]))
 
-let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name
-    num0 num1 num2 =
-  Array.init num0 (fun i ->
-      range2 ~integer ~lb ~ub
-        (String.concat "_" [name; string_of_int i])
-        num1 num2)
+let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
+    ?(start0 = 0) ?(start1 = 0) ?(start2 = 0) stop0 stop1 stop2 name =
+  Array.init (stop0 - start0) (fun i ->
+      range2 ~integer ~lb ~ub ~start0:start1 ~start1:start2 stop1 stop2
+        (String.concat "_" [name; string_of_int (start0 + i)]))
 
 let of_array = Array.fold_left List.append []
 
