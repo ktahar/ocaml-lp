@@ -26,26 +26,32 @@ let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
       range2 ~integer ~lb ~ub ~start0:start1 ~start1:start2 stop1 stop2
         (String.concat "_" [name; string_of_int (start0 + i)]))
 
-let rangev ?(integer = false) ?(lb = [||]) ?(ub = [||])
-    ?(start = 0) stop name =
-  Array.init (stop - start) (fun i ->
-    let l = if Array.length lb > 0 then lb.(i) else Float.zero in
-    let u = if Array.length ub > 0 then ub.(i) else Float.infinity in
-      var ~integer ~lb:l ~ub:u (String.concat "_" [name; string_of_int (start + i)]))
+let rangeb = range ~integer:true ~lb:Float.zero ~ub:Float.one
 
-let range2v ?(integer = false) ?(lb = [||]) ?(ub = [||])
-    ?(start0 = 0) ?(start1 = 0) stop0 stop1 name =
+let range2b = range2 ~integer:true ~lb:Float.zero ~ub:Float.one
+
+let range3b = range3 ~integer:true ~lb:Float.zero ~ub:Float.one
+
+let rangev ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start = 0) stop name =
+  Array.init (stop - start) (fun i ->
+      let l = if Array.length lb > 0 then lb.(i) else Float.zero in
+      let u = if Array.length ub > 0 then ub.(i) else Float.infinity in
+      var ~integer ~lb:l ~ub:u
+        (String.concat "_" [name; string_of_int (start + i)]))
+
+let range2v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
+    ?(start1 = 0) stop0 stop1 name =
   Array.init (stop0 - start0) (fun i ->
-    let l = if Array.length lb > 0 then lb.(i) else [||] in
-    let u = if Array.length ub > 0 then ub.(i) else [||] in
+      let l = if Array.length lb > 0 then lb.(i) else [||] in
+      let u = if Array.length ub > 0 then ub.(i) else [||] in
       rangev ~integer ~lb:l ~ub:u ~start:start1 stop1
         (String.concat "_" [name; string_of_int (start0 + i)]))
 
-let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||])
-    ?(start0 = 0) ?(start1 = 0) ?(start2 = 0) stop0 stop1 stop2 name =
+let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
+    ?(start1 = 0) ?(start2 = 0) stop0 stop1 stop2 name =
   Array.init (stop0 - start0) (fun i ->
-    let l = if Array.length lb > 0 then lb.(i) else [||] in
-    let u = if Array.length ub > 0 then ub.(i) else [||] in
+      let l = if Array.length lb > 0 then lb.(i) else [||] in
+      let u = if Array.length ub > 0 then ub.(i) else [||] in
       range2v ~integer ~lb:l ~ub:u ~start0:start1 ~start1:start2 stop1 stop2
         (String.concat "_" [name; string_of_int (start0 + i)]))
 

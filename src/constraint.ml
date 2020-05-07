@@ -17,8 +17,8 @@ let to_string ?(short = false) c =
 let simplify_sides lhs rhs =
   let l = Poly.partition lhs in
   let r = Poly.partition rhs in
-  let newl = Poly.(fst l -- (fst r)) in
-  let newr = Poly.(snd r -- (snd l)) in
+  let newl = Poly.(fst l -- fst r) in
+  let newr = Poly.(snd r -- snd l) in
   (Poly.simplify newl, Poly.simplify newr)
 
 let simplify = function

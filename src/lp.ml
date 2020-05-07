@@ -20,6 +20,12 @@ let range2 = Poly.range2
 
 let range3 = Poly.range3
 
+let rangeb = Poly.rangeb
+
+let range2b = Poly.range2b
+
+let range3b = Poly.range3b
+
 let rangev = Poly.rangev
 
 let range2v = Poly.range2v

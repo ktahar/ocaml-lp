@@ -55,6 +55,24 @@ val range3 :
   -> Poly.t array array array
 (** Make 3D array of monomials of a variable *)
 
+val rangeb : ?start:int -> int -> string -> Poly.t array
+(** Make an array of monomials of a binary variable *)
+
+val range2b :
+  ?start0:int -> ?start1:int -> int -> int -> string -> Poly.t array array
+(** Make 2D array of monomials of a binary variable *)
+
+val range3b :
+     ?start0:int
+  -> ?start1:int
+  -> ?start2:int
+  -> int
+  -> int
+  -> int
+  -> string
+  -> Poly.t array array array
+(** Make 3D array of monomials of a binary variable *)
+
 val rangev :
      ?integer:bool
   -> ?lb:float array
