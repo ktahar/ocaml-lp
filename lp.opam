@@ -19,6 +19,7 @@ depends: [
     "ctypes-foreign"
     "menhir"
     "alcotest" {with-test}
+    "conf-glpk" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]

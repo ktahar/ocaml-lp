@@ -1,6 +1,7 @@
 (tests
  (names test_var test_poly test_lp test_glpk)
  (libraries alcotest lp)
+ (flags :standard -cclib -lglpk)
  (deps
   (glob_files *.lp))
  (action
