@@ -13,7 +13,7 @@ module To_test = struct
     get_prob_name prob
 
   let smcp_msg_lev () =
-    match C.getf smcp Smcp.msg_lev with Smcp.Msg.ALL -> true | _ -> false
+    match C.getf smcp Smcp.msg_lev with Msg.ALL -> true | _ -> false
 
   let smcp_r_test () =
     match C.getf smcp Smcp.r_test with Smcp.Rt.HAR -> true | _ -> false

@@ -51,8 +51,7 @@ let collision p =
       uniql ;
     true )
 
-let vname_list p =
-  List.map Var.to_string (uniq_vars p)
+let vname_list p = List.map Var.to_string (uniq_vars p)
 
 let classify p =
   let odeg = Objective.degree (fst p) in
