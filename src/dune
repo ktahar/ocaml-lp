@@ -6,4 +6,4 @@
 (library
  (name lp)
  (public_name lp)
- (libraries str))
+ (libraries str ctypes ctypes.foreign))

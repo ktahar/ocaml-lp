@@ -7,6 +7,7 @@ module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
+module Glpk = Glpk
 
 (* polynomial builders and operators *)
 
