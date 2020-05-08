@@ -43,7 +43,7 @@ let smcp_presolve () =
 
 let () =
   let open Alcotest in
-  run "Glpk"
+  run "Glp"
     [ ("set_get_pname", [test_case "set_get_pname" `Quick set_get_pname])
     ; ("smcp_msg_lev", [test_case "smcp_msg_lev" `Quick smcp_msg_lev])
     ; ("smcp_r_test", [test_case "smcp_r_test" `Quick smcp_r_test])

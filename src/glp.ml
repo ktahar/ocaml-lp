@@ -258,6 +258,10 @@ let set_obj_dir = foreign "glp_set_obj_dir" (prob @-> Dir.t @-> returning void)
 
 let get_obj_dir = foreign "glp_get_obj_dir" (prob @-> returning Dir.t)
 
+let add_rows = foreign "glp_add_rows" (prob @-> int @-> returning int)
+
+let add_cols = foreign "glp_add_cols" (prob @-> int @-> returning int)
+
 let set_row_name =
   foreign "glp_set_row_name" (prob @-> int @-> string @-> returning void)
 
@@ -292,19 +296,19 @@ let set_obj_coef =
 (** set_mat_row [prob] [i] [len] [indices] [vals] sets the i-th row of constraint matrix. *)
 let set_mat_row =
   foreign "glp_set_mat_row"
-    (prob @-> int @-> int @-> ptr int @-> ptr double @-> returning void)
+    (prob @-> int @-> int @-> ptr void @-> ptr void @-> returning void)
 
 (** set_mat_col [prob] [j] [len] [indices] [vals] sets the j-th column of constraint matrix. *)
 let set_mat_col =
   foreign "glp_set_mat_col"
-    (prob @-> int @-> int @-> ptr int @-> ptr double @-> returning void)
+    (prob @-> int @-> int @-> ptr void @-> ptr void @-> returning void)
 
 (** load_matrix [prob] [ne] [ia] [ja] [ar] sets the constraint matrix.
  * The matrix is represented as an sparce matrix.
  * for k=1 .. [ne], value [ar][k] is set at ([ia][k], [ja][k]) element. *)
 let load_matrix =
   foreign "glp_load_matrix"
-    (prob @-> int @-> ptr int @-> ptr int @-> ptr double @-> returning void)
+    (prob @-> int @-> ptr void @-> ptr void @-> ptr void @-> returning void)
 
 let get_num_rows = foreign "glp_get_num_rows" (prob @-> returning int)
 
