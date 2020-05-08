@@ -95,19 +95,119 @@ module Stat = struct
   let t = view ~read:of_int ~write:to_int int
 end
 
+module BoolInt = struct
+  type t = bool
+
+  let of_int i = if i = 0 then false else true
+
+  let to_int b = if b then 1 else 0
+
+  let t = view ~read:of_int ~write:to_int int
+end
+
 (* simplex method control parameters *)
 module Smcp = struct
   type t
 
+  module Msg = struct
+    type t = OFF | ERR | ON | ALL | DBG
+
+    let of_int = function
+      | 0 ->
+          OFF
+      | 1 ->
+          ERR
+      | 2 ->
+          ON
+      | 3 ->
+          ALL
+      | 4 ->
+          DBG
+      | _ ->
+          failwith "Unexpected Msg flag"
+
+    let to_int = function OFF -> 0 | ERR -> 1 | ON -> 2 | ALL -> 3 | DBG -> 4
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
+  module Meth = struct
+    type t = PRIMAL | DUALP | DUAL
+
+    let of_int = function
+      | 0 ->
+          PRIMAL
+      | 1 ->
+          DUALP
+      | 2 ->
+          DUAL
+      | _ ->
+          failwith "Unexpected Method flag"
+
+    let to_int = function PRIMAL -> 0 | DUALP -> 1 | DUAL -> 2
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
+  module Pt = struct
+    type t = STD | PSE
+
+    let of_int = function
+      | 0x11 ->
+          STD
+      | 0x22 ->
+          PSE
+      | _ ->
+          failwith "Unexpected Pricing flag"
+
+    let to_int = function STD -> 0x11 | PSE -> 0x22
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
+  module Rt = struct
+    type t = STD | HAR | FLIP
+
+    let of_int = function
+      | 0x11 ->
+          STD
+      | 0x22 ->
+          HAR
+      | 0x33 ->
+          FLIP
+      | _ ->
+          failwith "Unexpected Ratio Test flag"
+
+    let to_int = function STD -> 0x11 | HAR -> 0x22 | FLIP -> 0x33
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
+  module An = struct
+    type t = AT | NT
+
+    let of_int = function
+      | 1 ->
+          AT
+      | 2 ->
+          NT
+      | _ ->
+          failwith "Unexpected A or N flag"
+
+    let to_int = function AT -> 1 | NT -> 2
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
   let t : t structure typ = structure "smcp"
 
-  let msg_lev = field t "msg_lev" int
+  let msg_lev = field t "msg_lev" Msg.t
 
-  let meth = field t "meth" int
+  let meth = field t "meth" Meth.t
 
-  let pricing = field t "pricing" int
+  let pricing = field t "pricing" Pt.t
 
-  let r_test = field t "r_test" int
+  let r_test = field t "r_test" Rt.t
 
   let tol_bnd = field t "tol_bnd" double
 
@@ -127,13 +227,13 @@ module Smcp = struct
 
   let out_dly = field t "out_dly" int (* display delay in ms *)
 
-  let presolve = field t "presolve" int (* enable/disable presolver *)
+  let presolve = field t "presolve" BoolInt.t (* enable/disable presolver *)
 
-  let excl = field t "excl" int
+  let excl = field t "excl" BoolInt.t
 
-  let shift = field t "shift" int
+  let shift = field t "shift" BoolInt.t
 
-  let aorn = field t "aorn" int
+  let aorn = field t "aorn" An.t
 
   let () = seal t
 end
