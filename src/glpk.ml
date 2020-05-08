@@ -116,7 +116,7 @@ module Simplex = struct
       set_cols prob vars ;
       let ret = simplex prob (C.addr smcp) in
       (* TODO handle some of non-zero return values *)
-      if ret <> 0 then failwith "non-zero return value"
+      if ret <> 0 then failwith "non-zero return value from simplex"
       else
         match get_status prob with
         | Stat.OPT ->
@@ -168,28 +168,38 @@ module Mip = struct
     let prob = create_prob () in
     let _ = add_rows prob nrows in
     let _ = add_cols prob ncols in
+    let smcp = C.make Smcp.t in
     let iocp = C.make Iocp.t in
     try
+      init_smcp (C.addr smcp) ;
       init_iocp (C.addr iocp) ;
       (* TODO set solver parameters *)
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
       set_cols prob vars ;
-      let ret = intopt prob (C.addr iocp) in
+      let ret = simplex prob (C.addr smcp) in
       (* TODO handle some of non-zero return values *)
-      if ret <> 0 then failwith "non-zero return value"
+      if ret <> 0 then failwith "non-zero return value from simplex"
       else
-        match mip_status prob with
-        | Stat.OPT ->
-            let oval = mip_obj_val prob in
-            let tbl = Hashtbl.create ncols in
-            List.iteri
-              (fun j v -> Hashtbl.add tbl v (mip_col_val prob (1 + j)))
-              vars ;
-            delete_prob prob ;
-            Ok (oval, tbl)
+        match get_status prob with
+        | Stat.OPT -> (
+            let ret = intopt prob (C.addr iocp) in
+            (* TODO handle some of non-zero return values *)
+            if ret <> 0 then failwith "non-zero return value from intopt"
+            else
+              match mip_status prob with
+              | Stat.OPT ->
+                  let oval = mip_obj_val prob in
+                  let tbl = Hashtbl.create ncols in
+                  List.iteri
+                    (fun j v -> Hashtbl.add tbl v (mip_col_val prob (1 + j)))
+                    vars ;
+                  delete_prob prob ;
+                  Ok (oval, tbl)
+              | status ->
+                  failwith ("MILP is " ^ Stat.to_string status) )
         | status ->
-            failwith ("Problem is " ^ Stat.to_string status)
+            failwith ("LP relaxation is " ^ Stat.to_string status)
     with Failure msg -> delete_prob prob ; Error msg
 
   let check_class p =
