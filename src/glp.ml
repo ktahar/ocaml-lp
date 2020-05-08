@@ -94,6 +94,20 @@ module Stat = struct
     | UNBND ->
         6
 
+  let to_string = function
+    | UNDEF ->
+        "Undefined"
+    | FEAS ->
+        "Feasible"
+    | INFEAS ->
+        "Infeasible"
+    | NOFEAS ->
+        "NoFeasible"
+    | OPT ->
+        "Optimal"
+    | UNBND ->
+        "Unbounded"
+
   let t = view ~read:of_int ~write:to_int int
 end
 

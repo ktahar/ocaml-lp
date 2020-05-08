@@ -118,15 +118,17 @@ module Simplex = struct
       let ret = simplex prob (C.addr smcp) in
       if ret <> 0 then failwith "non-zero return value"
       else
-        let oval = get_obj_val prob in
-        let tbl = Hashtbl.create ncols in
-        let () =
-          List.iteri
-            (fun j v -> Hashtbl.add tbl v (get_col_prim prob (1 + j)))
-            vars
-        in
-        delete_prob prob ;
-        Ok (oval, tbl)
+        match get_status prob with
+        | Stat.OPT ->
+            let oval = get_obj_val prob in
+            let tbl = Hashtbl.create ncols in
+            List.iteri
+              (fun j v -> Hashtbl.add tbl v (get_col_prim prob (1 + j)))
+              vars ;
+            delete_prob prob ;
+            Ok (oval, tbl)
+        | status ->
+            failwith ("Problem is " ^ Stat.to_string status)
     with Failure msg -> delete_prob prob ; Error msg
 
   let check_class p =
