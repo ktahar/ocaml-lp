@@ -69,11 +69,13 @@ let set_cnstr prob vars i cnstr =
       List.iteri
         (fun i v -> C.CArray.set aindices i v)
         (0 :: List.map (idx_of_term vars) poly)
+      (* 0-th element is dummy *)
     in
     let () =
       List.iteri
         (fun i v -> C.CArray.set acoeffs i v)
         (0.0 :: List.map c_of_term poly)
+      (* 0-th element is dummy *)
     in
     set_mat_row prob ri (List.length poly)
       (C.to_voidp (C.CArray.start aindices))
@@ -89,6 +91,21 @@ let set_cnstr prob vars i cnstr =
 
 let set_cnstrs prob vars = List.iteri (set_cnstr prob vars)
 
+let set_bounds prob =
+  List.iteri (fun j var ->
+      let cj = 1 + j in
+      match var with
+      | {Var.attr= Var.Continuous (lb, ub); _} ->
+          if lb = Float.neg_infinity && ub = Float.infinity then
+            set_col_bnds prob cj Bnd.FR 0.0 0.0
+          else if ub = Float.infinity then set_col_bnds prob cj Bnd.LO lb 0.0
+          else if lb = Float.neg_infinity then
+            set_col_bnds prob cj Bnd.UP 0.0 ub
+          else if lb <> ub then set_col_bnds prob cj Bnd.DB lb ub
+          else set_col_bnds prob cj Bnd.FX lb ub
+      | _ ->
+          failwith "Glpk.solve_simplex: integer variable found")
+
 let solve_simplex p =
   let obj = fst p in
   let cnstrs = snd p in
@@ -96,11 +113,20 @@ let solve_simplex p =
   let nrows = List.length cnstrs in
   let ncols = List.length vars in
   let prob = create_prob () in
-  let smcp = C.make Smcp.t in
-  let () = init_smcp (C.addr smcp) in
-  (* TODO set solver parameters *)
   let _ = add_rows prob nrows in
   let _ = add_cols prob ncols in
-  let () = set_obj prob vars obj in
-  let () = set_cnstrs prob vars cnstrs in
-  ()
+  let smcp = C.make Smcp.t in
+  let () =
+    try
+      init_smcp (C.addr smcp) ;
+      (* TODO set solver parameters *)
+      set_obj prob vars obj ;
+      set_cnstrs prob vars cnstrs ;
+      set_bounds prob vars ;
+      let ret = simplex prob (C.addr smcp) in
+      if ret <> 0 then failwith "Glpk: non-zero return value"
+    with f -> delete_prob prob ; raise f
+  in
+  let ov = get_obj_val prob in
+  let cs = List.init nrows (fun j -> get_col_prim prob (1 + j)) in
+  delete_prob prob ; (ov, cs)
