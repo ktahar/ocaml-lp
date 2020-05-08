@@ -118,10 +118,15 @@ module Simplex = struct
       let ret = simplex prob (C.addr smcp) in
       if ret <> 0 then failwith "non-zero return value"
       else
-        let ov = get_obj_val prob in
-        let cs = List.init nrows (fun j -> get_col_prim prob (1 + j)) in
+        let oval = get_obj_val prob in
+        let tbl = Hashtbl.create ncols in
+        let () =
+          List.iteri
+            (fun j v -> Hashtbl.add tbl v (get_col_prim prob (1 + j)))
+            vars
+        in
         delete_prob prob ;
-        Ok (ov, cs)
+        Ok (oval, tbl)
     with Failure msg -> delete_prob prob ; Error msg
 
   let check_class p =
