@@ -1,8 +1,8 @@
 # ocaml-lp : LP and MIP modeling in OCaml
 
-This library is a modeling tool for Linear Programming (LP) and Mixed Integer Programming (MIP).
-The model can be exported to CPLEX LP file format, which can be loaded by various solvers.
-Importing models from LP file is also supported.
+This library helps the modeling of Linear Programming (LP) and Mixed Integer Programming (MIP) in OCaml.
+The model can be imported-from / exported-to CPLEX LP file format, which can be loaded by various solvers.
+It also has an interface to GLPK (GNU Linear Programming Kit).
 
 ## Install
 
@@ -14,23 +14,33 @@ opam install lp
 
 ## Example
 
-```OCaml
+Note: To use GLPK interface, compile your application with `-cclib -lglpk` flags.
+
+```ocaml
+let x = Lp.var "x"
+let y = Lp.var "y"
+
 let problem =
   let open Lp in
-  let x = var "x" in
-  let y = var "y" in
   let c0 = x ++ c 1.2 *~ y <~ c 5.0 in
   let c1 = c 2.0 *~ x ++ y <~ c 1.2 in
   let obj = maximize (x ++ y) in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
-let () =
+let write () =
    if Lp.validate problem then
        Lp.write "my_problem.lp" problem
    else
        print_endline "Oops, my problem is broken."
 
+let solve () =
+    match Lp.Glpk.Simplex.solve problem with
+    | Ok (obj, tbl) ->
+        Printf.printf "Objective: %.2f\n" obj ;
+        Printf.printf "x: %.2f y: %.2f\n"
+        (Hashtbl.find tbl x) (Hashtbl.find tbl y) ;
+    | Error msg -> print_endline msg
 ```
 
 ## Status
