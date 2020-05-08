@@ -1,4 +1,4 @@
-open Lp.Glpk
+open Lp.Glp
 module C = Ctypes
 
 let prob = create_prob ()

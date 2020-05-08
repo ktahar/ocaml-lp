@@ -1,7 +1,9 @@
+(* Ctypes binding to glpk *)
+
 open Ctypes
 open Foreign
 
-(* integer constants which are #defined in glpk.h *)
+(* integer constants which are #defined in glpk.h version 4.65 *)
 
 module Dir = struct
   type t = MIN | MAX
@@ -95,6 +97,7 @@ module Stat = struct
   let t = view ~read:of_int ~write:to_int int
 end
 
+(* GLP_ON = 1 and GLP_OFF = 0 *)
 module BoolInt = struct
   type t = bool
 

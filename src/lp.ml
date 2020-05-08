@@ -6,7 +6,7 @@ module Cnstr = Constraint
 module Obj = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
-module Glpk = Glpk
+module Glp = Glp
 
 (* export polynomial builders and operators *)
 let c = Poly.c
