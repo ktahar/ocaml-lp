@@ -13,6 +13,9 @@ val c : float -> t
 val var : ?integer:bool -> ?lb:float -> ?ub:float -> string -> t
 (** Make monomial of a variable *)
 
+val of_var : Var.t -> t
+(** Make monomial from a Var.t *)
+
 val binary : string -> t
 (** Make monomial of a binary variable *)
 

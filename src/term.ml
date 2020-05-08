@@ -8,6 +8,8 @@ let c x = Const x
 let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
   Linear (Float.one, Var.make ~integer ~lb ~ub name)
 
+let of_var v = Linear (Float.one, v)
+
 let binary name =
   Linear (Float.one, Var.make ~integer:true ~lb:Float.zero ~ub:Float.one name)
 

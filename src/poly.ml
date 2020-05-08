@@ -7,6 +7,8 @@ let c x = [Term.c x]
 let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
   [Term.var ~integer ~lb ~ub name]
 
+let of_var v = [Term.of_var v]
+
 let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
 
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)

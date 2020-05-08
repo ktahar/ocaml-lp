@@ -123,7 +123,8 @@ module Simplex = struct
             let oval = get_obj_val prob in
             let tbl = Hashtbl.create ncols in
             List.iteri
-              (fun j v -> Hashtbl.add tbl v (get_col_prim prob (1 + j)))
+              (fun j v ->
+                Hashtbl.add tbl (Poly.of_var v) (get_col_prim prob (1 + j)))
               vars ;
             delete_prob prob ;
             Ok (oval, tbl)
@@ -192,7 +193,8 @@ module Mip = struct
                   let oval = mip_obj_val prob in
                   let tbl = Hashtbl.create ncols in
                   List.iteri
-                    (fun j v -> Hashtbl.add tbl v (mip_col_val prob (1 + j)))
+                    (fun j v ->
+                      Hashtbl.add tbl (Poly.of_var v) (mip_col_val prob (1 + j)))
                     vars ;
                   delete_prob prob ;
                   Ok (oval, tbl)
