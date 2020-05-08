@@ -1,7 +1,7 @@
 module To_test = struct
   let simplex_lp0 () =
     let p = Lp.read "lp0.lp" in
-    fst (Lp.Glpk.solve_simplex p)
+    match Lp.Glpk.Simplex.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
 end
 
 let simplex_lp0 () =
