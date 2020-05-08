@@ -42,7 +42,7 @@ let set_obj prob vars obj =
 
 let set_cnstr prob vars i cnstr =
   let ri = i + 1 in
-  let idx_of_term vars = function
+  let idx_of_term = function
     | Term.Linear (_, v) ->
         idx_var v vars
     | _ ->
@@ -68,7 +68,7 @@ let set_cnstr prob vars i cnstr =
     let () =
       List.iteri
         (fun i v -> C.CArray.set aindices i v)
-        (0 :: List.map (idx_of_term vars) poly)
+        (0 :: List.map idx_of_term poly)
       (* 0-th element is dummy *)
     in
     let () =

@@ -7,6 +7,7 @@ module Obj = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
 module Glp = Glp
+module Glpk = Glpk
 
 (* export polynomial builders and operators *)
 let c = Poly.c
