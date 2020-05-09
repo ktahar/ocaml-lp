@@ -48,7 +48,7 @@ let bad1 =
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
-let mip0s =
+let miqcp0s =
   {|maximize
  + 1.00 x + 1.00 y + 1.00 z + [ + 3.00 b * w ] / 2
 subject to
@@ -63,7 +63,7 @@ binary
  b
 end|}
 
-let mip0 =
+let miqcp0 =
   let open Lp in
   let x = var "x" in
   let y = var "y" ~lb:2.0 ~ub:10.0 in
@@ -83,13 +83,13 @@ module To_test = struct
 
   let validate_bad1 () = Lp.validate bad1
 
-  let validate_mip0 () = Lp.validate mip0
+  let validate_miqcp0 () = Lp.validate miqcp0
 
   let classify_lp0 () =
     match Lp.classify lp0 with Lp.Pclass.LP -> true | _ -> false
 
-  let classify_mip0 () =
-    match Lp.classify mip0 with Lp.Pclass.MIQCP -> true | _ -> false
+  let classify_miqcp0 () =
+    match Lp.classify miqcp0 with Lp.Pclass.MIQCP -> true | _ -> false
 
   let lp0_to_string () = Lp.to_string lp0
 
@@ -103,13 +103,14 @@ module To_test = struct
 
   let lp0_comment () = Lp.to_string (Lp.of_string lp0s_comment)
 
-  let mip0_read_to_string () = Lp.to_string ~short:true (Lp.read "mip0.lp")
+  let miqcp0_read_to_string () = Lp.to_string ~short:true (Lp.read "miqcp0.lp")
 
-  let mip0a_read_to_string () = Lp.to_string ~short:true (Lp.read "mip0a.lp")
+  let miqcp0a_read_to_string () =
+    Lp.to_string ~short:true (Lp.read "miqcp0a.lp")
 
-  let mip0_to_string () = Lp.to_string ~short:true mip0
+  let miqcp0_to_string () = Lp.to_string ~short:true miqcp0
 
-  let mip0_vname_list () = Lp.vname_list mip0
+  let miqcp0_vname_list () = Lp.vname_list miqcp0
 end
 
 let validate_lp0 () =
@@ -121,14 +122,14 @@ let validate_bad0 () =
 let validate_bad1 () =
   Alcotest.(check bool) "validate_bad1" false (To_test.validate_bad1 ())
 
-let validate_mip0 () =
-  Alcotest.(check bool) "validate_mip0" true (To_test.validate_mip0 ())
+let validate_miqcp0 () =
+  Alcotest.(check bool) "validate_miqcp0" true (To_test.validate_miqcp0 ())
 
 let classify_lp0 () =
   Alcotest.(check bool) "classify_lp0" true (To_test.classify_lp0 ())
 
-let classify_mip0 () =
-  Alcotest.(check bool) "classify_mip0" true (To_test.classify_mip0 ())
+let classify_miqcp0 () =
+  Alcotest.(check bool) "classify_miqcp0" true (To_test.classify_miqcp0 ())
 
 let lp0_to_string () =
   Alcotest.(check string) "lp0_to_string" lp0s (To_test.lp0_to_string ())
@@ -154,25 +155,27 @@ let lp0_model_string () =
     "lp0 model string" (To_test.lp0_to_string ())
     (To_test.lp0_read_to_string ())
 
-let mip0_to_string () =
-  Alcotest.(check string) "mip0 to string" mip0s (To_test.mip0_to_string ())
-
-let mip0_model_string () =
+let miqcp0_to_string () =
   Alcotest.(check string)
-    "mip0 model string"
-    (To_test.mip0_to_string ())
-    (To_test.mip0_read_to_string ())
+    "miqcp0 to string" miqcp0s
+    (To_test.miqcp0_to_string ())
 
-let mip0a_model_string () =
+let miqcp0_model_string () =
   Alcotest.(check string)
-    "mip0a model string"
-    (To_test.mip0_to_string ())
-    (To_test.mip0a_read_to_string ())
+    "miqcp0 model string"
+    (To_test.miqcp0_to_string ())
+    (To_test.miqcp0_read_to_string ())
 
-let mip0_vname_list () =
+let miqcp0a_model_string () =
+  Alcotest.(check string)
+    "miqcp0a model string"
+    (To_test.miqcp0_to_string ())
+    (To_test.miqcp0a_read_to_string ())
+
+let miqcp0_vname_list () =
   Alcotest.(check (list string))
-    "mip0 vname list" ["b"; "w"; "x"; "y"; "z"]
-    (To_test.mip0_vname_list ())
+    "miqcp0 vname list" ["b"; "w"; "x"; "y"; "z"]
+    (To_test.miqcp0_vname_list ())
 
 let () =
   let open Alcotest in
@@ -180,9 +183,10 @@ let () =
     [ ("lp0 validation", [test_case "validate_lp0" `Quick validate_lp0])
     ; ("bad0 validation", [test_case "validate_bad0" `Quick validate_bad0])
     ; ("bad1 validation", [test_case "validate_bad1" `Quick validate_bad1])
-    ; ("mip0 validation", [test_case "validate_mip0" `Quick validate_mip0])
+    ; ("miqcp0 validation", [test_case "validate_miqcp0" `Quick validate_miqcp0])
     ; ("lp0 classification", [test_case "classify_lp0" `Quick classify_lp0])
-    ; ("mip0 classification", [test_case "classify_mip0" `Quick classify_mip0])
+    ; ( "miqcp0 classification"
+      , [test_case "classify_miqcp0" `Quick classify_miqcp0] )
     ; ("lp0 string format", [test_case "lp0_to_string" `Quick lp0_to_string])
     ; ("lp0 string read", [test_case "lp0_of_to_string" `Quick lp0_of_to_string])
     ; ( "lp0 read file"
@@ -193,10 +197,11 @@ let () =
       )
     ; ( "lp0 model string"
       , [test_case "lp0_model_string" `Quick lp0_model_string] )
-    ; ("mip0 to string", [test_case "mip0_to_string" `Quick mip0_to_string])
-    ; ( "mip0 model string"
-      , [test_case "mip0_model_string" `Quick mip0_model_string] )
-    ; ( "mip0a model string"
-      , [test_case "mip0a_model_string" `Quick mip0a_model_string] )
-    ; ("mip0 vname list", [test_case "mip0_vname_list" `Quick mip0_vname_list])
-    ]
+    ; ( "miqcp0 to string"
+      , [test_case "miqcp0_to_string" `Quick miqcp0_to_string] )
+    ; ( "miqcp0 model string"
+      , [test_case "miqcp0_model_string" `Quick miqcp0_model_string] )
+    ; ( "miqcp0a model string"
+      , [test_case "miqcp0a_model_string" `Quick miqcp0a_model_string] )
+    ; ( "miqcp0 vname list"
+      , [test_case "miqcp0_vname_list" `Quick miqcp0_vname_list] ) ]
