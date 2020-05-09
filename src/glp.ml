@@ -150,16 +150,16 @@ module Smcp = struct
     type t = PRIMAL | DUALP | DUAL
 
     let of_int = function
-      | 0 ->
-          PRIMAL
       | 1 ->
-          DUALP
+          PRIMAL
       | 2 ->
+          DUALP
+      | 3 ->
           DUAL
       | _ ->
           failwith "Unexpected Method flag"
 
-    let to_int = function PRIMAL -> 0 | DUALP -> 1 | DUAL -> 2
+    let to_int = function PRIMAL -> 1 | DUALP -> 2 | DUAL -> 3
 
     let t = view ~read:of_int ~write:to_int int
   end
