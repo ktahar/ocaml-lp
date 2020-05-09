@@ -1,8 +1,9 @@
 # ocaml-lp : LP and MIP modeling in OCaml
 
 This library helps the modeling of Linear Programming (LP) and Mixed Integer Programming (MIP) in OCaml.
+It supports the model with not only linear terms, but also quadratic terms.
 The model can be imported-from / exported-to CPLEX LP file format, which can be loaded by various solvers.
-It also has an interface to GLPK (GNU Linear Programming Kit).
+It also has an interface to [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear Programming Kit).
 
 ## Install
 
@@ -13,8 +14,6 @@ opam install lp
 ```
 
 ## Example
-
-Note: To use GLPK interface, compile your application with `-cclib -lglpk` flags.
 
 ```ocaml
 let x = Lp.var "x"
@@ -43,9 +42,16 @@ let solve () =
     | Error msg -> print_endline msg
 ```
 
-## Status
+## Notes on GLPK interface
+
+- Tested only on GLPK version 4.65, something may fail on other versions.
+- To use this, compile your application with `-cclib -lglpk` flags.
+
+## Conformity to LP file format
 
 Currently only basic features of LP file format are supported.
+Yet to be supported are advanced features,
+which are typically available on commercial solvers.
 (There is no standard of LP file, though.)
 
 ### supported
@@ -61,7 +67,7 @@ Currently only basic features of LP file format are supported.
 - Multi-objective
 - Lazy constraint
 - Special ordered set (SOS)
-- Piecewise-linear objective and constraint
+- Piecewise-linear (PWL) objective and constraint
 - General Constraint
 - Scenario
 
@@ -72,6 +78,7 @@ Some references to LP file format.
 - [CPLEX](https://www.ibm.com/support/knowledgecenter/SSSA5P_12.7.1/ilog.odms.cplex.help/CPLEX/FileFormats/topics/LP.html)
 - [Gurobi](https://www.gurobi.com/documentation/9.0/refman/lp_format.html)
 - [lp_solve](http://lpsolve.sourceforge.net/5.5/CPLEX-format.htm)
+- Manual of [GLPK](https://www.gnu.org/software/glpk/)
 
 ## License
 MIT
