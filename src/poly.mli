@@ -112,10 +112,13 @@ val range3v :
 (** Make 3D array of monomials of a variable with different bounds *)
 
 val of_array : t array -> t
-(** Convert an array of monomials into a polynomial *)
+(** Convert an array of polynomials into single polynomial *)
+
+val of_float_array : float array -> t
+(** Convert a float array into a polynomial *)
 
 val of_list : t list -> t
-(** Convert a list of monomials into a polynomial *)
+(** Convert a list of polynomials into single polynomial *)
 
 val of_term_list : Term.t list -> t
 (** Convert a list of terms into a polynomial *)

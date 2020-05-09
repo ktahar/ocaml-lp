@@ -59,7 +59,9 @@ let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
       range2v ~integer ~lb:l ~ub:u ~start0:start1 ~start1:start2 stop1 stop2
         (String.concat "_" [name; string_of_int (start0 + i)]))
 
-let of_array = Array.fold_left List.append []
+let of_array a = List.concat (Array.to_list a)
+
+let of_float_array fa = of_array (Array.map c fa)
 
 let of_list = List.concat
 
