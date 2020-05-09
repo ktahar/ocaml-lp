@@ -111,14 +111,14 @@ val range3v :
   -> Poly.t array array array
 (** Make 3D array of monomials of a variable with different bounds *)
 
-val of_array : Poly.t array -> Poly.t
-(** Convert an array of polynomials into single polynomial *)
-
 val of_float_array : float array -> Poly.t
 (** Convert a float array into a polynomial *)
 
-val of_list : Poly.t list -> Poly.t
-(** Convert a list of polynomials into single polynomial *)
+val concat_array : Poly.t array -> Poly.t
+(** Concatenate an array of polynomials into single polynomial *)
+
+val concat_list : Poly.t list -> Poly.t
+(** Concatenate a list of polynomials into single polynomial *)
 
 val zero : Poly.t
 (** Constant zero *)
