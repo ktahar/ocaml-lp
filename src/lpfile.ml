@@ -68,4 +68,4 @@ let emit = function
   | Sobj obj :: Scnstr cnstrs :: attrs ->
       trans_attrs (obj, cnstrs) attrs
   | _ ->
-      failwith "LP file is ill-formed (no constraint ?)"
+      failwith "LP file is ill-formed (no objective or constraint section ?)"

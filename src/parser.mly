@@ -1,8 +1,9 @@
 %{
 open Lpfile
 module Cnstr = Constraint
-let rev_neg_head poly = match List.rev poly with
-    | hd :: rest -> Term.neg hd :: rest
+let rev_poly tl = Poly.of_term_list (List.rev tl)
+let rev_neg_head_poly tl = match List.rev tl with
+    | hd :: rest -> Poly.of_term_list (Term.neg hd :: rest)
     | _-> failwith "empty polynomial expression"
 %}
 
@@ -37,17 +38,17 @@ cnstr:
   | p = poly GT rhs = const { Cnstr.gt p rhs }
 
 const :
-  n = signed { [Term.Const n] }
+  n = signed { Poly.c n }
 
 poly :
   | p = poly_in { p }
-  | MLB p = poly_in { List.map Term.neg p }
-  | p0 = poly_in MLB p1 = poly_in { p0 @ List.map Term.neg p1 }
+  | MLB p = poly_in { Poly.neg p }
+  | p0 = poly_in MLB p1 = poly_in { Poly.(p0 -- p1) }
 
 poly_in :
-  | p = poly_rev { List.rev p }
-  | PLUS p = poly_rev { List.rev p }
-  | MINUS p = poly_rev { rev_neg_head p }
+  | p = poly_rev { rev_poly p }
+  | PLUS p = poly_rev { rev_poly p }
+  | MINUS p = poly_rev { rev_neg_head_poly p }
 
 poly_rev :
   | t = term { [t] }

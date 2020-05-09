@@ -9,6 +9,8 @@ let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
 
 let of_var v = [Term.of_var v]
 
+let of_term t = [t]
+
 let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
 
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
@@ -60,6 +62,16 @@ let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
 let of_array = Array.fold_left List.append []
 
 let of_list = List.concat
+
+let of_term_list = Fun.id
+
+let to_float = function
+  | [] ->
+      0.0
+  | [Term.Const c] ->
+      c
+  | _ ->
+      failwith "cannot convert to float as this is not const monomial"
 
 let zero = []
 
@@ -271,3 +283,34 @@ let to_integer name p = List.map (Term.to_integer name) p
 let double_quad p = List.map Term.double_quad p
 
 let half_quad p = List.map Term.half_quad p
+
+let map = List.map
+
+let map_linear f =
+  List.map (fun t ->
+      match t with
+      | Term.Linear (c, v) ->
+          f c v
+      | _ ->
+          failwith "non-linear term encountered")
+
+let mapi = List.mapi
+
+let iter = List.iter
+
+let iter_linear f =
+  List.iter (fun t -> match t with Term.Linear (c, v) -> f c v | _ -> ())
+
+let iter_linear_exn f =
+  List.iter (fun t ->
+      match t with
+      | Term.Linear (c, v) ->
+          f c v
+      | _ ->
+          failwith "non-linear term encountered")
+
+let iteri = List.iteri
+
+let length = List.length
+
+let take_linear_coeffs = map_linear (fun c _ -> c)

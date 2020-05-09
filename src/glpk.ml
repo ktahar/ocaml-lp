@@ -18,12 +18,7 @@ let rec idx_var (v : Var.t) = function
 
 let set_obj prob vars obj =
   let coeff =
-    List.iter (fun t ->
-        match t with
-        | Term.Linear (c, v) ->
-            set_obj_coef prob (idx_var v vars) c
-        | _ ->
-            failwith "set_obj: nonlinear term in objective")
+    Poly.iter_linear_exn (fun c v -> set_obj_coef prob (idx_var v vars) c)
   in
   match obj with
   | Objective.Max poly ->
@@ -33,51 +28,31 @@ let set_obj prob vars obj =
 
 let set_cnstr prob vars i cnstr =
   let ri = i + 1 in
-  let idx_of_term = function
-    | Term.Linear (_, v) ->
-        idx_var v vars
-    | _ ->
-        failwith "set_cnstr: nonlinear term in constraint"
-  in
-  let c_of_term = function
-    | Term.Linear (c, _) ->
-        c
-    | _ ->
-        failwith "set_cnstr: nonlinear term in constraint"
-  in
-  let take_const = function
-    | [] ->
-        0.0
-    | [Term.Const c] ->
-        c
-    | _ ->
-        failwith "set_cnstr: rhs must be constant"
-  in
   let coeff poly =
-    let aindices = C.CArray.make C.int (1 + List.length poly) in
-    let acoeffs = C.CArray.make C.double (1 + List.length poly) in
+    let aindices = C.CArray.make C.int (1 + Poly.length poly) in
+    let acoeffs = C.CArray.make C.double (1 + Poly.length poly) in
     let () =
       List.iteri
         (fun i v -> C.CArray.set aindices i v)
-        (0 :: List.map idx_of_term poly)
+        (0 :: Poly.map_linear (fun _ v -> idx_var v vars) poly)
       (* 0-th element is dummy *)
     in
     let () =
       List.iteri
         (fun i v -> C.CArray.set acoeffs i v)
-        (0.0 :: List.map c_of_term poly)
+        (0.0 :: Poly.take_linear_coeffs poly)
       (* 0-th element is dummy *)
     in
-    set_mat_row prob ri (List.length poly)
+    set_mat_row prob ri (Poly.length poly)
       (C.to_voidp (C.CArray.start aindices))
       (C.to_voidp (C.CArray.start acoeffs))
   in
   match cnstr with
   | Cnstr.Eq (_, lhs, rhs) ->
-      set_row_bnds prob ri Bnd.FX (take_const rhs) 0.0 ;
+      set_row_bnds prob ri Bnd.FX (Poly.to_float rhs) 0.0 ;
       coeff lhs
   | Cnstr.Ineq (_, lhs, rhs) ->
-      set_row_bnds prob ri Bnd.UP 0.0 (take_const rhs) ;
+      set_row_bnds prob ri Bnd.UP 0.0 (Poly.to_float rhs) ;
       coeff lhs
 
 let set_cnstrs prob vars = List.iteri (set_cnstr prob vars)

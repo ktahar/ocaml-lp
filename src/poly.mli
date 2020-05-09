@@ -1,8 +1,7 @@
 (** Module for polynomial expression type *)
 
-(** Type for the polynomial with order up to two (quadratic).
-    Internal representation (Term.t list) is intentionally exposed for now. *)
-type t = Term.t list
+(** Type for the polynomial with order up to two (quadratic). *)
+type t
 
 (** Type for the polynomial classified by orders *)
 type classified = {const: t; linear: t; quad: t}
@@ -15,6 +14,9 @@ val var : ?integer:bool -> ?lb:float -> ?ub:float -> string -> t
 
 val of_var : Var.t -> t
 (** Make monomial from a Var.t *)
+
+val of_term : Term.t -> t
+(** Make monomial from a Term.t *)
 
 val binary : string -> t
 (** Make monomial of a binary variable *)
@@ -115,6 +117,13 @@ val of_array : t array -> t
 val of_list : t list -> t
 (** Convert a list of monomials into a polynomial *)
 
+val of_term_list : Term.t list -> t
+(** Convert a list of terms into a polynomial *)
+
+val to_float : t -> float
+(** Convert a Constant monomial to float.
+ * Raises Failure if it's not constant monomial *)
+
 val zero : t
 (** Constant zero *)
 
@@ -205,3 +214,31 @@ val double_quad : t -> t
 
 val half_quad : t -> t
 (** half the coefficients in all quadratic terms in the polynomial *)
+
+val map : (Term.t -> 'a) -> t -> 'a list
+(** apply a function to all terms in the polynomial and build a list *)
+
+val map_linear : (float -> Var.t -> 'a) -> t -> 'a list
+(** apply a function only to linear terms in the polynomial and build a list.
+ * Raise Failure if non-linear terms exist. *)
+
+val mapi : (int -> Term.t -> 'a) -> t -> 'a list
+(** apply a function to all terms in the polynomial and build a list *)
+
+val iter : (Term.t -> unit) -> t -> unit
+(** apply a function to all terms in the polynomial *)
+
+val iteri : (int -> Term.t -> unit) -> t -> unit
+(** apply a function to all terms in the polynomial *)
+
+val iter_linear : (float -> Var.t -> unit) -> t -> unit
+(** apply a function only to linear terms in the polynomial.
+ * non-linear terms are just ignored. *)
+
+val iter_linear_exn : (float -> Var.t -> unit) -> t -> unit
+(** apply a function only to linear terms in the polynomial.
+ * Raise Failure if non-linear terms exist. *)
+
+val length : t -> int
+
+val take_linear_coeffs : t -> float list
