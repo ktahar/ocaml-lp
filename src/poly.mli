@@ -111,7 +111,7 @@ val range3v :
   -> t array array array
 (** Make 3D array of monomials of a variable with different bounds *)
 
-val concat_array : t array -> t
+val concat : t array -> t
 (** Concatenate an array of polynomials into single polynomial *)
 
 val concat_list : t list -> t

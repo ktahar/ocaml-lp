@@ -34,11 +34,9 @@ let range2v = Poly.range2v
 
 let range3v = Poly.range3v
 
+let concat = Poly.concat
+
 let of_float_array = Poly.of_float_array
-
-let concat_array = Poly.concat_array
-
-let concat_list = Poly.concat_list
 
 let zero = Poly.zero
 
