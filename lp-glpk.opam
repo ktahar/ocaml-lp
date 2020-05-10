@@ -15,6 +15,7 @@ dev-repo: "git+https://github.com/ktahar/ocaml-lp.git"
 depends: [
     "ocaml" {>= "4.08.0"}
     "dune"  {>= "2.2.0"}
+    "lp"
     "ctypes"
     "ctypes-foreign"
     "alcotest" {with-test}
