@@ -1,9 +1,9 @@
 (* solve LP and MILP using glpk *)
 
+module C = Ctypes
 module Glp = Lp_glp
 open Glp
 open Lp
-module C = Ctypes
 
 (* NOTE on array indexing
  * glpk's API treats Carray as 1-origin! Conventions in C are:
