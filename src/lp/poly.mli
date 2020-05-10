@@ -148,10 +148,10 @@ val classify : t -> classified
 val collision : t -> bool
 (** Check if any variable collision exist in the polynomial *)
 
-val simplify : ?epsilon:float -> t -> t
+val simplify : ?eps:float -> t -> t
 (** Simplify the polynomial.
     The polynomial is sorted and terms with same variables are accumulated.
-    After that, near-zero terms are dropped. [epsilon] specifies the threshold
+    After that, near-zero terms are dropped. [eps] specifies the threshold
     of near-zero, defaulting to 10. *. epsilon_float.
  *)
 
@@ -185,7 +185,7 @@ val dot : t -> t -> t
 val ( *@ ) : t -> t -> t
 (** Regard two polynomials as {i vectors} and take dot product. *)
 
-val equiv : t -> t -> bool
+val equiv : ?eps:float -> t -> t -> bool
 (** Check if two polynomials are equivalent *)
 
 val divt : t -> Term.t -> t

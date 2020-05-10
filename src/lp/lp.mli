@@ -154,29 +154,45 @@ val div : Poly.t -> Poly.t -> Poly.t
 val ( /~ ) : Poly.t -> Poly.t -> Poly.t
 (** Equivalent to div *)
 
-val eq : ?name:string -> Poly.t -> Poly.t -> Constraint.t
-(** Build an equality constraint. Optinal name can be given. Polynomials are simplified on build. *)
+val eq : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an equality constraint. Optinal name can be given.
+ * Polynomials are simplified on build.
+ * [eps] specifies the threshold of near-zero,
+ * defaulting to 10. *. epsilon_float.*)
 
 val ( =~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed equality constraint. Polynomials are simplified on build. *)
 
-val lt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
-(** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
+val lt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an inequality constraint. Optinal name can be given.
+ * Polynomials are simplified on build.
+ * [eps] specifies the threshold of near-zero,
+ * defaulting to 10. *. epsilon_float.*)
 
 val ( <~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
-val gt : ?name:string -> Poly.t -> Poly.t -> Constraint.t
-(** Build an inequality constraint. Optinal name can be given. Polynomials are simplified on build. *)
+val gt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+(** Build an inequality constraint.
+ * Optinal name can be given.
+ * Polynomials are simplified on build.
+ * [eps] specifies the threshold of near-zero,
+ * defaulting to 10. *. epsilon_float.*)
 
 val ( >~ ) : Poly.t -> Poly.t -> Constraint.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
-val maximize : Poly.t -> Objective.t
-(** Build an objective to maximize a polynomial. The polynomial is simplified on build. *)
+val maximize : ?eps:float -> Poly.t -> Objective.t
+(** Build an objective to maximize a polynomial.
+ * The polynomial is simplified on build.
+ * [eps] specifies the threshold of near-zero,
+ * defaulting to 10. *. epsilon_float.*)
 
-val minimize : Poly.t -> Objective.t
-(** Build an objective to minimize a polynomial. The polynomial is simplified on build. *)
+val minimize : ?eps:float -> Poly.t -> Objective.t
+(** Build an objective to minimize a polynomial.
+ * The polynomial is simplified on build.
+ * [eps] specifies the threshold of near-zero,
+ * defaulting to 10. *. epsilon_float.*)
 
 (* model validation and manipulation *)
 

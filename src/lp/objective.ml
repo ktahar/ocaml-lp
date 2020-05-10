@@ -1,8 +1,8 @@
 type t = Max of Poly.t | Min of Poly.t
 
-let maximize p = Max (Poly.sort p)
+let maximize ?(eps = 10. *. epsilon_float) p = Max (Poly.simplify ~eps p)
 
-let minimize p = Min (Poly.sort p)
+let minimize ?(eps = 10. *. epsilon_float) p = Min (Poly.simplify ~eps p)
 
 let take_vars = function Max p | Min p -> Poly.take_vars p
 

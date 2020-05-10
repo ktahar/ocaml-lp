@@ -14,19 +14,19 @@ let to_string ?(short = false) c =
   | Ineq (None, lhs, rhs) ->
       String.concat " <= " [p_string lhs; p_string rhs]
 
-let simplify_sides lhs rhs =
+let simplify_sides ?(eps = 10. *. epsilon_float) lhs rhs =
   let l = Poly.partition lhs in
   let r = Poly.partition rhs in
   let newl = Poly.(fst l -- fst r) in
   let newr = Poly.(snd r -- snd l) in
-  (Poly.simplify newl, Poly.simplify newr)
+  (Poly.simplify ~eps newl, Poly.simplify ~eps newr)
 
-let simplify = function
+let simplify ?(eps = 10. *. epsilon_float) = function
   | Eq (name, lhs, rhs) ->
-      let s = simplify_sides lhs rhs in
+      let s = simplify_sides ~eps lhs rhs in
       Eq (name, fst s, snd s)
   | Ineq (name, lhs, rhs) ->
-      let s = simplify_sides lhs rhs in
+      let s = simplify_sides ~eps lhs rhs in
       Ineq (name, fst s, snd s)
 
 let take_vars = function
@@ -47,21 +47,22 @@ let constant c =
         print_endline "a constraint is constant" ) ;
     true )
 
-let eq ?(name = "") lhs rhs =
-  let s = simplify_sides lhs rhs in
+let eq ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
+  let s = simplify_sides ~eps lhs rhs in
   if String.length name > 0 then
     if Var.validate_name name then Eq (Some name, fst s, snd s)
     else failwith ("Invalid name for constraint: " ^ name)
   else Eq (None, fst s, snd s)
 
-let lt ?(name = "") lhs rhs =
-  let s = simplify_sides lhs rhs in
+let lt ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
+  let s = simplify_sides ~eps lhs rhs in
   if String.length name > 0 then
     if Var.validate_name name then Ineq (Some name, fst s, snd s)
     else failwith ("Invalid name for constraint: " ^ name)
   else Ineq (None, fst s, snd s)
 
-let gt ?(name = "") lhs rhs = lt ~name rhs lhs
+let gt ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
+  lt ~eps ~name rhs lhs
 
 let ( =~ ) l r = eq l r
 

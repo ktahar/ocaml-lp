@@ -137,7 +137,7 @@ let uniq_vars poly =
   let vars = take_vars poly in
   List.sort_uniq Var.compare_name vars
 
-let simplify ?(epsilon = 10. *. epsilon_float) poly =
+let simplify ?(eps = 10. *. epsilon_float) poly =
   let rec simplify_ const lins quads = function
     | [] ->
         (Term.Const const :: List.rev lins) @ List.rev quads
@@ -170,7 +170,7 @@ let simplify ?(epsilon = 10. *. epsilon_float) poly =
         simplify_ const lins simpl_q rest
   in
   poly |> sort |> simplify_ Float.zero [] []
-  |> List.filter (fun t -> not (Term.near_zero ~epsilon t))
+  |> List.filter (fun t -> not (Term.near_zero ~eps t))
 
 let collision p =
   let sorted = sort p in
@@ -214,7 +214,8 @@ let dot = List.map2 Term.mul
 
 let ( *@ ) = dot
 
-let equiv pl pr = match simplify (pl -- pr) with [] -> true | _ -> false
+let equiv ?(eps = 10. *. epsilon_float) pl pr =
+  match simplify ~eps (pl -- pr) with [] -> true | _ -> false
 
 let divt poly term = List.map (fun t -> Term.div t term) poly
 
