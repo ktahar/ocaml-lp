@@ -34,7 +34,7 @@ let write () =
        print_endline "Oops, my problem is broken."
 
 let solve () =
-    match Lp_glpk.Simplex.solve problem with
+    match Lp_glpk.solve problem with
     | Ok (obj, tbl) ->
         Printf.printf "Objective: %.2f\n" obj ;
         Printf.printf "x: %.2f y: %.2f\n"

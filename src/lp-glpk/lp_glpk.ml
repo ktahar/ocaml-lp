@@ -111,10 +111,11 @@ module Simplex = struct
     match Problem.classify p with Problem.Pclass.LP -> true | _ -> false
 
   let solve p =
-    if check_class p then solve_main p else Error "Glpk.Simplex is only for LP"
+    if check_class p then solve_main p
+    else Error "Lp_glpk.Simplex is only for LP"
 end
 
-module Mip = struct
+module Milp = struct
   let set_cols prob =
     let set_bounds cj lb ub =
       if lb = Float.neg_infinity && ub = Float.infinity then
@@ -180,8 +181,18 @@ module Mip = struct
     with Failure msg -> delete_prob prob ; Error msg
 
   let check_class p =
-    match Problem.classify p with Problem.Pclass.MILP -> true | _ -> false
+    match Problem.classify p with Pclass.MILP -> true | _ -> false
 
   let solve p =
-    if check_class p then solve_main p else Error "Glpk.Mip is only for MILP"
+    if check_class p then solve_main p
+    else Error "Lp_glpk.Milp is only for MILP"
 end
+
+let solve p =
+  match Problem.classify p with
+  | Pclass.LP ->
+      Simplex.solve p
+  | Pclass.MILP ->
+      Milp.solve p
+  | _ ->
+      Error "glpk is only for LP or MILP"
