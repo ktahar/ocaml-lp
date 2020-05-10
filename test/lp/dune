@@ -1,0 +1,8 @@
+(tests
+ (package lp)
+ (names test_var test_poly test_lp)
+ (libraries alcotest lp)
+ (deps
+  (glob_files *.lp))
+ (action
+  (run %{test} --color=always)))

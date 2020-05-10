@@ -1,8 +1,9 @@
 (* solve LP and MILP using glpk *)
 
+module Glp = Lp_glp
 open Glp
+open Lp
 module C = Ctypes
-module Cnstr = Constraint
 
 (* NOTE on array indexing
  * glpk's API treats Carray as 1-origin! Conventions in C are:
@@ -21,9 +22,9 @@ let set_obj prob vars obj =
     Poly.iter_linear_exn (fun c v -> set_obj_coef prob (idx_var v vars) c)
   in
   match obj with
-  | Objective.Max poly ->
+  | Obj.Max poly ->
       set_obj_dir prob Dir.MAX ; coeff poly
-  | Objective.Min poly ->
+  | Obj.Min poly ->
       set_obj_dir prob Dir.MIN ; coeff poly
 
 let set_cnstr prob vars i cnstr =

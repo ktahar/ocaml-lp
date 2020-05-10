@@ -1,4 +1,4 @@
-(* Ctypes binding to glpk *)
+(* Raw ctypes binding to glpk *)
 
 open Ctypes
 open Foreign

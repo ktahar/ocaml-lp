@@ -1,0 +1,4 @@
+(library
+ (name lp_glpk)
+ (public_name lp-glpk)
+ (libraries lp ctypes ctypes.foreign))
