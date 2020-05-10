@@ -1,8 +1,7 @@
 (* solve LP and MILP using glpk *)
 
 module C = Ctypes
-module Glp = Lp_glp
-open Glp
+open Lp_glp
 open Lp
 
 (* NOTE on array indexing
