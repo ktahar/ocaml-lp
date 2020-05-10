@@ -38,14 +38,14 @@ let solve () =
     | Ok (obj, tbl) ->
         Printf.printf "Objective: %.2f\n" obj ;
         Printf.printf "x: %.2f y: %.2f\n"
-        (Hashtbl.find tbl x) (Hashtbl.find tbl y) ;
+        (Hashtbl.find tbl x) (Hashtbl.find tbl y)
     | Error msg -> print_endline msg
 ```
 
 ## Notes on GLPK interface
 
-- Tested only on GLPK version 4.65, something may fail on other versions.
 - To use this, compile your application with `-cclib -lglpk` flags.
+- Since this is tested only on GLPK version 4.65, something may fail on other versions.
 
 ## Conformity to LP file format
 
