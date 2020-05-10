@@ -9,8 +9,8 @@ It also has an interface to [GLPK](https://www.gnu.org/software/glpk/) (GNU Line
 
 ```bash
 # optional but recommended to pin dev-repo as it's on quite early stage of development
-opam pin lp --dev-repo
-opam install lp
+opam pin lp lp-glpk --dev-repo
+opam install lp lp-glpk
 ```
 
 ## Example
@@ -34,7 +34,7 @@ let write () =
        print_endline "Oops, my problem is broken."
 
 let solve () =
-    match Lp.Glpk.Simplex.solve problem with
+    match Lp_glpk.Simplex.solve problem with
     | Ok (obj, tbl) ->
         Printf.printf "Objective: %.2f\n" obj ;
         Printf.printf "x: %.2f y: %.2f\n"
