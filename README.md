@@ -9,7 +9,8 @@ It also has an interface to [GLPK](https://www.gnu.org/software/glpk/) (GNU Line
 
 ```bash
 # optional but recommended to pin dev-repo as it's on quite early stage of development
-opam pin lp lp-glpk --dev-repo
+opam pin lp --dev-repo
+opam pin lp-glpk --dev-repo
 opam install lp lp-glpk
 ```
 
