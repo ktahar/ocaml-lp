@@ -1,19 +1,12 @@
 module Var = Lp.Var
 
 let x = Var.make "x"
-
 let y = Var.make "y"
-
 let x_0_1 = Var.make "x_0_1"
-
 let x_1_1 = Var.make "x_1_1"
-
 let x_2_1 = Var.make "x_2_1"
-
 let x_10_1 = Var.make "x_10_1"
-
 let sort vars = List.sort Var.compare_name vars
-
 let to_string_list = List.map Var.to_string
 
 module To_test = struct

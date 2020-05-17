@@ -22,25 +22,26 @@ let y = Lp.var "y"
 
 let problem =
   let open Lp in
-  let c0 = x ++ c 1.2 *~ y <~ c 5.0 in
-  let c1 = c 2.0 *~ x ++ y <~ c 1.2 in
   let obj = maximize (x ++ y) in
+  let c0 = x ++ (c 1.2 *~ y) <~ c 5.0 in
+  let c1 = (c 2.0 *~ x) ++ y <~ c 1.2 in
   let cnstrs = [c0; c1] in
   (obj, cnstrs)
 
-let write () =
-   if Lp.validate problem then
-       Lp.write "my_problem.lp" problem
-   else
-       print_endline "Oops, my problem is broken."
+let write () = Lp.write "my_problem.lp" problem
 
 let solve () =
-    match Lp_glpk.solve problem with
-    | Ok (obj, tbl) ->
-        Printf.printf "Objective: %.2f\n" obj ;
-        Printf.printf "x: %.2f y: %.2f\n"
+  match Lp_glpk.solve problem with
+  | Ok (obj, tbl) ->
+      Printf.printf "Objective: %.2f\n" obj ;
+      Printf.printf "x: %.2f y: %.2f\n"
         (Hashtbl.find tbl x) (Hashtbl.find tbl y)
-    | Error msg -> print_endline msg
+  | Error msg ->
+      print_endline msg
+
+let () =
+  if Lp.validate problem then (write () ; solve ())
+  else print_endline "Oops, my problem is broken."
 ```
 
 ## Notes on GLPK interface

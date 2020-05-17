@@ -2,13 +2,9 @@ module Term = Lp.Term
 module Poly = Lp.Poly
 
 let x = Poly.var "x"
-
 let y = Poly.var "y"
-
 let z = Poly.var "z"
-
 let a = Poly.var "a"
-
 let b = Poly.var "b"
 
 let p0 =
@@ -17,7 +13,6 @@ let p0 =
 
 module To_test = struct
   let equiv0 () = Poly.(equiv p0 p0)
-
   let equiv1 () = Poly.(equiv p0 (p0 ++ c 1.))
 
   let expand0 () =
@@ -59,17 +54,11 @@ module To_test = struct
 end
 
 let equiv0 () = Alcotest.(check bool) "equiv0" true (To_test.equiv0 ())
-
 let equiv1 () = Alcotest.(check bool) "equiv1" false (To_test.equiv1 ())
-
 let expand0 () = Alcotest.(check bool) "expand0" true (To_test.expand0 ())
-
 let dot0 () = Alcotest.(check bool) "dot0" true (To_test.dot0 ())
-
 let divt0 () = Alcotest.(check bool) "divt0" true (To_test.divt0 ())
-
 let div0 () = Alcotest.(check bool) "div0" true (To_test.div0 ())
-
 let div1 () = Alcotest.(check bool) "div1" true (To_test.div1 ())
 
 let () =

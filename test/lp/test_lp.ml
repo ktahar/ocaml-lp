@@ -78,11 +78,8 @@ let miqcp0 =
 
 module To_test = struct
   let validate_lp0 () = Lp.validate lp0
-
   let validate_bad0 () = Lp.validate bad0
-
   let validate_bad1 () = Lp.validate bad1
-
   let validate_miqcp0 () = Lp.validate miqcp0
 
   let classify_lp0 () =
@@ -92,9 +89,7 @@ module To_test = struct
     match Lp.classify miqcp0 with Lp.Pclass.MIQCP -> true | _ -> false
 
   let lp0_to_string () = Lp.to_string lp0
-
   let lp0_of_to_string () = Lp.to_string (Lp.of_string lp0s)
-
   let lp0_read_to_string () = Lp.to_string (Lp.read "lp0.lp")
 
   let lp0_write_read_to_string () =
@@ -102,14 +97,12 @@ module To_test = struct
     Lp.to_string (Lp.read "_lp0.lp")
 
   let lp0_comment () = Lp.to_string (Lp.of_string lp0s_comment)
-
   let miqcp0_read_to_string () = Lp.to_string ~short:true (Lp.read "miqcp0.lp")
 
   let miqcp0a_read_to_string () =
     Lp.to_string ~short:true (Lp.read "miqcp0a.lp")
 
   let miqcp0_to_string () = Lp.to_string ~short:true miqcp0
-
   let miqcp0_vname_list () = Lp.vname_list miqcp0
 end
 

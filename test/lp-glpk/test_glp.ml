@@ -2,17 +2,11 @@ open Lp_glp
 module C = Ctypes
 
 let prob = create_prob ()
-
 let smcp = C.make Smcp.t
-
 let () = init_smcp (C.addr smcp)
-
 let iocp = C.make Iocp.t
-
 let () = init_iocp (C.addr iocp)
-
 let near_eq f0 f1 = Float.abs (f0 -. f1) < 1e-12
-
 let max_int32 = Int32.to_int Int32.max_int
 
 module To_test = struct
