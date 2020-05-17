@@ -1,5 +1,5 @@
 opam-version: "2.0"
-synopsis: "LP and MIP modeling in OCaml (GLPK interface)"
+synopsis: "LP and MIP modeling in OCaml (Gurobi interface)"
 description: """
 This library helps the modeling of Linear Programming (LP) and Mixed Integer Programming (MIP) in OCaml.
 It supports the model with not only linear terms, but also quadratic terms.
@@ -19,7 +19,6 @@ depends: [
     "ctypes"
     "ctypes-foreign"
     "alcotest" {with-test}
-    "conf-glpk" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]
