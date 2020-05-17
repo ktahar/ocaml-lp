@@ -3,6 +3,8 @@
 open Ctypes
 open Foreign
 
+exception Gurobi_error of string
+
 module Vt = struct
   type t = CONTINUOUS | BINARY | INTEGER | SEMICONT | SEMIINT
 
@@ -82,9 +84,22 @@ type model = unit ptr
 
 let model : model typ = ptr void
 
-let empty_env = foreign "GRBemptyenv" (ptr env @-> returning int)
+let get_error_msg = foreign "GRBgeterrormsg" (env @-> returning string)
 
-let start_env = foreign "GRBstartenv" (env @-> returning int)
+let check env ret_code =
+  if ret_code = 0 then () else raise (Gurobi_error (get_error_msg env))
+
+let _empty_env = foreign "GRBemptyenv" (ptr env @-> returning int)
+
+let empty_env penv =
+  let ret_code = _empty_env penv in
+  if ret_code = 0 then ()
+    (* cannot use get_error_msg because env is not created yet *)
+  else raise (Gurobi_error ("GRBemptyenv returned " ^ string_of_int ret_code))
+
+let _start_env = foreign "GRBstartenv" (env @-> returning int)
+
+let start_env e = check e (_start_env e)
 
 let free_env = foreign "GRBfreeenv" (env @-> returning void)
 
