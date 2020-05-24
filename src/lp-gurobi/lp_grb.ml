@@ -168,7 +168,7 @@ let get_int_attr env model name =
   check env (_get_int_attr model name value) ;
   !@value
 
-let set_minimze env model = set_int_attr env model "ModelSense" 1
+let set_minimize env model = set_int_attr env model "ModelSense" 1
 
 let set_maximize env model = set_int_attr env model "ModelSense" (-1)
 

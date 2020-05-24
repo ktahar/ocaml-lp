@@ -67,6 +67,12 @@ module Constr = struct
     ; cname= Cnstr.name cnstr }
 end
 
+let set_dir env model = function
+  | Obj.Max _ ->
+      set_maximize env model
+  | Obj.Min _ ->
+      set_minimize env model
+
 let add_obj_qterms env model vars dobj =
   let open Lp.Poly in
   match dobj.qcs with
@@ -98,6 +104,7 @@ let solve problem =
         vattr.names
     in
     try
+      set_dir env model obj ;
       add_obj_qterms env model vars dobj ;
       add_constraints env model vars cnstrs ;
       update_model env model ;
