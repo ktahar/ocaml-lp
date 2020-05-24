@@ -194,8 +194,7 @@ let add_var env model inds vals obj lb ub vtype vname =
     let avals = CArray.of_list double vals in
     check env
       (_add_var model numnz (CArray.start ainds) (CArray.start avals) obj lb ub
-         vtype vname) ;
-    update_model env model
+         vtype vname)
 
 let _add_constr =
   foreign "GRBaddconstr"
@@ -211,8 +210,7 @@ let add_constr env model cinds cvals sense rhs cname =
     let avals = CArray.of_list double cvals in
     check env
       (_add_constr model numnz (CArray.start ainds) (CArray.start avals) sense
-         rhs cname) ;
-    update_model env model
+         rhs cname)
 
 (** quadratic obj and constraints *)
 let _add_qpterms =
@@ -229,8 +227,7 @@ let add_qpterms env model rows cols vals =
     let avals = CArray.of_list double vals in
     check env
       (_add_qpterms model numqnz (CArray.start arows) (CArray.start acols)
-         (CArray.start avals)) ;
-    update_model env model
+         (CArray.start avals))
 
 let _add_qconstr =
   foreign "GRBaddqconstr"
@@ -254,8 +251,7 @@ let add_qconstr env model linds lvals qrows qcols qvals sense rhs cname =
     check env
       (_add_qconstr model numlnz (CArray.start alinds) (CArray.start alvals)
          numqnz (CArray.start aqrows) (CArray.start aqcols)
-         (CArray.start aqvals) sense rhs cname) ;
-    update_model env model
+         (CArray.start aqvals) sense rhs cname)
 
 let get_status env model = Stat.of_int (get_int_attr env model "Status")
 
