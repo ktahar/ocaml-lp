@@ -15,6 +15,10 @@ module To_test = struct
   let equiv0 () = Poly.(equiv p0 p0)
   let equiv1 () = Poly.(equiv p0 (p0 ++ c 1.))
 
+  let decompose0 () =
+    let dec = Poly.decompose p0 in
+    List.length dec.lcs = 3 && List.length dec.qcs = 2
+
   let expand0 () =
     Poly.(
       equiv
@@ -55,6 +59,10 @@ end
 
 let equiv0 () = Alcotest.(check bool) "equiv0" true (To_test.equiv0 ())
 let equiv1 () = Alcotest.(check bool) "equiv1" false (To_test.equiv1 ())
+
+let decompose0 () =
+  Alcotest.(check bool) "decompose0" true (To_test.decompose0 ())
+
 let expand0 () = Alcotest.(check bool) "expand0" true (To_test.expand0 ())
 let dot0 () = Alcotest.(check bool) "dot0" true (To_test.dot0 ())
 let divt0 () = Alcotest.(check bool) "divt0" true (To_test.divt0 ())
@@ -66,6 +74,7 @@ let () =
   run "Poly"
     [ ("equiv0", [test_case "equiv0" `Quick equiv0])
     ; ("equiv1", [test_case "equiv1" `Quick equiv1])
+    ; ("decompose0", [test_case "decompose0" `Quick decompose0])
     ; ("expand0", [test_case "expand0" `Quick expand0])
     ; ("dot0", [test_case "dot0" `Quick dot0])
     ; ("divt0", [test_case "divt0" `Quick divt0])
