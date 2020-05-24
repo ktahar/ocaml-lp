@@ -116,4 +116,9 @@ let solve problem =
       | stat ->
           failwith ("Problem is " ^ Stat.to_string stat)
     with e -> free_model env model ; raise e
-  with e -> free_env env ; Error e
+  with
+  | Gurobi_error msg | Failure msg ->
+      free_env env ; Error msg
+  | e ->
+      (* unexpected exception *)
+      free_env env ; raise e
