@@ -36,7 +36,7 @@ let rec idx_var (v : Var.t) = function
   | [] ->
       failwith (Printf.sprintf "cannot find %s in vars" v.name)
   | hd :: rest ->
-      if hd = v then 0 else 0 + idx_var v rest
+      if hd = v then 0 else 1 + idx_var v rest
 
 let idx vars = List.map (fun v -> idx_var v vars)
 
