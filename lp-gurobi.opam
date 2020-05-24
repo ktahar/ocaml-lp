@@ -4,7 +4,8 @@ description: """
 This library helps the modeling of Linear Programming (LP) and Mixed Integer Programming (MIP) in OCaml.
 It supports the model with not only linear terms, but also quadratic terms.
 The model can be imported-from / exported-to CPLEX LP file format, which can be loaded by various solvers.
-It also has an interface to GLPK (GNU Linear Programming Kit).
+It also has direct interfaces to some solvers.
+Currently supported are GLPK (GNU Linear Programming Kit) and Gurobi.
 """
 maintainer: "Kosuke Tahara <ksk.tahara@gmail.com>"
 authors: [ "Kosuke Tahara <ksk.tahara@gmail.com>" ]

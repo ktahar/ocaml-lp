@@ -1,0 +1,9 @@
+(tests
+ (package lp-gurobi)
+ (names test_gurobi)
+ (libraries alcotest lp lp-gurobi)
+ (flags :standard -cclib -lgurobi)
+ (deps
+  (glob_files *.lp))
+ (action
+  (run %{test} --color=always)))

@@ -3,7 +3,8 @@
 This library helps the modeling of Linear Programming (LP) and Mixed Integer Programming (MIP) in OCaml.
 It supports the model with not only linear terms, but also quadratic terms.
 The model can be imported-from / exported-to CPLEX LP file format, which can be loaded by various solvers.
-It also has an interface to [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear Programming Kit).
+It also has direct interfaces to some solvers.
+Currently supported are [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear Programming Kit) and [Gurobi](https://www.gurobi.com).
 
 ## Install
 
@@ -11,7 +12,8 @@ It also has an interface to [GLPK](https://www.gnu.org/software/glpk/) (GNU Line
 # optional but recommended to pin dev-repo as it's on quite early stage of development
 opam pin lp --dev-repo
 opam pin lp-glpk --dev-repo
-opam install lp lp-glpk
+opam pin lp-gurobi --dev-repo # if you have an access to Gurobi
+opam install lp lp-glpk lp-gurobi
 ```
 
 ## Example
@@ -31,6 +33,7 @@ let problem =
 let write () = Lp.write "my_problem.lp" problem
 
 let solve () =
+  (* For Gurobi, use Lp_gurobi.solve instead *)
   match Lp_glpk.solve problem with
   | Ok (obj, tbl) ->
       Printf.printf "Objective: %.2f\n" obj ;
