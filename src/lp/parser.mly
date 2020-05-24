@@ -63,6 +63,7 @@ term :
   | n = NUM  v = ID { Term.Linear (n, Var.make v) }
   | v0 = ID TIMES v1 = ID { Term.Quad (Float.one, Var.make v0, Var.make v1) }
   | n = NUM v0 = ID TIMES v1 = ID { Term.Quad (n, Var.make v0, Var.make v1) }
+  | v = ID SQ { Term.Quad (Float.one, Var.make v, Var.make v) }
   | n = NUM  v = ID SQ { Term.Quad (n, Var.make v, Var.make v) }
 
 bounds:
