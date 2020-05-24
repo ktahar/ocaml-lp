@@ -103,7 +103,9 @@ let model : model typ = ptr void
 let get_error_msg = foreign "GRBgeterrormsg" (env @-> returning string)
 
 let check env ret_code =
-  if ret_code = 0 then () else raise (Gurobi_error (get_error_msg env))
+  if ret_code = 0 then ()
+  else
+    raise (Gurobi_error (Printf.sprintf "%s (%d)" (get_error_msg env) ret_code))
 
 let _empty_env = foreign "GRBemptyenv" (ptr env @-> returning int)
 
