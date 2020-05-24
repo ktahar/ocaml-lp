@@ -59,8 +59,9 @@ rule token = parse
   | square { SQ }
   | st { ST }
   | minus_lb { MLB }
+  | plus_lb { PLB }
   (* eat up whitespaces and unnecessary symbols *)
-  | div2 | plus_lb | ']' | white+ { token lexbuf }
+  | ']' | div2 | white+ { token lexbuf }
   | number as n { NUM (float_of_string n ) }
   | id as s { kw_or_id s }
   | "+"  { PLUS }

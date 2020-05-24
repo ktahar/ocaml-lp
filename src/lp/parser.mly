@@ -11,7 +11,7 @@ let rev_neg_head_poly tl = match List.rev tl with
 %token <string> ID
 %token MIN MAX ST BOUND GENERAL BINARY FREE INF END
 %token COLON EQ LT GT
-%token PLUS MINUS TIMES SQ MLB
+%token PLUS MINUS TIMES SQ PLB MLB
 
 %start <Lpfile.t> sections
 
@@ -42,7 +42,9 @@ const :
 
 poly :
   | p = poly_in { p }
+  | PLB p = poly_in { p }
   | MLB p = poly_in { Poly.neg p }
+  | p0 = poly_in PLB p1 = poly_in { Poly.(p0 ++ p1) }
   | p0 = poly_in MLB p1 = poly_in { Poly.(p0 -- p1) }
 
 poly_in :
