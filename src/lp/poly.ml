@@ -2,6 +2,14 @@ type t = Term.t list
 
 type classified = {const: t; linear: t; quad: t}
 
+type decomposed =
+  { const: float
+  ; lcs: float list
+  ; lvs: Var.t list
+  ; qcs: float list
+  ; qv0s: Var.t list
+  ; qv1s: Var.t list }
+
 let c x = [Term.c x]
 
 let var ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name =
@@ -118,6 +126,19 @@ let classify_by var poly =
   in
   classify_ [] [] [] poly
 
+let decompose poly =
+  let rec decompose_ const lcs lvs qcs qv0s qv1s = function
+    | [] ->
+        {const; lcs; lvs; qcs; qv0s; qv1s}
+    | Term.Const c :: rest ->
+        decompose_ (c +. const) lcs lvs qcs qv0s qv1s rest
+    | Term.Linear (c, v) :: rest ->
+        decompose_ const (c :: lcs) (v :: lvs) qcs qv0s qv1s rest
+    | Term.Quad (c, v0, v1) :: rest ->
+        decompose_ const lcs lvs (c :: qcs) (v0 :: qv0s) (v1 :: qv1s) rest
+  in
+  decompose_ Float.zero [] [] [] [] [] poly
+
 let degree p = List.fold_left max 0 (List.map Term.degree p)
 
 let take_vars poly =
@@ -136,6 +157,25 @@ let take_vars poly =
 let uniq_vars poly =
   let vars = take_vars poly in
   List.sort_uniq Var.compare_name vars
+
+let linear_coeff poly var =
+  let accum coeff = function
+    | Term.Linear (c, v) when v = var ->
+        c +. coeff
+    | _ ->
+        coeff
+  in
+  List.fold_left accum Float.zero poly
+
+let quad_coeff poly v0 v1 =
+  let accum coeff = function
+    | Term.Quad (c, vv0, vv1)
+      when (v0 = vv0 && v1 = vv1) || (v1 = vv0 && v0 = vv1) ->
+        c +. coeff
+    | _ ->
+        coeff
+  in
+  List.fold_left accum Float.zero poly
 
 let simplify ?(eps = 10. *. epsilon_float) poly =
   let rec simplify_ const lins quads = function

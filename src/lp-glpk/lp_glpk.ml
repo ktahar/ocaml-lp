@@ -9,7 +9,7 @@ open Lp
  * - declare a[n+1] instead of a[n] for an array of length n.
  * - ignore zero-th element a[0]. *)
 
-(* get 1-origin index var in vars (Var.t list) *)
+(* get 1-origin index of v in vars (Var.t list) *)
 let rec idx_var (v : Var.t) = function
   | [] ->
       failwith (Printf.sprintf "cannot find %s in vars" v.name)

@@ -84,6 +84,13 @@ let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
 
 let to_string v = v.name
 
+let to_bound v =
+  match v.attr with
+  | Binary ->
+      (Float.zero, Float.one)
+  | Continuous (lb, ub) | General (lb, ub) ->
+      (lb, ub)
+
 let to_bound_string ?(short = false) v =
   let default lb ub = lb = Float.zero && ub = Float.infinity in
   match v.attr with

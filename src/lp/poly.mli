@@ -6,6 +6,15 @@ type t
 (** Type for the polynomial classified by orders *)
 type classified = {const: t; linear: t; quad: t}
 
+(** Type for the decomposed expression of the polynomial *)
+type decomposed =
+  { const: float
+  ; lcs: float list
+  ; lvs: Var.t list
+  ; qcs: float list
+  ; qv0s: Var.t list
+  ; qv1s: Var.t list }
+
 val c : float -> t
 (** Make monomial of a constant value *)
 
@@ -145,6 +154,9 @@ val partition : t -> t * t
 val classify : t -> classified
 (** Classify terms into three categories {quad, linear, const} *)
 
+val decompose : t -> decomposed
+(** Decompose the polynomial into {const, lcs, lvs, qcs, qv0s, qv1s} *)
+
 val collision : t -> bool
 (** Check if any variable collision exist in the polynomial *)
 
@@ -160,6 +172,15 @@ val degree : t -> int
 
 val take_vars : t -> Var.t list
 (** List up all the variables in the polynomial *)
+
+val uniq_vars : t -> Var.t list
+(** List up all the unique variables in the polynomial *)
+
+val linear_coeff : t -> Var.t -> float
+(** take linear coefficient of a variable in a polynomial *)
+
+val quad_coeff : t -> Var.t -> Var.t -> float
+(** take quad coefficient of the variables in a polynomial *)
 
 val neg : t -> t
 (** Negate the whole polynomial *)

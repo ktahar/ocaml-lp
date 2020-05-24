@@ -6,6 +6,8 @@ let minimize ?(eps = 10. *. epsilon_float) p = Min (Poly.simplify ~eps p)
 
 let take_vars = function Max p | Min p -> Poly.take_vars p
 
+let to_poly = function Max p | Min p -> p
+
 let to_string ?(short = false) o =
   let p_string p = Poly.to_string ~short (Poly.double_quad p) in
   match o with

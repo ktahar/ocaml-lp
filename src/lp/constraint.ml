@@ -70,6 +70,16 @@ let ( <~ ) l r = lt l r
 
 let ( >~ ) l r = gt l r
 
+let lhs = function Eq (_, l, _) | Ineq (_, l, _) -> l
+
+let rhs = function Eq (_, _, r) | Ineq (_, _, r) -> r
+
+let name = function
+  | Eq (Some name, _, _) | Ineq (Some name, _, _) ->
+      name
+  | _ ->
+      ""
+
 let trans_bound name lb ub = function
   | Eq (n, l, r) ->
       let newl = Poly.trans_bound name lb ub l in

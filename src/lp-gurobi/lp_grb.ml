@@ -73,6 +73,20 @@ module Stat = struct
     | _ ->
         OTHER
 
+  let to_string = function
+    | LOADED ->
+        "loaded"
+    | OPTIMAL ->
+        "optimal"
+    | INFEASIBLE ->
+        "infeasible"
+    | INF_OR_UNBD ->
+        "infeasible or unbounded"
+    | UNBOUNDED ->
+        "unbounded"
+    | OTHER ->
+        "unknown status"
+
   (* one of the limits is exceded *)
 end
 
