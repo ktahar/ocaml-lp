@@ -1,8 +1,8 @@
 (* solve MIP using Gurobi *)
 
 module C = Ctypes
-open Lp_grb
 open Lp
+open Lp_grb
 
 module Var_attrs = struct
   type t =
@@ -91,7 +91,7 @@ let add_constraints env model vars =
           add_qconstr env model cr.linds cr.lvals cr.qrows cr.qcols cr.qvals
             cr.sense cr.rhs cr.cname)
 
-let solve problem =
+let solve ?(write_fname = "") problem =
   let obj = fst problem in
   let cnstrs = snd problem in
   let dobj = Poly.decompose (Obj.to_poly obj) in
@@ -108,6 +108,7 @@ let solve problem =
       add_obj_qterms env model vars dobj ;
       add_constraints env model vars cnstrs ;
       update_model env model ;
+      if String.length write_fname > 0 then write env model write_fname else () ;
       optimize env model ;
       match get_status env model with
       | OPTIMAL ->

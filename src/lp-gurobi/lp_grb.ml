@@ -275,3 +275,7 @@ let get_dbl_attr_array env model name start length =
   CArray.to_list xs
 
 let get_obj_x env model length = get_dbl_attr_array env model "X" 0 length
+
+let _write = foreign "GRBwrite" (model @-> string @-> returning int)
+
+let write env model fname = check env (_write model fname)
