@@ -108,7 +108,7 @@ let solve problem =
           let len = List.length vars in
           let tbl = Hashtbl.create len in
           List.iter2
-            (fun var value -> Hashtbl.add tbl var value)
+            (fun var value -> Hashtbl.add tbl (Poly.of_var var) value)
             vars (get_obj_x env model len) ;
           free_model env model ;
           free_env env ;
