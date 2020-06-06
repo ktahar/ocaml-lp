@@ -111,13 +111,7 @@ let trans_bound lb ub = function
   | org ->
       org
 
-let to_binary = function
-  | {name; attr= Continuous _} ->
-      {name; attr= Binary}
-  | {name; attr= General _} ->
-      {name; attr= Binary}
-  | org ->
-      org
+let to_binary v = {v with attr= Binary}
 
 let to_integer = function
   | {name; attr= Continuous (lb, ub)} ->
