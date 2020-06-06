@@ -28,11 +28,10 @@ module Pclass = struct
         "MIQCP"
 end
 
-type t = Objective.t * Constraints.t
+type t = Objective.t * Cnstrs.t
 
 let take_vars p =
-  Objective.take_vars (fst p)
-  @ List.concat (List.map Constraint.take_vars (snd p))
+  Objective.take_vars (fst p) @ List.concat (List.map Cnstr.take_vars (snd p))
 
 let uniq_vars p =
   let vars = take_vars p in
@@ -55,7 +54,7 @@ let vname_list p = List.map Var.to_string (uniq_vars p)
 
 let classify p =
   let odeg = Objective.degree (fst p) in
-  let cdeg = Constraints.degree (snd p) in
+  let cdeg = Cnstrs.degree (snd p) in
   if Vars.has_integer (uniq_vars p) then
     if cdeg = 2 then Pclass.MIQCP
     else if odeg = 2 then Pclass.MIQP
@@ -64,11 +63,11 @@ let classify p =
   else if odeg = 2 then Pclass.QP
   else Pclass.LP
 
-let validate p = not (collision p || Constraints.has_constant (snd p))
+let validate p = not (collision p || Cnstrs.has_constant (snd p))
 
 let to_string ?(short = false) p =
   let obj = Objective.to_string ~short (fst p) in
-  let cnstrs = Constraints.to_string ~short (snd p) in
+  let cnstrs = Cnstrs.to_string ~short (snd p) in
   let vars = uniq_vars p in
   let bound = Vars.to_bound_string ~short vars in
   let vtype = Vars.to_vtype_string vars in

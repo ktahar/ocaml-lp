@@ -1,6 +1,5 @@
 %{
 open Lpfile
-module Cnstr = Constraint
 let rev_poly tl = Poly.of_term_list (List.rev tl)
 let rev_neg_head_poly tl = match List.rev tl with
     | hd :: rest -> Poly.of_term_list (Term.neg hd :: rest)

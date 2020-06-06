@@ -21,9 +21,9 @@ let set_obj prob vars obj =
     Poly.iter_linear_exn (fun c v -> set_obj_coef prob (idx_var v vars) c)
   in
   match obj with
-  | Obj.Max poly ->
+  | Objective.Max poly ->
       set_obj_dir prob Dir.MAX ; coeff poly
-  | Obj.Min poly ->
+  | Objective.Min poly ->
       set_obj_dir prob Dir.MIN ; coeff poly
 
 let set_cnstr prob vars i cnstr =

@@ -2,8 +2,8 @@
 module Var = Var
 module Term = Term
 module Poly = Poly
-module Cnstr = Constraint
-module Obj = Objective
+module Cnstr = Cnstr
+module Objective = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
 
@@ -59,17 +59,17 @@ let div = Poly.div
 let ( /~ ) = Poly.( /~ )
 
 (* export constraint builders *)
-let eq = Constraint.eq
+let eq = Cnstr.eq
 
-let ( =~ ) = Constraint.( =~ )
+let ( =~ ) = Cnstr.( =~ )
 
-let lt = Constraint.lt
+let lt = Cnstr.lt
 
-let ( <~ ) = Constraint.( <~ )
+let ( <~ ) = Cnstr.( <~ )
 
-let gt = Constraint.gt
+let gt = Cnstr.gt
 
-let ( >~ ) = Constraint.( >~ )
+let ( >~ ) = Cnstr.( >~ )
 
 (* export objective builders *)
 let maximize = Objective.maximize

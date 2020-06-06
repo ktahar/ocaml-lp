@@ -3,8 +3,8 @@
 module Var = Var
 module Term = Term
 module Poly = Poly
-module Cnstr = Constraint
-module Obj = Objective
+module Cnstr = Cnstr
+module Objective = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
 
@@ -154,32 +154,32 @@ val div : Poly.t -> Poly.t -> Poly.t
 val ( /~ ) : Poly.t -> Poly.t -> Poly.t
 (** Equivalent to div *)
 
-val eq : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+val eq : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Cnstr.t
 (** Build an equality constraint. Optinal name can be given.
  * Polynomials are simplified on build.
  * [eps] specifies the threshold of near-zero,
  * defaulting to 10. *. epsilon_float.*)
 
-val ( =~ ) : Poly.t -> Poly.t -> Constraint.t
+val ( =~ ) : Poly.t -> Poly.t -> Cnstr.t
 (** Build an unnamed equality constraint. Polynomials are simplified on build. *)
 
-val lt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+val lt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Cnstr.t
 (** Build an inequality constraint. Optinal name can be given.
  * Polynomials are simplified on build.
  * [eps] specifies the threshold of near-zero,
  * defaulting to 10. *. epsilon_float.*)
 
-val ( <~ ) : Poly.t -> Poly.t -> Constraint.t
+val ( <~ ) : Poly.t -> Poly.t -> Cnstr.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
-val gt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Constraint.t
+val gt : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> Cnstr.t
 (** Build an inequality constraint.
  * Optinal name can be given.
  * Polynomials are simplified on build.
  * [eps] specifies the threshold of near-zero,
  * defaulting to 10. *. epsilon_float.*)
 
-val ( >~ ) : Poly.t -> Poly.t -> Constraint.t
+val ( >~ ) : Poly.t -> Poly.t -> Cnstr.t
 (** Build an unnamed inequality constraint. Polynomials are simplified on build. *)
 
 val maximize : ?eps:float -> Poly.t -> Objective.t

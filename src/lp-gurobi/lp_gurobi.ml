@@ -68,9 +68,9 @@ module Constr = struct
 end
 
 let set_dir env model = function
-  | Obj.Max _ ->
+  | Objective.Max _ ->
       set_maximize env model
-  | Obj.Min _ ->
+  | Objective.Min _ ->
       set_minimize env model
 
 let add_obj_qterms env model vars dobj =

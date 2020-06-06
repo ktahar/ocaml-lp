@@ -2,7 +2,7 @@ type bound = {name: string; lb: float; ub: float}
 
 type section =
   | Sobj of Objective.t
-  | Scnstr of Constraint.t list
+  | Scnstr of Cnstr.t list
   | Sbound of bound list
   | Sgeneral of string list
   | Sbinary of string list
@@ -19,7 +19,7 @@ let trans_binary p name =
         | Objective.Min p ->
             Objective.Min (Poly.to_binary name p)
       in
-      let newc = List.map (Constraint.to_binary name) cnstrs in
+      let newc = List.map (Cnstr.to_binary name) cnstrs in
       (newobj, newc)
 
 let trans_general p name =
@@ -32,7 +32,7 @@ let trans_general p name =
         | Objective.Min p ->
             Objective.Min (Poly.to_integer name p)
       in
-      let newc = List.map (Constraint.to_integer name) cnstrs in
+      let newc = List.map (Cnstr.to_integer name) cnstrs in
       (newobj, newc)
 
 let trans_bound p b =
@@ -45,7 +45,7 @@ let trans_bound p b =
         | Objective.Min p ->
             Objective.Min (Poly.trans_bound b.name b.lb b.ub p)
       in
-      let newc = List.map (Constraint.trans_bound b.name b.lb b.ub) cnstrs in
+      let newc = List.map (Cnstr.trans_bound b.name b.lb b.ub) cnstrs in
       (newobj, newc)
 
 let rec trans_attrs problem = function
