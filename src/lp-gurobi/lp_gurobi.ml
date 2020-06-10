@@ -23,7 +23,7 @@ module Var_attrs = struct
         Vt.BINARY
 
   let make objective vars =
-    let obj = List.map (Poly.linear_coeff (Obj.to_poly objective)) vars in
+    let obj = List.map (Poly.linear_coeff (Objective.to_poly objective)) vars in
     { objs= obj
     ; lbs= List.map (fun v -> fst (Var.to_bound v)) vars
     ; ubs= List.map (fun v -> snd (Var.to_bound v)) vars
@@ -94,7 +94,7 @@ let add_constraints env model vars =
 let solve ?(write_fname = "") problem =
   let obj = fst problem in
   let cnstrs = snd problem in
-  let dobj = Poly.decompose (Obj.to_poly obj) in
+  let dobj = Poly.decompose (Objective.to_poly obj) in
   let vars = Problem.uniq_vars problem in
   let vattr = Var_attrs.make obj vars in
   let env = empty_env () in
