@@ -1,3 +1,8 @@
+(** Module for LP variable.
+    Typically, users don't need to use this module directly.
+    See higher-level module for polynomials ({!module:Poly}) instead.
+*)
+
 type attr = Continuous of float * float | General of float * float | Binary
 
 type t = {name: string; attr: attr}

@@ -1,3 +1,8 @@
+(** Module for a term in the polynomial.
+    Typically, users don't need to use this module directly.
+    See higher-level module for polynomials ({!module:Poly}) instead.
+*)
+
 type t =
   | Const of float
   | Linear of float * Var.t
