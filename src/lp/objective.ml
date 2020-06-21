@@ -20,4 +20,24 @@ let to_string ?(short = false) o =
   | Min p ->
       "minimize\n " ^ p_string p
 
+let trans_bound name lb ub = function
+  | Max p ->
+      Max (Poly.trans_bound name lb ub p)
+  | Min p ->
+      Min (Poly.trans_bound name lb ub p)
+
+let to_integer name = function
+  | Max p ->
+      Max (Poly.to_integer name p)
+  | Min p ->
+      Min (Poly.to_integer name p)
+
+let to_binary name = function
+  | Max p ->
+      Max (Poly.to_binary name p)
+  | Min p ->
+      Min (Poly.to_binary name p)
+
 let degree = function Max p | Min p -> Poly.degree p
+
+let is_max = function Max _ -> true | Min _ -> false

@@ -11,37 +11,19 @@ type t = section list
 
 let trans_binary p name =
   let obj, cnstrs = p in
-  let newobj =
-    match obj with
-    | Objective.Max p ->
-        Objective.Max (Poly.to_binary name p)
-    | Objective.Min p ->
-        Objective.Min (Poly.to_binary name p)
-  in
+  let newobj = Objective.to_binary name obj in
   let newc = List.map (Cnstr.to_binary name) cnstrs in
   (newobj, newc)
 
 let trans_general p name =
   let obj, cnstrs = p in
-  let newobj =
-    match obj with
-    | Objective.Max p ->
-        Objective.Max (Poly.to_integer name p)
-    | Objective.Min p ->
-        Objective.Min (Poly.to_integer name p)
-  in
+  let newobj = Objective.to_integer name obj in
   let newc = List.map (Cnstr.to_integer name) cnstrs in
   (newobj, newc)
 
 let trans_bound p b =
   let obj, cnstrs = p in
-  let newobj =
-    match obj with
-    | Objective.Max p ->
-        Objective.Max (Poly.trans_bound b.name b.lb b.ub p)
-    | Objective.Min p ->
-        Objective.Min (Poly.trans_bound b.name b.lb b.ub p)
-  in
+  let newobj = Objective.trans_bound b.name b.lb b.ub obj in
   let newc = List.map (Cnstr.trans_bound b.name b.lb b.ub) cnstrs in
   (newobj, newc)
 

@@ -1,10 +1,6 @@
-type t =
-  | Eq of string option * Poly.t * Poly.t
-  | Ineq of string option * Poly.t * Poly.t
+type t
 
 val to_string : ?short:bool -> t -> string
-
-val simplify_sides : ?eps:float -> Poly.t -> Poly.t -> Poly.t * Poly.t
 
 val simplify : ?eps:float -> t -> t
 
@@ -30,7 +26,11 @@ val lhs : t -> Poly.t
 
 val rhs : t -> Poly.t
 
+val sides : t -> Poly.t * float
+
 val name : t -> string
+
+val is_eq : t -> bool
 
 val trans_bound : string -> float -> float -> t -> t
 

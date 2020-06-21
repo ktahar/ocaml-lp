@@ -22,8 +22,8 @@ sections :
 
 
 objective: (* objective section cannot be empty *)
-  | MIN p = poly { [Sobj (Objective.Min (Poly.half_quad p))] }
-  | MAX p = poly { [Sobj (Objective.Max (Poly.half_quad p))] }
+  | MIN p = poly { [Sobj (Objective.minimize (Poly.half_quad p))] }
+  | MAX p = poly { [Sobj (Objective.maximize (Poly.half_quad p))] }
 
 cnstrs: (* constraints section cannot be empty *)
   ST l = nonempty_list(cnstr) { [Scnstr l] }

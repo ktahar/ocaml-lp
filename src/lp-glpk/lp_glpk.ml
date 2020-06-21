@@ -17,14 +17,11 @@ let rec idx_var (v : Var.t) = function
       if hd = v then 1 else 1 + idx_var v rest
 
 let set_obj prob vars obj =
-  let coeff =
-    Poly.iter_linear_exn (fun c v -> set_obj_coef prob (idx_var v vars) c)
-  in
-  match obj with
-  | Objective.Max poly ->
-      set_obj_dir prob Dir.MAX ; coeff poly
-  | Objective.Min poly ->
-      set_obj_dir prob Dir.MIN ; coeff poly
+  if Objective.is_max obj then set_obj_dir prob Dir.MAX
+  else set_obj_dir prob Dir.MIN ;
+  Poly.iter_linear_exn
+    (fun c v -> set_obj_coef prob (idx_var v vars) c)
+    (Objective.to_poly obj)
 
 let set_cnstr prob vars i cnstr =
   let ri = i + 1 in
@@ -47,13 +44,10 @@ let set_cnstr prob vars i cnstr =
       (C.to_voidp (C.CArray.start aindices))
       (C.to_voidp (C.CArray.start acoeffs))
   in
-  match cnstr with
-  | Cnstr.Eq (_, lhs, rhs) ->
-      set_row_bnds prob ri Bnd.FX (Poly.to_float rhs) 0.0 ;
-      coeff lhs
-  | Cnstr.Ineq (_, lhs, rhs) ->
-      set_row_bnds prob ri Bnd.UP 0.0 (Poly.to_float rhs) ;
-      coeff lhs
+  let lhs, rhs = Cnstr.sides cnstr in
+  if Cnstr.is_eq cnstr then set_row_bnds prob ri Bnd.FX rhs 0.0
+  else set_row_bnds prob ri Bnd.UP 0.0 rhs ;
+  coeff lhs
 
 let set_cnstrs prob vars = List.iteri (set_cnstr prob vars)
 

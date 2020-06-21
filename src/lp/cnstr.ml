@@ -74,11 +74,15 @@ let lhs = function Eq (_, l, _) | Ineq (_, l, _) -> l
 
 let rhs = function Eq (_, _, r) | Ineq (_, _, r) -> r
 
+let sides = function Eq (_, l, r) | Ineq (_, l, r) -> (l, Poly.to_float r)
+
 let name = function
   | Eq (Some name, _, _) | Ineq (Some name, _, _) ->
       name
   | _ ->
       ""
+
+let is_eq = function Eq _ -> true | Ineq _ -> false
 
 let trans_bound name lb ub = function
   | Eq (n, l, r) ->

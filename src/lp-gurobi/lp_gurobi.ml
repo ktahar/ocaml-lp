@@ -51,7 +51,7 @@ module Constr = struct
     ; rhs: float
     ; cname: string }
 
-  let to_sense = function Cnstr.Eq _ -> Cs.EQ | Cnstr.Ineq _ -> Cs.LT
+  let to_sense c = if Cnstr.is_eq c then Cs.EQ else Cs.LT
 
   let of_cnstr vars cnstr =
     let dec = Poly.decompose (Cnstr.lhs cnstr) in
@@ -67,11 +67,9 @@ module Constr = struct
     ; cname= Cnstr.name cnstr }
 end
 
-let set_dir env model = function
-  | Objective.Max _ ->
-      set_maximize env model
-  | Objective.Min _ ->
-      set_minimize env model
+let set_dir env model obj =
+  if Objective.is_max obj then set_maximize env model
+  else set_minimize env model
 
 let add_obj_qterms env model vars dobj =
   let open Lp.Poly in
