@@ -47,6 +47,10 @@ let () =
   else print_endline "Oops, my problem is broken."
 ```
 
+## Documentation
+
+Odoc-generated documentation can be found [online](https://ktahar.github.io/ocaml-lp/) or in [docs](docs).
+
 ## Notes on GLPK interface
 
 - To use this, compile your application with `-cclib -lglpk` flags.
