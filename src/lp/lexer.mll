@@ -1,6 +1,12 @@
 {
 open Parser
 
+exception Error of char * Lexing.position
+
+let lexing_error lexbuf =
+  let invalid_char = Lexing.lexeme_char lexbuf 0 in
+  raise (Error (invalid_char, lexbuf.Lexing.lex_curr_p))
+
 let keywords = Hashtbl.create 32
 
 let _ = List.iter (fun (k, v) ->
@@ -51,7 +57,7 @@ let square = '^' ' '* '2'
 let div2 = '/' ' '* '2'
 let minus_lb = '-' ' '* '['
 let plus_lb = ('+' ' '*)? '['
-let white = ['\t' ' ' '\r' '\n']
+let white = ['\t' ' ' '\r']
 
 rule token = parse
   | '\\' { comment lexbuf; token lexbuf }
@@ -60,6 +66,7 @@ rule token = parse
   | st { ST }
   | minus_lb { MLB }
   | plus_lb { PLB }
+  | '\n' { Lexing.new_line lexbuf; token lexbuf }
   (* eat up whitespaces and unnecessary symbols *)
   | ']' | div2 | white+ { token lexbuf }
   | number as n { NUM (float_of_string n ) }
@@ -71,6 +78,8 @@ rule token = parse
   | "<" | "<=" | "=<" { LT }
   | ">" | ">=" | "=>" { GT }
   | "="  { EQ }
+  | _ { lexing_error lexbuf }
 and comment = parse
-  | ('\n' | eof) { () }
+  | '\n' { Lexing.new_line lexbuf }
+  | eof { () }
   | _ { comment lexbuf }

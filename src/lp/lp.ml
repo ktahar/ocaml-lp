@@ -86,17 +86,9 @@ let vname_list = Problem.vname_list
 (* IO *)
 let to_string = Problem.to_string
 
-let of_string s =
-  let lexbuf = Lexing.from_string s in
-  Lpfile.emit (Parser.sections Lexer.token lexbuf)
+let of_string = Parse.from_string
 
-let read file =
-  let ch = open_in file in
-  try
-    let lexbuf = Lexing.from_channel ch in
-    let problem = Lpfile.emit (Parser.sections Lexer.token lexbuf) in
-    close_in ch ; problem
-  with e -> close_in_noerr ch ; raise e
+let read = Parse.from_file
 
 let write ?(short = false) file problem =
   let ch = open_out file in

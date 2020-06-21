@@ -1,9 +1,10 @@
 (menhir
- (modules parser))
+ (modules parser)
+ (flags --log-automaton 2 --table))
 
 (ocamllex lexer)
 
 (library
  (name lp)
  (public_name lp)
- (libraries str))
+ (libraries str menhirLib))
