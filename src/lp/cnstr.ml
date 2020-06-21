@@ -1,41 +1,33 @@
 type t =
-  | Eq of string option * Poly.t * Poly.t
-  | Ineq of string option * Poly.t * Poly.t
+  | Eq of string option * Poly.t * float
+  | Ineq of string option * Poly.t * float
 
 let to_string ?(short = false) c =
-  let p_string = Poly.to_string ~short in
+  let slist lhs rhs =
+    [Poly.to_string ~short lhs; Poly.to_string ~short @@ Poly.c rhs]
+  in
   match c with
   | Eq (Some name, lhs, rhs) ->
-      name ^ ": " ^ String.concat " = " [p_string lhs; p_string rhs]
+      name ^ ": " ^ String.concat " = " @@ slist lhs rhs
   | Eq (None, lhs, rhs) ->
-      String.concat " = " [p_string lhs; p_string rhs]
+      String.concat " = " @@ slist lhs rhs
   | Ineq (Some name, lhs, rhs) ->
-      name ^ ": " ^ String.concat " <= " [p_string lhs; p_string rhs]
+      name ^ ": " ^ String.concat " <= " @@ slist lhs rhs
   | Ineq (None, lhs, rhs) ->
-      String.concat " <= " [p_string lhs; p_string rhs]
+      String.concat " <= " @@ slist lhs rhs
 
 let simplify_sides ?(eps = 10. *. epsilon_float) lhs rhs =
   let vl, cl = Poly.partition lhs in
   let vr, cr = Poly.partition rhs in
   let newl = Poly.(vl -- vr) in
   let newr = Poly.(cr -- cl) in
-  (Poly.simplify ~eps newl, Poly.simplify ~eps newr)
-
-let simplify ?(eps = 10. *. epsilon_float) = function
-  | Eq (name, lhs, rhs) ->
-      let l, r = simplify_sides ~eps lhs rhs in
-      Eq (name, l, r)
-  | Ineq (name, lhs, rhs) ->
-      let l, r = simplify_sides ~eps lhs rhs in
-      Ineq (name, l, r)
+  (Poly.simplify ~eps newl, Poly.to_float @@ Poly.simplify ~eps newr)
 
 let take_vars = function
-  | Eq (_, lhs, rhs) | Ineq (_, lhs, rhs) ->
-      Poly.take_vars lhs @ Poly.take_vars rhs
+  | Eq (_, lhs, _) | Ineq (_, lhs, _) ->
+      Poly.take_vars lhs
 
-let degree = function
-  | Eq (_, lhs, rhs) | Ineq (_, lhs, rhs) ->
-      max (Poly.degree lhs) (Poly.degree rhs)
+let degree = function Eq (_, lhs, _) | Ineq (_, lhs, _) -> Poly.degree lhs
 
 let constant c =
   if degree c > 0 then false
@@ -74,7 +66,7 @@ let lhs = function Eq (_, l, _) | Ineq (_, l, _) -> l
 
 let rhs = function Eq (_, _, r) | Ineq (_, _, r) -> r
 
-let sides = function Eq (_, l, r) | Ineq (_, l, r) -> (l, Poly.to_float r)
+let sides = function Eq (_, l, r) | Ineq (_, l, r) -> (l, r)
 
 let name = function
   | Eq (Some name, _, _) | Ineq (Some name, _, _) ->
@@ -87,29 +79,23 @@ let is_eq = function Eq _ -> true | Ineq _ -> false
 let trans_bound name lb ub = function
   | Eq (n, l, r) ->
       let newl = Poly.trans_bound name lb ub l in
-      let newr = Poly.trans_bound name lb ub r in
-      Eq (n, newl, newr)
+      Eq (n, newl, r)
   | Ineq (n, l, r) ->
       let newl = Poly.trans_bound name lb ub l in
-      let newr = Poly.trans_bound name lb ub r in
-      Ineq (n, newl, newr)
+      Ineq (n, newl, r)
 
 let to_integer name = function
   | Eq (n, l, r) ->
       let newl = Poly.to_integer name l in
-      let newr = Poly.to_integer name r in
-      Eq (n, newl, newr)
+      Eq (n, newl, r)
   | Ineq (n, l, r) ->
       let newl = Poly.to_integer name l in
-      let newr = Poly.to_integer name r in
-      Ineq (n, newl, newr)
+      Ineq (n, newl, r)
 
 let to_binary name = function
   | Eq (n, l, r) ->
       let newl = Poly.to_binary name l in
-      let newr = Poly.to_binary name r in
-      Eq (n, newl, newr)
+      Eq (n, newl, r)
   | Ineq (n, l, r) ->
       let newl = Poly.to_binary name l in
-      let newr = Poly.to_binary name r in
-      Ineq (n, newl, newr)
+      Ineq (n, newl, r)

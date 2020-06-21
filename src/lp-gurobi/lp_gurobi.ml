@@ -55,7 +55,6 @@ module Constr = struct
 
   let of_cnstr vars cnstr =
     let dec = Poly.decompose (Cnstr.lhs cnstr) in
-    let rhs = Poly.to_float (Cnstr.rhs cnstr) in
     let open Poly in
     { linds= idx vars dec.lvs
     ; lvals= dec.lcs
@@ -63,7 +62,7 @@ module Constr = struct
     ; qcols= idx vars dec.qv1s
     ; qvals= dec.qcs
     ; sense= to_sense cnstr
-    ; rhs
+    ; rhs= Cnstr.rhs cnstr
     ; cname= Cnstr.name cnstr }
 end
 

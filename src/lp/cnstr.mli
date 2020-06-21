@@ -2,9 +2,7 @@ type t
 
 val to_string : ?short:bool -> t -> string
 
-val simplify : ?eps:float -> t -> t
-
-val take_vars : t -> Lp__.Var.t list
+val take_vars : t -> Var.t list
 
 val degree : t -> int
 
@@ -24,7 +22,7 @@ val ( >~ ) : Poly.t -> Poly.t -> t
 
 val lhs : t -> Poly.t
 
-val rhs : t -> Poly.t
+val rhs : t -> float
 
 val sides : t -> Poly.t * float
 
