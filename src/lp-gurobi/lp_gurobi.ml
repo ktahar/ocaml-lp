@@ -92,8 +92,7 @@ let add_constraints env model vars =
             cr.sense cr.rhs cr.cname)
 
 let solve ?(write_fname = "") problem =
-  let obj = fst problem in
-  let cnstrs = snd problem in
+  let obj, cnstrs = problem in
   let dobj = Poly.decompose (Objective.to_poly obj) in
   let vars = Problem.uniq_vars problem in
   let vattr = Var_attrs.make obj vars in

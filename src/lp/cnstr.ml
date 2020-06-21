@@ -15,19 +15,19 @@ let to_string ?(short = false) c =
       String.concat " <= " [p_string lhs; p_string rhs]
 
 let simplify_sides ?(eps = 10. *. epsilon_float) lhs rhs =
-  let l = Poly.partition lhs in
-  let r = Poly.partition rhs in
-  let newl = Poly.(fst l -- fst r) in
-  let newr = Poly.(snd r -- snd l) in
+  let vl, cl = Poly.partition lhs in
+  let vr, cr = Poly.partition rhs in
+  let newl = Poly.(vl -- vr) in
+  let newr = Poly.(cr -- cl) in
   (Poly.simplify ~eps newl, Poly.simplify ~eps newr)
 
 let simplify ?(eps = 10. *. epsilon_float) = function
   | Eq (name, lhs, rhs) ->
-      let s = simplify_sides ~eps lhs rhs in
-      Eq (name, fst s, snd s)
+      let l, r = simplify_sides ~eps lhs rhs in
+      Eq (name, l, r)
   | Ineq (name, lhs, rhs) ->
-      let s = simplify_sides ~eps lhs rhs in
-      Ineq (name, fst s, snd s)
+      let l, r = simplify_sides ~eps lhs rhs in
+      Ineq (name, l, r)
 
 let take_vars = function
   | Eq (_, lhs, rhs) | Ineq (_, lhs, rhs) ->
@@ -48,18 +48,18 @@ let constant c =
     true )
 
 let eq ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
-  let s = simplify_sides ~eps lhs rhs in
+  let l, r = simplify_sides ~eps lhs rhs in
   if String.length name > 0 then
-    if Var.validate_name name then Eq (Some name, fst s, snd s)
+    if Var.validate_name name then Eq (Some name, l, r)
     else failwith ("Invalid name for constraint: " ^ name)
-  else Eq (None, fst s, snd s)
+  else Eq (None, l, r)
 
 let lt ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
-  let s = simplify_sides ~eps lhs rhs in
+  let l, r = simplify_sides ~eps lhs rhs in
   if String.length name > 0 then
-    if Var.validate_name name then Ineq (Some name, fst s, snd s)
+    if Var.validate_name name then Ineq (Some name, l, r)
     else failwith ("Invalid name for constraint: " ^ name)
-  else Ineq (None, fst s, snd s)
+  else Ineq (None, l, r)
 
 let gt ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
   lt ~eps ~name rhs lhs

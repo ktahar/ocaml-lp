@@ -74,14 +74,13 @@ module Simplex = struct
             failwith "set_cols: integer variable found")
 
   let solve_main p =
-    let obj = fst p in
-    let cnstrs = snd p in
+    let obj, cnstrs = p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
     let ncols = List.length vars in
     let prob = create_prob () in
-    let _ = add_rows prob nrows in
-    let _ = add_cols prob ncols in
+    ignore @@ add_rows prob nrows ;
+    ignore @@ add_cols prob ncols ;
     let smcp = C.make Smcp.t in
     try
       init_smcp (C.addr smcp) ;
@@ -137,14 +136,13 @@ module Milp = struct
             set_col_kind prob cj Vt.BV)
 
   let solve_main p =
-    let obj = fst p in
-    let cnstrs = snd p in
+    let obj, cnstrs = p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
     let ncols = List.length vars in
     let prob = create_prob () in
-    let _ = add_rows prob nrows in
-    let _ = add_cols prob ncols in
+    ignore @@ add_rows prob nrows ;
+    ignore @@ add_cols prob ncols ;
     let smcp = C.make Smcp.t in
     let iocp = C.make Iocp.t in
     try

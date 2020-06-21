@@ -4,7 +4,9 @@ let fail lexbuf (_ : Lpfile.section list I.checkpoint) =
   let invalid_char = Lexing.lexeme_char lexbuf 0 in
   let pos = lexbuf.lex_start_p in
   Printf.fprintf stderr "line %d column %d: syntax error near '%c'.\n%!"
-    pos.pos_lnum (pos.pos_cnum - pos.pos_bol) invalid_char ;
+    pos.pos_lnum
+    (pos.pos_cnum - pos.pos_bol)
+    invalid_char ;
   None
 
 let loop lexbuf result =
@@ -16,7 +18,9 @@ let process lexbuf =
   try loop lexbuf (Parser.Incremental.sections lexbuf.lex_curr_p)
   with Lexer.Error (c, pos) ->
     Printf.fprintf stderr "line %d column %d: invalid symbol '%c'.\n%!"
-      pos.pos_lnum (pos.pos_cnum - pos.pos_bol) c ;
+      pos.pos_lnum
+      (pos.pos_cnum - pos.pos_bol)
+      c ;
     None
 
 let emit lexbuf =
