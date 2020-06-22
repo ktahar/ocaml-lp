@@ -1,23 +1,23 @@
 module To_test = struct
   let solve_lp0 () =
     let p = Lp.read "lp0.lp" in
-    match Lp_gurobi.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_gurobi.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 
   let solve_milp0 () =
     let p = Lp.read "milp0.lp" in
-    match Lp_gurobi.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_gurobi.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 
   let solve_qp0 () =
     let p = Lp.read "qp0.lp" in
-    match Lp_gurobi.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_gurobi.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 
   let solve_iqp0 () =
     let p = Lp.read "iqp0.lp" in
-    match Lp_gurobi.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_gurobi.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 
   let solve_qcp0 () =
     let p = Lp.read "qcp0.lp" in
-    match Lp_gurobi.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_gurobi.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 end
 
 let solve_lp0 () =

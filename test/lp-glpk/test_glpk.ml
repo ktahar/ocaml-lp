@@ -1,11 +1,11 @@
 module To_test = struct
   let simplex_lp0 () =
     let p = Lp.read "lp0.lp" in
-    match Lp_glpk.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_glpk.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 
   let mip_milp0 () =
     let p = Lp.read "milp0.lp" in
-    match Lp_glpk.solve p with Ok (ov, _) -> ov | Error _ -> 0.0
+    match Lp_glpk.solve p with Ok (obj, _) -> obj | Error _ -> 0.0
 end
 
 let simplex_lp0 () =

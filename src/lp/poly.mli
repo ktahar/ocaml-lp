@@ -145,6 +145,9 @@ val one : t
 val sort : t -> t
 (** Sort terms in the polynomial. *)
 
+val compare : t -> t -> int
+(** Compare the polynomial. *)
+
 val to_string : ?short:bool -> t -> string
 (** Get string expression of the polynomial. *)
 

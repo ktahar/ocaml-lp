@@ -3,6 +3,13 @@
 module C = Ctypes
 open Lp_glp
 open Lp
+module PMap = Map.Make (Poly)
+
+let make_pmap vars f =
+  List.fold_left
+    (fun m (k, v) -> PMap.add k v m)
+    PMap.empty
+    (List.mapi (fun i v -> (Poly.of_var v, f i)) vars)
 
 (* NOTE on array indexing
  * glpk's API treats Carray as 1-origin! Conventions in C are:
@@ -88,14 +95,10 @@ module Simplex = struct
       else
         match get_status prob with
         | Stat.OPT ->
-            let oval = get_obj_val prob in
-            let tbl = Hashtbl.create ncols in
-            List.iteri
-              (fun j v ->
-                Hashtbl.add tbl (Poly.of_var v) (get_col_prim prob (1 + j)))
-              vars ;
+            let obj = get_obj_val prob in
+            let xs = make_pmap vars (fun i -> get_col_prim prob (i + 1)) in
             delete_prob prob ;
-            Ok (oval, tbl)
+            Ok (obj, xs)
         | status ->
             failwith ("Problem is " ^ Stat.to_string status)
     with Failure msg -> delete_prob prob ; Error msg
@@ -158,14 +161,10 @@ module Milp = struct
             else
               match mip_status prob with
               | Stat.OPT ->
-                  let oval = mip_obj_val prob in
-                  let tbl = Hashtbl.create ncols in
-                  List.iteri
-                    (fun j v ->
-                      Hashtbl.add tbl (Poly.of_var v) (mip_col_val prob (1 + j)))
-                    vars ;
+                  let obj = mip_obj_val prob in
+                  let xs = make_pmap vars (fun i -> mip_col_val prob (i + 1)) in
                   delete_prob prob ;
-                  Ok (oval, tbl)
+                  Ok (obj, xs)
               | status ->
                   failwith ("MILP is " ^ Stat.to_string status) )
         | status ->

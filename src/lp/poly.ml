@@ -89,6 +89,18 @@ let one = [Term.one]
 
 let sort p = List.sort Term.compare (List.map Term.sort p)
 
+let rec compare p0 p1 =
+  match (p0, p1) with
+  | [], [] ->
+      0
+  | _, [] ->
+      1
+  | [], _ ->
+      -1
+  | t0 :: rest0, t1 :: rest1 ->
+      let c = Term.compare t0 t1 in
+      if c <> 0 then c else compare rest0 rest1
+
 let partition poly =
   List.partition
     (fun t -> match t with Term.Const _ -> false | _ -> true)

@@ -3,6 +3,14 @@
 module C = Ctypes
 open Lp
 open Lp_grb
+module PMap = Map.Make (Poly)
+
+let make_pmap vars xs =
+  List.fold_left2
+    (fun m k v -> PMap.add k v m)
+    PMap.empty
+    (List.map Poly.of_var vars)
+    xs
 
 module Var_attrs = struct
   type t =
@@ -108,15 +116,11 @@ let solve ?(write_fname = "") problem =
       optimize env model ;
       match get_status env model with
       | OPTIMAL ->
-          let oval = get_obj_val env model in
-          let len = List.length vars in
-          let tbl = Hashtbl.create len in
-          List.iter2
-            (fun var value -> Hashtbl.add tbl (Poly.of_var var) value)
-            vars (get_obj_x env model len) ;
+          let obj = get_obj_val env model in
+          let xs = make_pmap vars (get_obj_x env model @@ List.length vars) in
           free_model env model ;
           free_env env ;
-          Ok (oval, tbl)
+          Ok (obj, xs)
       | stat ->
           failwith ("Problem is " ^ Stat.to_string stat)
     with e -> free_model env model ; raise e
