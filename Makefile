@@ -1,4 +1,4 @@
-.PHONY: default test fmt doc
+.PHONY: default test fmt doc clean
 
 default:
 	dune build
@@ -10,6 +10,9 @@ fmt:
 	dune build @fmt
 
 doc:
-	rm -r docs
 	dune build @doc
+	rm -r docs
 	cp -r _build/default/_doc/_html docs
+
+clean:
+	dune clean
