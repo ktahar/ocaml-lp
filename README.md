@@ -33,12 +33,13 @@ let problem =
 let write () = Lp.write "my_problem.lp" problem
 
 let solve () =
-  (* For Gurobi, use Lp_gurobi.solve instead *)
-  match Lp_glpk.solve problem with
-  | Ok (obj, tbl) ->
+  (* For Gurobi, use Lp_gurobi instead *)
+  let open Lp_glpk in
+  match solve problem with
+  | Ok (obj, xs) ->
       Printf.printf "Objective: %.2f\n" obj ;
       Printf.printf "x: %.2f y: %.2f\n"
-        (Hashtbl.find tbl x) (Hashtbl.find tbl y)
+        (PMap.find x xs) (PMap.find y xs)
   | Error msg ->
       print_endline msg
 
