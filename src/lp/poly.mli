@@ -201,7 +201,7 @@ val expand : t -> t -> t
 (** Multiply two polynomials. Specifically, performs polynomial expansion. *)
 
 val ( *~ ) : t -> t -> t
-(** Multiply two polynomials. Specifically, performs polynomial expansion. *)
+(** Infix equivalent of {!val:expand} *)
 
 val dot : t -> t -> t
 (** Regard two polynomials as {i vectors} and take dot product.
@@ -209,9 +209,7 @@ val dot : t -> t -> t
 *)
 
 val ( *@ ) : t -> t -> t
-(** Regard two polynomials as {i vectors} and take dot product.
-    Raise Failure if the lengths of two polynomials are different.
-*)
+(** Infix equivalent of {!val:dot} *)
 
 val equiv : ?eps:float -> t -> t -> bool
 (** Check if two polynomials are equivalent *)

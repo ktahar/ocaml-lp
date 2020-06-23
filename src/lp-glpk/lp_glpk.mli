@@ -11,6 +11,6 @@ module Milp : sig
 end
 
 val solve : Lp.Problem.t -> (float * float PMap.t, string) result
-(** solve the problem using GLPK.
+(** Solve the problem using GLPK.
    GLPK can solve only linear problems (LP or MILP).
 *)

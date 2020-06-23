@@ -1,17 +1,5 @@
 module Pclass = struct
-  type t =
-    (* Linear *)
-    | LP
-    (* Quadratic *)
-    | QP
-    (* Quadratically Constrained; aka QCQP *)
-    | QCP
-    (* Mixed Integer Linear *)
-    | MILP
-    (* Mixed Integer Quadratic *)
-    | MIQP
-    (* Mixed Integer Quadratically Constrained *)
-    | MIQCP
+  type t = LP | QP | QCP | MILP | MIQP | MIQCP
 
   let to_string = function
     | LP ->

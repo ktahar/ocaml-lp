@@ -2,7 +2,14 @@
 
 (** Module for the optimization problem class. *)
 module Pclass : sig
-  (** Optimization problem classes. *)
+  (** Optimization problem classes.
+    - LP: Linear
+    - QP: Quadratic
+    - QCP: Quadratically Constrained; aka QCQP
+    - MILP: Mixed Integer Linear
+    - MIQP: Mixed Integer Quadratic
+    - MIQCP: Mixed Integer Quadratically Constrained
+  *)
   type t = LP | QP | QCP | MILP | MIQP | MIQCP
 
   val to_string : t -> string

@@ -136,7 +136,7 @@ val expand : Poly.t -> Poly.t -> Poly.t
 (** Multiply two polynomials. Specifically, performs polynomial expansion. *)
 
 val ( *~ ) : Poly.t -> Poly.t -> Poly.t
-(** Multiply two polynomials. Specifically, performs polynomial expansion. *)
+(** Infix equivalent of {!val:expand} *)
 
 val dot : Poly.t -> Poly.t -> Poly.t
 (** Regard two polynomials as {i vectors} and take dot product.
@@ -144,9 +144,7 @@ val dot : Poly.t -> Poly.t -> Poly.t
 *)
 
 val ( *@ ) : Poly.t -> Poly.t -> Poly.t
-(** Regard two polynomials as {i vectors} and take dot product.
-    Raise Failure if the lengths of two polynomials are different.
-*)
+(** Infix equivalent of {!val:dot} *)
 
 val div : Poly.t -> Poly.t -> Poly.t
 (** Divide polynomial by a {b univariate} polynomial.
