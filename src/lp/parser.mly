@@ -4,6 +4,9 @@ let rev_poly tl = Poly.of_term_list (List.rev tl)
 let rev_neg_head_poly tl = match List.rev tl with
     | hd :: rest -> Poly.of_term_list (Term.neg hd :: rest)
     | _-> failwith "empty polynomial expression"
+
+(* avoid dropping non-zero terms by simplification *)
+let eps = min_float
 %}
 
 %token <float> NUM
@@ -22,19 +25,19 @@ sections :
 
 
 objective: (* objective section cannot be empty *)
-  | MIN p = poly { [Sobj (Objective.minimize (Poly.half_quad p))] }
-  | MAX p = poly { [Sobj (Objective.maximize (Poly.half_quad p))] }
+  | MIN p = poly { [Sobj (Objective.minimize ~eps (Poly.half_quad p))] }
+  | MAX p = poly { [Sobj (Objective.maximize ~eps (Poly.half_quad p))] }
 
 cnstrs: (* constraints section cannot be empty *)
   ST l = nonempty_list(cnstr) { [Scnstr l] }
 
 cnstr:
-  | l = ID COLON p = poly EQ rhs = const { Cnstr.eq ~name:l p rhs }
-  | l = ID COLON p = poly LT rhs = const { Cnstr.lt ~name:l p rhs }
-  | l = ID COLON p = poly GT rhs = const { Cnstr.gt ~name:l p rhs }
-  | p = poly EQ rhs = const { Cnstr.eq p rhs }
-  | p = poly LT rhs = const { Cnstr.lt p rhs }
-  | p = poly GT rhs = const { Cnstr.gt p rhs }
+  | l = ID COLON p = poly EQ rhs = const { Cnstr.eq ~eps ~name:l p rhs }
+  | l = ID COLON p = poly LT rhs = const { Cnstr.lt ~eps ~name:l p rhs }
+  | l = ID COLON p = poly GT rhs = const { Cnstr.gt ~eps ~name:l p rhs }
+  | p = poly EQ rhs = const { Cnstr.eq ~eps p rhs }
+  | p = poly LT rhs = const { Cnstr.lt ~eps p rhs }
+  | p = poly GT rhs = const { Cnstr.gt ~eps p rhs }
 
 const :
   n = signed { Poly.c n }
