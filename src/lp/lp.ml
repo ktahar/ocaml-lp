@@ -6,6 +6,7 @@ module Cnstr = Cnstr
 module Objective = Objective
 module Problem = Problem
 module Pclass = Problem.Pclass
+module PMap = Map.Make (Poly)
 
 (* export polynomial builders and operators *)
 let c = Poly.c

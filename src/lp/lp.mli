@@ -10,6 +10,9 @@ module Problem = Problem
 (** Module for the optimization problem class. *)
 module Pclass = Problem.Pclass
 
+(** Map with Poly.t key. It can be used to pack optimization result. *)
+module PMap : Map.S with type key = Poly.t
+
 (* polynomial builders and operators *)
 
 val c : float -> Poly.t

@@ -3,12 +3,11 @@
 module C = Ctypes
 open Lp_glp
 open Lp
-module PMap = Map.Make (Poly)
 
 let make_pmap vars f =
   List.fold_left
-    (fun m (k, v) -> PMap.add k v m)
-    PMap.empty
+    (fun m (k, v) -> Lp.PMap.add k v m)
+    Lp.PMap.empty
     (List.mapi (fun i v -> (Poly.of_var v, f i)) vars)
 
 (* NOTE on array indexing
