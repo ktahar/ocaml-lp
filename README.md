@@ -34,12 +34,11 @@ let write () = Lp.write "my_problem.lp" problem
 
 let solve () =
   (* For Gurobi, use Lp_gurobi instead *)
-  let open Lp_glpk in
-  match solve problem with
+  match Lp_glpk.solve problem with
   | Ok (obj, xs) ->
       Printf.printf "Objective: %.2f\n" obj ;
       Printf.printf "x: %.2f y: %.2f\n"
-        (PMap.find x xs) (PMap.find y xs)
+        (Lp.PMap.find x xs) (Lp.PMap.find y xs)
   | Error msg ->
       print_endline msg
 
