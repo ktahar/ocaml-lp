@@ -17,7 +17,24 @@ module Pclass : sig
 end
 
 (** Type for an optimization problem (model). *)
-type t = Objective.t * Cnstr.t list
+type t
+
+val make : ?name:string -> Objective.t -> Cnstr.t list -> t
+(** Make problem from an {!type:Objective.t} and a constraint ({!type:Cnstr.t}) list.
+    String [name] can be given optionally.
+*)
+
+val name : t -> string option
+(** Get name of the problem. *)
+
+val objective : t -> Objective.t
+(** Take {!type:Objective.t} of the problem. *)
+
+val cnstrs : t -> Cnstr.t list
+(** Take constraint ({!type:Cnstr.t}) list of the problem. *)
+
+val obj_cnstrs : t -> Objective.t * Cnstr.t list
+(** Get problem content as a pair of {!type:Objective.t} and constraint ({!type:Cnstr.t}) list. *)
 
 val take_vars : t -> Var.t list
 (** Make list of the variables in the problem. *)

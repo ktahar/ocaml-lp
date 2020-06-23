@@ -1,4 +1,4 @@
-(** High-level interface to Gurobi *)
+(** High-level interface to Gurobi. *)
 
 val solve :
      ?write_fname:string

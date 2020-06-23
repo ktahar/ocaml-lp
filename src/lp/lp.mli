@@ -200,10 +200,15 @@ val minimize : ?eps:float -> Poly.t -> Objective.t
     [eps] specifies the threshold of near-zero, defaulting to 10. *. epsilon_float.
 *)
 
+val make : ?name:string -> Objective.t -> Cnstr.t list -> Problem.t
+(** Make problem from an {!type:Objective.t} and a constraint ({!type:Cnstr.t}) list.
+    String [name] can be given optionally.
+*)
+
 (* model validation and manipulation *)
 
 val validate : Problem.t -> bool
-(** Validate the problem. [true] (false) means the problem is valid (invalid). *)
+(** Validate the problem. [true] ([false]) means the problem is valid (invalid). *)
 
 val classify : Problem.t -> Pclass.t
 (** Classify the problem into {!type:Pclass.t}. *)

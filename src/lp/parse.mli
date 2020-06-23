@@ -1,7 +1,7 @@
 val process : Lexing.lexbuf -> Lpfile.t option
 
-val emit : Lexing.lexbuf -> Objective.t * Cnstr.t list
+val emit : Lexing.lexbuf -> Problem.t
 
-val from_string : string -> Objective.t * Cnstr.t list
+val from_string : string -> Problem.t
 
-val from_file : string -> Objective.t * Cnstr.t list
+val from_file : string -> Problem.t

@@ -96,15 +96,15 @@ let add_constraints env model vars =
             cr.sense cr.rhs cr.cname)
 
 let solve ?(write_fname = "") problem =
-  let obj, cnstrs = problem in
+  let obj, cnstrs = Problem.obj_cnstrs problem in
   let dobj = Poly.decompose (Objective.to_poly obj) in
   let vars = Problem.uniq_vars problem in
   let vattr = Var_attrs.make obj vars in
   let env = empty_env () in
   try
+    let name = Option.value ~default:"model" (Problem.name problem) in
     let model =
-      new_model env "model" vattr.objs vattr.lbs vattr.ubs vattr.types
-        vattr.names
+      new_model env name vattr.objs vattr.lbs vattr.ubs vattr.types vattr.names
     in
     try
       set_dir env model obj ;

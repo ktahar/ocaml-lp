@@ -45,6 +45,7 @@ let rec trans_attrs problem = function
 
 let emit = function
   | Sobj obj :: Scnstr cnstrs :: attrs ->
-      trans_attrs (obj, cnstrs) attrs
+      let newobj, newcnstrs = trans_attrs (obj, cnstrs) attrs in
+      Problem.make newobj newcnstrs
   | _ ->
       failwith "LP file is ill-formed (no objective or constraint section ?)"

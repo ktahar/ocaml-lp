@@ -59,7 +59,7 @@ let div = Poly.div
 
 let ( /~ ) = Poly.( /~ )
 
-(* export constraint builders *)
+(* export constraint, objective, and problem builders *)
 let eq = Cnstr.eq
 
 let ( =~ ) = Cnstr.( =~ )
@@ -72,10 +72,11 @@ let gt = Cnstr.gt
 
 let ( >~ ) = Cnstr.( >~ )
 
-(* export objective builders *)
 let maximize = Objective.maximize
 
 let minimize = Objective.minimize
+
+let make = Problem.make
 
 (* model validation and classification *)
 let validate = Problem.validate

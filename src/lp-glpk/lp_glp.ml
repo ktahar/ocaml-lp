@@ -1,4 +1,4 @@
-(* Raw ctypes binding to glpk *)
+(** Raw ctypes binding to GLPK *)
 
 open Ctypes
 open Foreign
@@ -410,23 +410,24 @@ let set_col_name =
 let get_col_name = foreign "glp_get_col_name" (prob @-> int @-> returning string)
 
 (** set_row_bnds [prob] [i] [bnd] [lb] [ub] sets bounds of i-th row (constraint).
- * If the row is not lower (upper) bounded, lb (ub) is just ignored.
- * If the row is equality constraint (Bnd.FX),
- * only [lb] is used and [ub] is ignored. *)
+    If the row is not lower (upper) bounded, lb (ub) is just ignored.
+    If the row is equality constraint (Bnd.FX),
+    only [lb] is used and [ub] is ignored.
+*)
 let set_row_bnds =
   foreign "glp_set_row_bnds"
     (prob @-> int @-> Bnd.t @-> double @-> double @-> returning void)
 
 (** set_col_bnds [prob] [j] [bnd] [lb] [ub] sets bounds of j-th col (variable).
- * If the col is not lower (upper) bounded, lb (ub) is just ignored.
- * If the col is equality constraint (Bnd.FX),
- * only [lb] is used and [ub] is ignored. *)
+    If the col is not lower (upper) bounded, lb (ub) is just ignored.
+    If the col is equality constraint (Bnd.FX),
+    only [lb] is used and [ub] is ignored.
+*)
 let set_col_bnds =
   foreign "glp_set_col_bnds"
     (prob @-> int @-> Bnd.t @-> double @-> double @-> returning void)
 
-(** set_obj_coef [prob] [j] sets the objective coefficient
- * at j-th col (variable) *)
+(** set_obj_coef [prob] [j] sets the objective coefficient at j-th col (variable) *)
 let set_obj_coef =
   foreign "glp_set_obj_coef" (prob @-> int @-> double @-> returning void)
 
@@ -441,8 +442,9 @@ let set_mat_col =
     (prob @-> int @-> int @-> ptr void @-> ptr void @-> returning void)
 
 (** load_matrix [prob] [ne] [ia] [ja] [ar] sets the constraint matrix.
- * The matrix is represented as an sparce matrix.
- * for k=1 .. [ne], value [ar][k] is set at ([ia][k], [ja][k]) element. *)
+    The matrix is represented as an sparce matrix.
+    for k=1 .. [ne], value [ar][k] is set at ([ia][k], [ja][k]) element.
+*)
 let load_matrix =
   foreign "glp_load_matrix"
     (prob @-> int @-> ptr void @-> ptr void @-> ptr void @-> returning void)

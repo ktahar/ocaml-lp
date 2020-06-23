@@ -1,13 +1,13 @@
-.PHONY: default test fmt doc clean
+.PHONY: build test fmt doc clean
 
-default:
+build:
 	dune build
 
 test:
 	dune runtest
 
 fmt:
-	dune build @fmt
+	dune build @fmt --auto-promote
 
 doc:
 	dune build @doc

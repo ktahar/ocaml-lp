@@ -64,8 +64,6 @@ module Vars = struct
 end
 
 module Cnstrs = struct
-  type t = Cnstr.t list
-
   let to_string ?(short = false) cnstrs =
     let c_string = Cnstr.to_string ~short in
     let body =
@@ -80,10 +78,23 @@ module Cnstrs = struct
   let degree cs = cs |> List.map Cnstr.degree |> List.fold_left max 0
 end
 
-type t = Objective.t * Cnstrs.t
+type t = {name: string option; obj: Objective.t; cnstrs: Cnstr.t list}
+
+let make ?(name = "") obj cnstrs =
+  if 0 = String.length name then {name= None; obj; cnstrs}
+  else {name= Some name; obj; cnstrs}
+
+let name p = p.name
+
+let objective p = p.obj
+
+let cnstrs p = p.cnstrs
+
+let obj_cnstrs p = (p.obj, p.cnstrs)
 
 let take_vars p =
-  Objective.take_vars (fst p) @ List.concat (List.map Cnstr.take_vars (snd p))
+  Objective.take_vars (objective p)
+  @ List.concat (List.map Cnstr.take_vars (cnstrs p))
 
 let uniq_vars p =
   let vars = take_vars p in
@@ -105,8 +116,8 @@ let collision p =
 let vname_list p = List.map Var.to_string (uniq_vars p)
 
 let classify p =
-  let odeg = Objective.degree (fst p) in
-  let cdeg = Cnstrs.degree (snd p) in
+  let odeg = Objective.degree (objective p) in
+  let cdeg = Cnstrs.degree (cnstrs p) in
   if Vars.has_integer (uniq_vars p) then
     if cdeg = 2 then Pclass.MIQCP
     else if odeg = 2 then Pclass.MIQP
@@ -115,16 +126,17 @@ let classify p =
   else if odeg = 2 then Pclass.QP
   else Pclass.LP
 
-let validate p = not (collision p || Cnstrs.has_constant (snd p))
+let validate p = not (collision p || Cnstrs.has_constant (cnstrs p))
 
 let to_string ?(short = false) p =
-  let obj = Objective.to_string ~short (fst p) in
-  let cnstrs = Cnstrs.to_string ~short (snd p) in
+  let obj = Objective.to_string ~short (objective p) in
+  let cnstrs = Cnstrs.to_string ~short (cnstrs p) in
   let vars = uniq_vars p in
   let bound = Vars.to_bound_string ~short vars in
   let vtype = Vars.to_vtype_string vars in
   String.concat "\n"
-    ( [obj; cnstrs]
+    ( (match name p with None -> [] | Some n -> ["\\ " ^ n])
+    @ [obj; cnstrs]
     @ (match bound with None -> [] | Some b -> [b])
     @ (match vtype with None -> [] | Some v -> [v])
     @ ["end"] )

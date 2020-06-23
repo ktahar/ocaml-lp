@@ -6,7 +6,7 @@ let lp0 =
   let c1 = lt ~name:"c1" ((c 2.0 *~ x) ++ y) (c 1.2) in
   let obj = maximize (x ++ y) in
   let cnstrs = [c0; c1] in
-  (obj, cnstrs)
+  make obj cnstrs
 
 let lp0s =
   {|maximize
@@ -35,7 +35,7 @@ let bad0 =
   let c1 = (c 2.0 *~ x) ++ y <~ c 1.2 in
   let obj = minimize (x ++ y) in
   let cnstrs = [c0; c1] in
-  (obj, cnstrs)
+  make obj cnstrs
 
 let bad1 =
   (* invalid model with constant constraint *)
@@ -46,7 +46,7 @@ let bad1 =
   let c1 = c 2.0 <~ c 3.0 in
   let obj = minimize (x ++ y) in
   let cnstrs = [c0; c1] in
-  (obj, cnstrs)
+  make obj cnstrs
 
 let miqcp0s =
   {|maximize
@@ -74,7 +74,7 @@ let miqcp0 =
   let c1 = (c 2.0 *~ x) ++ (b *~ y) -- (x *~ z) <~ c 2.0 in
   let obj = maximize (x ++ y ++ z ++ (c 1.5 *~ w *~ b)) in
   let cnstrs = [c0; c1] in
-  (obj, cnstrs)
+  make obj cnstrs
 
 module To_test = struct
   let validate_lp0 () = Lp.validate lp0

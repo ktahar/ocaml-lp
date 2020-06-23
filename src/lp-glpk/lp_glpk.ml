@@ -74,7 +74,7 @@ module Simplex = struct
             failwith "set_cols: integer variable found")
 
   let solve_main p =
-    let obj, cnstrs = p in
+    let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
     let ncols = List.length vars in
@@ -132,7 +132,7 @@ module Milp = struct
             set_col_kind prob cj Vt.BV)
 
   let solve_main p =
-    let obj, cnstrs = p in
+    let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
     let ncols = List.length vars in

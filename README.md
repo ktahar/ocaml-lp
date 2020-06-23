@@ -27,8 +27,7 @@ let problem =
   let obj = maximize (x ++ y) in
   let c0 = x ++ (c 1.2 *~ y) <~ c 5.0 in
   let c1 = (c 2.0 *~ x) ++ y <~ c 1.2 in
-  let cnstrs = [c0; c1] in
-  (obj, cnstrs)
+  make obj [c0; c1]
 
 let write () = Lp.write "my_problem.lp" problem
 
@@ -86,7 +85,6 @@ Some references to LP file format.
 
 - [CPLEX](https://www.ibm.com/support/knowledgecenter/SSSA5P_12.7.1/ilog.odms.cplex.help/CPLEX/FileFormats/topics/LP.html)
 - [Gurobi](https://www.gurobi.com/documentation/9.0/refman/lp_format.html)
-- [lp_solve](http://lpsolve.sourceforge.net/5.5/CPLEX-format.htm)
 - Manual of [GLPK](https://www.gnu.org/software/glpk/)
 
 ## License
