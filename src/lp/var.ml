@@ -103,7 +103,7 @@ let to_bound_string ?(short = false) v =
   | _ ->
       None
 
-let trans_bound lb ub = function
+let with_bound lb ub = function
   | {name; attr= Continuous _} ->
       {name; attr= Continuous (lb, ub)}
   | {name; attr= General _} ->

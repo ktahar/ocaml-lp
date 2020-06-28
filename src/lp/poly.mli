@@ -201,7 +201,7 @@ val expand : t -> t -> t
 (** Multiply two polynomials. Specifically, performs polynomial expansion. *)
 
 val ( *~ ) : t -> t -> t
-(** Infix equivalent of {!val:expand} *)
+(** Infix equivalent of {!val:expand}. *)
 
 val dot : t -> t -> t
 (** Regard two polynomials as {i vectors} and take dot product.
@@ -209,7 +209,7 @@ val dot : t -> t -> t
 *)
 
 val ( *@ ) : t -> t -> t
-(** Infix equivalent of {!val:dot} *)
+(** Infix equivalent of {!val:dot}. *)
 
 val equiv : ?eps:float -> t -> t -> bool
 (** Check if two polynomials are equivalent *)
@@ -229,8 +229,8 @@ val div : t -> t -> t
 val ( /~ ) : t -> t -> t
 (** Infix equivalent of {!val:div}. *)
 
-val trans_bound : string -> float -> float -> t -> t
-(** trans_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
+val with_bound : string -> float -> float -> t -> t
+(** with_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
 
 val to_integer : string -> t -> t
 (** to_integer [name] transforms the variable [name] into general integer variable. *)

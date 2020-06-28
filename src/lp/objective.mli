@@ -24,8 +24,8 @@ val to_poly : t -> Poly.t
 val to_string : ?short:bool -> t -> string
 (** Get string expression (LP file format) of the objective. *)
 
-val trans_bound : string -> float -> float -> t -> t
-(** trans_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
+val with_bound : string -> float -> float -> t -> t
+(** with_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
 
 val to_integer : string -> t -> t
 (** to_integer [name] transforms the variable [name] into general integer variable. *)

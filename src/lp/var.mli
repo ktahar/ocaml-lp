@@ -25,7 +25,7 @@ val to_bound : t -> float * float
 
 val to_bound_string : ?short:bool -> t -> string option
 
-val trans_bound : float -> float -> t -> t
+val with_bound : float -> float -> t -> t
 
 val to_binary : t -> t
 

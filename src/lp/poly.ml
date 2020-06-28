@@ -329,7 +329,7 @@ let div n d =
 
 let ( /~ ) = div
 
-let trans_bound name lb ub p = List.map (Term.trans_bound name lb ub) p
+let with_bound name lb ub p = List.map (Term.with_bound name lb ub) p
 
 let to_binary name p = List.map (Term.to_binary name) p
 

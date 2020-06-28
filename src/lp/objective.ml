@@ -20,11 +20,11 @@ let to_string ?(short = false) o =
   | Min p ->
       "minimize\n " ^ p_string p
 
-let trans_bound name lb ub = function
+let with_bound name lb ub = function
   | Max p ->
-      Max (Poly.trans_bound name lb ub p)
+      Max (Poly.with_bound name lb ub p)
   | Min p ->
-      Min (Poly.trans_bound name lb ub p)
+      Min (Poly.with_bound name lb ub p)
 
 let to_integer name = function
   | Max p ->

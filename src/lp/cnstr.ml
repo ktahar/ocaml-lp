@@ -76,12 +76,12 @@ let name = function
 
 let is_eq = function Eq _ -> true | Ineq _ -> false
 
-let trans_bound name lb ub = function
+let with_bound name lb ub = function
   | Eq (n, l, r) ->
-      let newl = Poly.trans_bound name lb ub l in
+      let newl = Poly.with_bound name lb ub l in
       Eq (n, newl, r)
   | Ineq (n, l, r) ->
-      let newl = Poly.trans_bound name lb ub l in
+      let newl = Poly.with_bound name lb ub l in
       Ineq (n, newl, r)
 
 let to_integer name = function

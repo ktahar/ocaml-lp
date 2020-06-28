@@ -46,7 +46,7 @@ val collision : t -> t -> bool
 
 val compare : t -> t -> int
 
-val trans_bound : string -> float -> float -> t -> t
+val with_bound : string -> float -> float -> t -> t
 
 val to_binary : string -> t -> t
 

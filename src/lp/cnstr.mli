@@ -57,8 +57,8 @@ val name : t -> string
 val is_eq : t -> bool
 (** True (false) if the constraint is of equality (inequality). *)
 
-val trans_bound : string -> float -> float -> t -> t
-(** trans_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
+val with_bound : string -> float -> float -> t -> t
+(** with_bound [name] [lb] [ub] transforms the bounds of the variable [name] with [lb] and [ub]. *)
 
 val to_integer : string -> t -> t
 (** to_integer [name] transforms the variable [name] into general integer variable. *)

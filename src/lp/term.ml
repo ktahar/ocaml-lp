@@ -151,16 +151,16 @@ let compare tl tr =
   | Linear _, Quad _ ->
       -1
 
-let trans_bound name lb ub = function
+let with_bound name lb ub = function
   | Linear (c, v) when v.name = name ->
-      Linear (c, Var.trans_bound lb ub v)
+      Linear (c, Var.with_bound lb ub v)
   | Quad (c, v0, v1) when v0.name = name && v1.name = name ->
-      let newv = Var.trans_bound lb ub v0 in
+      let newv = Var.with_bound lb ub v0 in
       Quad (c, newv, newv)
   | Quad (c, v0, v1) when v0.name = name ->
-      Quad (c, Var.trans_bound lb ub v0, v1)
+      Quad (c, Var.with_bound lb ub v0, v1)
   | Quad (c, v0, v1) when v1.name = name ->
-      Quad (c, v0, Var.trans_bound lb ub v1)
+      Quad (c, v0, Var.with_bound lb ub v1)
   | org ->
       org
 
