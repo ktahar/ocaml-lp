@@ -67,7 +67,7 @@ which are typically available on commercial solvers.
 - Single objective (linear and quadratic)
 - Constraints (linear and quadratic)
 - Bounds
-- Variable types (General Integers and Binary Integers)
+- Variable types (general and binary integers)
 
 ### not-supported
 
