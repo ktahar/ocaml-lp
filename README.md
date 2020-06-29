@@ -48,7 +48,8 @@ let () =
 
 ## Documentation
 
-Odoc-generated documentation can be found [online](https://ktahar.github.io/ocaml-lp/) or in [docs](docs).
+High level APIs have comments for odoc (ocamldoc).
+Generated docs can be found [online](https://ktahar.github.io/ocaml-lp/) or in [docs](docs) directory.
 
 ## Notes on GLPK interface
 

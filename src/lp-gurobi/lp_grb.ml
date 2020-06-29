@@ -1,10 +1,11 @@
-(* Thin ctypes wrapper around Gurobi's C API *)
+(** Thin ctypes wrapper around Gurobi's C API. *)
 
 open Ctypes
 open Foreign
 
 exception Gurobi_error of string
 
+(** Variable type. *)
 module Vt = struct
   type t = CONTINUOUS | BINARY | INTEGER | SEMICONT | SEMIINT
 
@@ -37,7 +38,7 @@ module Vt = struct
   let t = view ~read:of_char ~write:to_char char
 end
 
-(** constraint sense *)
+(** Constraint sense. *)
 module Cs = struct
   type t = LT | GT | EQ
 
@@ -56,6 +57,7 @@ module Cs = struct
   let t = view ~read:of_char ~write:to_char char
 end
 
+(** Status. *)
 module Stat = struct
   type t = LOADED | OPTIMAL | INFEASIBLE | INF_OR_UNBD | UNBOUNDED | OTHER
 
@@ -123,7 +125,7 @@ let empty_env ?(start = true) () =
     (* cannot use get_error_msg because env is not created yet *)
     raise (Gurobi_error ("GRBemptyenv returned " ^ string_of_int ret_code))
 
-(** no error code *)
+(* no error code *)
 let free_env = foreign "GRBfreeenv" (env @-> returning void)
 
 let _new_model =
@@ -212,7 +214,8 @@ let add_constr env model cinds cvals sense rhs cname =
       (_add_constr model numnz (CArray.start ainds) (CArray.start avals) sense
          rhs cname)
 
-(** quadratic obj and constraints *)
+(* quadratic obj and constraints *)
+
 let _add_qpterms =
   foreign "GRBaddqpterms"
     (model @-> int @-> ptr int @-> ptr int @-> ptr double @-> returning int)
