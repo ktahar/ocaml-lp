@@ -1,11 +1,8 @@
-(** Thin ctypes wrapper around Gurobi's C API. *)
-
 open Ctypes
 open Foreign
 
 exception Gurobi_error of string
 
-(** Variable type. *)
 module Vt = struct
   type t = CONTINUOUS | BINARY | INTEGER | SEMICONT | SEMIINT
 
@@ -38,7 +35,6 @@ module Vt = struct
   let t = view ~read:of_char ~write:to_char char
 end
 
-(** Constraint sense. *)
 module Cs = struct
   type t = LT | GT | EQ
 
@@ -57,7 +53,6 @@ module Cs = struct
   let t = view ~read:of_char ~write:to_char char
 end
 
-(** Status. *)
 module Stat = struct
   type t = LOADED | OPTIMAL | INFEASIBLE | INF_OR_UNBD | UNBOUNDED | OTHER
 
@@ -88,16 +83,12 @@ module Stat = struct
         "unbounded"
     | OTHER ->
         "unknown status"
-
-  (* one of the limits is exceded *)
 end
 
-(* *env in C *)
 type env = unit ptr
 
 let env : env typ = ptr void
 
-(* *model in C *)
 type model = unit ptr
 
 let model : model typ = ptr void

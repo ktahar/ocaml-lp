@@ -1,5 +1,3 @@
-(** Raw ctypes binding to GLPK. *)
-
 open Ctypes
 open Foreign
 
@@ -113,8 +111,6 @@ end
 
 (* GLP_ON = 1 and GLP_OFF = 0 *)
 module BoolInt = struct
-  type t = bool
-
   let of_int i = if i = 0 then false else true
 
   let to_int b = if b then 1 else 0
@@ -144,7 +140,6 @@ module Msg = struct
   let t = view ~read:of_int ~write:to_int int
 end
 
-(* simplex method control parameters *)
 module Smcp = struct
   module Meth = struct
     type t = PRIMAL | DUALP | DUAL
@@ -238,13 +233,13 @@ module Smcp = struct
 
   let it_lim = field t "it_lim" int
 
-  let tm_lim = field t "tm_lim" int (* time limit in ms *)
+  let tm_lim = field t "tm_lim" int
 
-  let out_frq = field t "out_frq" int (* display frequency in ms *)
+  let out_frq = field t "out_frq" int
 
-  let out_dly = field t "out_dly" int (* display delay in ms *)
+  let out_dly = field t "out_dly" int
 
-  let presolve = field t "presolve" BoolInt.t (* enable/disable presolver *)
+  let presolve = field t "presolve" BoolInt.t
 
   let excl = field t "excl" BoolInt.t
 
@@ -255,7 +250,6 @@ module Smcp = struct
   let () = seal t
 end
 
-(* integer optimizer control parameters *)
 module Iocp = struct
   module Br = struct
     type t = FFV | LFV | MFV | DTH | PCH
@@ -331,11 +325,11 @@ module Iocp = struct
 
   let tol_obj = field t "tol_obj" double
 
-  let tm_lim = field t "tm_lim" int (* time limit in ms *)
+  let tm_lim = field t "tm_lim" int
 
-  let out_frq = field t "out_frq" int (* display frequency in ms *)
+  let out_frq = field t "out_frq" int
 
-  let out_dly = field t "out_dly" int (* display delay in ms *)
+  let out_dly = field t "out_dly" int
 
   let cb_func = field t "cb_func" (ptr void)
 
@@ -363,7 +357,7 @@ module Iocp = struct
 
   let ps_heur = field t "ps_heur" BoolInt.t
 
-  let ps_tm_lim = field t "ps_tm_lim" int (* proxy time limit in ms *)
+  let ps_tm_lim = field t "ps_tm_lim" int
 
   let sr_heur = field t "sr_heur" BoolInt.t
 
@@ -409,42 +403,25 @@ let set_col_name =
 
 let get_col_name = foreign "glp_get_col_name" (prob @-> int @-> returning string)
 
-(** set_row_bnds [prob] [i] [bnd] [lb] [ub] sets bounds of i-th row (constraint).
-    If the row is not lower (upper) bounded, lb (ub) is just ignored.
-    If the row is equality constraint (Bnd.FX),
-    only [lb] is used and [ub] is ignored.
-*)
 let set_row_bnds =
   foreign "glp_set_row_bnds"
     (prob @-> int @-> Bnd.t @-> double @-> double @-> returning void)
 
-(** set_col_bnds [prob] [j] [bnd] [lb] [ub] sets bounds of j-th col (variable).
-    If the col is not lower (upper) bounded, lb (ub) is just ignored.
-    If the col is equality constraint (Bnd.FX),
-    only [lb] is used and [ub] is ignored.
-*)
 let set_col_bnds =
   foreign "glp_set_col_bnds"
     (prob @-> int @-> Bnd.t @-> double @-> double @-> returning void)
 
-(** set_obj_coef [prob] [j] sets the objective coefficient at j-th col (variable) *)
 let set_obj_coef =
   foreign "glp_set_obj_coef" (prob @-> int @-> double @-> returning void)
 
-(** set_mat_row [prob] [i] [len] [indices] [vals] sets the i-th row of constraint matrix. *)
 let set_mat_row =
   foreign "glp_set_mat_row"
     (prob @-> int @-> int @-> ptr void @-> ptr void @-> returning void)
 
-(** set_mat_col [prob] [j] [len] [indices] [vals] sets the j-th column of constraint matrix. *)
 let set_mat_col =
   foreign "glp_set_mat_col"
     (prob @-> int @-> int @-> ptr void @-> ptr void @-> returning void)
 
-(** load_matrix [prob] [ne] [ia] [ja] [ar] sets the constraint matrix.
-    The matrix is represented as an sparce matrix.
-    for k=1 .. [ne], value [ar][k] is set at ([ia][k], [ja][k]) element.
-*)
 let load_matrix =
   foreign "glp_load_matrix"
     (prob @-> int @-> ptr void @-> ptr void @-> ptr void @-> returning void)
