@@ -53,6 +53,10 @@ val empty_env : ?start:bool -> unit -> env
 
 val free_env : env -> unit
 
+val set_int_param : env -> string -> int -> unit
+
+val set_term_output : env -> bool -> unit
+
 val new_model :
      env
   -> string

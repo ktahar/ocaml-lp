@@ -232,6 +232,8 @@ module Iocp : sig
   val flip : (bool, t Ctypes.structure) Ctypes.field
 end
 
+val set_term_out : bool -> unit
+
 type prob
 
 val prob : prob Ctypes.typ

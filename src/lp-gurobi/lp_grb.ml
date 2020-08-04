@@ -119,6 +119,15 @@ let empty_env ?(start = true) () =
 (* no error code *)
 let free_env = foreign "GRBfreeenv" (env @-> returning void)
 
+let _set_int_param =
+  foreign "GRBsetintparam" (env @-> string @-> int @-> returning int)
+
+let set_int_param env name value = check env (_set_int_param env name value)
+
+let set_term_output env output =
+  let code = if output then 1 else 0 in
+  set_int_param env "OutputFlag" code
+
 let _new_model =
   foreign "GRBnewmodel"
     ( env @-> ptr model @-> string @-> int @-> ptr double @-> ptr double

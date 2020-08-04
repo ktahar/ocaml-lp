@@ -102,10 +102,10 @@ module Simplex = struct
             failwith ("Problem is " ^ Stat.to_string status)
     with Failure msg -> delete_prob prob ; Error msg
 
-  let solve p =
+  let solve ?(term_output = true) p =
     match Problem.classify p with
     | Pclass.LP ->
-        solve_main p
+        set_term_out term_output ; solve_main p
     | _ ->
         Error "Lp_glpk.Simplex is only for LP"
 end
@@ -170,19 +170,19 @@ module Milp = struct
             failwith ("LP relaxation is " ^ Stat.to_string status)
     with Failure msg -> delete_prob prob ; Error msg
 
-  let solve p =
+  let solve ?(term_output = true) p =
     match Problem.classify p with
     | Pclass.MILP ->
-        solve_main p
+        set_term_out term_output ; solve_main p
     | _ ->
         Error "Lp_glpk.Milp is only for MILP"
 end
 
-let solve p =
+let solve ?(term_output = true) p =
   match Problem.classify p with
   | Pclass.LP ->
-      Simplex.solve p
+      Simplex.solve ~term_output p
   | Pclass.MILP ->
-      Milp.solve p
+      Milp.solve ~term_output p
   | _ ->
       Error "glpk is only for LP or MILP"

@@ -372,6 +372,8 @@ module Iocp = struct
   let () = seal t
 end
 
+let set_term_out = foreign "glp_term_out" (BoolInt.t @-> returning void)
+
 type prob = unit ptr
 
 let prob : prob typ = ptr void
