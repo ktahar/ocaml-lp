@@ -96,7 +96,13 @@ let to_bound_string ?(short = false) v =
   match v.attr with
   | General (lb, ub) when not (default lb ub) ->
       let round v = v |> Float.round |> Float.to_int in
-      Some (Printf.sprintf "%d <= %s <= %d" (round lb) v.name (round ub))
+      let lb_s =
+        if Float.is_infinite lb then "-inf" else string_of_int (round lb)
+      in
+      let ub_s =
+        if Float.is_infinite ub then "inf" else string_of_int (round ub)
+      in
+      Some (Printf.sprintf "%s <= %s <= %s" lb_s v.name ub_s)
   | Continuous (lb, ub) when not (default lb ub) ->
       if short then Some (Printf.sprintf "%.2f <= %s <= %.2f" lb v.name ub)
       else Some (Printf.sprintf "%.18e <= %s <= %.18e" lb v.name ub)
