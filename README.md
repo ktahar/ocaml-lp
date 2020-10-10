@@ -48,7 +48,7 @@ let () =
 
 ## Documentation
 
-High level APIs have comments for odoc (ocamldoc).
+High level APIs have comments for odoc (or ocamldoc).
 Generated docs can be found [online](https://ktahar.github.io/ocaml-lp/) or in [docs](docs) directory.
 
 ## Notes on GLPK interface
