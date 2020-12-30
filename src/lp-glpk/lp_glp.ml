@@ -76,7 +76,7 @@ module Stat = struct
     | 6 ->
         UNBND
     | _ ->
-        failwith "Unexpected Bound flag"
+        failwith "Unexpected Status flag"
 
   let to_int = function
     | UNDEF ->
