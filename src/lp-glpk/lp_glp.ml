@@ -1,7 +1,7 @@
 open Ctypes
 open Foreign
 
-(* integer constants which are #defined in glpk.h version 4.65 *)
+(* integer constants which are #defined in glpk.h version 4.65 and 5+ *)
 
 module Dir = struct
   type t = MIN | MAX
