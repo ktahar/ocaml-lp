@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.3.0] - 2021-02-14
 ### Added
 - Odoc documentation
 - Error-position reports from the lexer / parser

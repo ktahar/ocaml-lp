@@ -13,10 +13,13 @@ Currently supported are [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear P
 opam pin lp --dev-repo
 opam pin lp-glpk --dev-repo
 opam pin lp-gurobi --dev-repo # if you have an access to Gurobi
-opam install lp lp-glpk lp-gurobi
+opam install lp lp-glpk # lp-gurobi
 ```
 
 ## Example
+
+A minimum example is shown below.
+More examples can be found on [wiki](https://github.com/ktahar/ocaml-lp/wiki/).
 
 ```ocaml
 let x = Lp.var "x"
@@ -54,7 +57,7 @@ Generated docs can be found [online](https://ktahar.github.io/ocaml-lp/) or in [
 ## Notes on GLPK interface
 
 - To use this, compile your application with `-cclib -lglpk` flags.
-- Since this is tested only on GLPK version 4.65, something may fail on other versions.
+- Since this is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
 
 ## Conformity to LP file format
 
