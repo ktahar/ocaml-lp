@@ -19,7 +19,7 @@ opam install lp lp-glpk # lp-gurobi
 ## Example
 
 A minimum example is shown below.
-More examples can be found on [wiki](https://github.com/ktahar/ocaml-lp/wiki/).
+More detailed description can be found on [wiki](https://github.com/ktahar/ocaml-lp/wiki/).
 
 ```ocaml
 let x = Lp.var "x"
