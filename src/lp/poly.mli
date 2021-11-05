@@ -19,7 +19,10 @@ val c : float -> t
 (** Make monomial of a constant value. *)
 
 val var : ?integer:bool -> ?lb:float -> ?ub:float -> string -> t
-(** Make monomial of a variable. *)
+(** Make monomial of a variable.
+    You can optionally set its bounds ([lb] and [ub]) and whether it is an [integer].
+    By default, it becomes continuous and non-negative ([integer] = false, [lb] = Float.zero, and [ub] = Float.infinity).
+*)
 
 val of_var : Var.t -> t
 (** Make monomial from a {!type:Var.t}. *)

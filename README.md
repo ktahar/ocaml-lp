@@ -9,11 +9,13 @@ Currently supported are [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear P
 ## Install
 
 ```bash
-# optional but recommended to pin dev-repo as it's on quite early stage of development
+# optional but recommended to pin dev-repo
 opam pin lp --dev-repo
 opam pin lp-glpk --dev-repo
-opam pin lp-gurobi --dev-repo # if you have an access to Gurobi
-opam install lp lp-glpk # lp-gurobi
+opam install lp lp-glpk
+# If you have an access to Gurobi:
+# opam pin lp-gurobi --dev-repo
+# opam install lp-gurobi
 ```
 
 ## Example
@@ -59,21 +61,26 @@ Generated docs can be found [online](https://ktahar.github.io/ocaml-lp/) or in [
 - To use this, compile your application with `-cclib -lglpk` flags.
 - Since this is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
 
-## Conformity to LP file format
+## Development Status
+
+Original author isn't developing this heavily because basic features are completed.
+However, bug-reports, requests, or patches are always welcome via GitHub [issues](https://github.com/ktahar/ocaml-lp/issues) and [pull requests](https://github.com/ktahar/ocaml-lp/pulls).
+
+### Conformity to LP file format
 
 Currently only basic features of LP file format are supported.
 Yet to be supported are advanced features,
 which are typically available on commercial solvers.
 (There is no standard of LP file, though.)
 
-### supported
+#### supported
 
 - Single objective (linear and quadratic)
 - Constraints (linear and quadratic)
 - Bounds
 - Variable types (general and binary integers)
 
-### not-supported
+#### not-supported
 
 - Semi-continuous variables
 - Multi-objective
@@ -87,8 +94,8 @@ which are typically available on commercial solvers.
 
 Some references to LP file format.
 
-- [CPLEX](https://www.ibm.com/support/knowledgecenter/SSSA5P_12.7.1/ilog.odms.cplex.help/CPLEX/FileFormats/topics/LP.html)
-- [Gurobi](https://www.gurobi.com/documentation/9.0/refman/lp_format.html)
+- [CPLEX](https://www.ibm.com/docs/en/icos/12.7.1.0?topic=cplex-lp-file-format-algebraic-representation)
+- [Gurobi](https://www.gurobi.com/documentation/9.1/refman/lp_format.html)
 - Manual of [GLPK](https://www.gnu.org/software/glpk/)
 
 ## License
