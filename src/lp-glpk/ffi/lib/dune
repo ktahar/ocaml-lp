@@ -24,7 +24,7 @@
   (names lp_glpk_stubs)
   ; supress warnings due to following issue of ctypes:
   ; https://github.com/ocamllabs/ocaml-ctypes/issues/134
-  (flags -Wno-discarded-qualifiers))
+  (flags :standard -Wno-discarded-qualifiers))
  (c_library_flags
   (:standard -lglpk))
  (libraries lp-glpk.bindings lp-glpk.types ctypes.stubs ctypes))
