@@ -2,7 +2,6 @@
  (package lp-glpk)
  (names test_glp test_glpk)
  (libraries alcotest lp lp-glpk)
- (flags :standard -cclib -lglpk)
  (deps
   (glob_files *.lp))
  (action
