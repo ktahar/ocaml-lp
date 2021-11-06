@@ -1,3 +1,2 @@
-version = 0.14.2
 profile = ocamlformat
 module-item-spacing = compact
