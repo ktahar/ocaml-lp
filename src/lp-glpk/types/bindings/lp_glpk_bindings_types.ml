@@ -1,4 +1,4 @@
-(* integer constants which are #defined in glpk.h version 4.65 and 5+ *)
+module C = Lp_glpk_consts.M
 
 module M (F : Ctypes.TYPE) = struct
   open Ctypes
@@ -7,15 +7,12 @@ module M (F : Ctypes.TYPE) = struct
   module Dir = struct
     type t = MIN | MAX
 
-    let of_int = function
-      | 1 ->
-          MIN
-      | 2 ->
-          MAX
-      | _ ->
-          failwith "Unexpected Direction flag"
+    let of_int i =
+      if i = C.min then MIN
+      else if i = C.max then MAX
+      else failwith "Unexpected Direction flag"
 
-    let to_int = function MIN -> 1 | MAX -> 2
+    let to_int = function MIN -> C.min | MAX -> C.max
 
     let t = view ~read:of_int ~write:to_int int
   end
@@ -23,17 +20,13 @@ module M (F : Ctypes.TYPE) = struct
   module Vt = struct
     type t = CV | IV | BV
 
-    let of_int = function
-      | 1 ->
-          CV
-      | 2 ->
-          IV
-      | 3 ->
-          BV
-      | _ ->
-          failwith "Unexpected Vtype flag"
+    let of_int i =
+      if i = C.cv then CV
+      else if i = C.iv then IV
+      else if i = C.bv then BV
+      else failwith "Unexpected Vtype flag"
 
-    let to_int = function CV -> 1 | IV -> 2 | BV -> 3
+    let to_int = function CV -> C.cv | IV -> C.iv | BV -> C.bv
 
     let t = view ~read:of_int ~write:to_int int
   end
@@ -41,21 +34,25 @@ module M (F : Ctypes.TYPE) = struct
   module Bnd = struct
     type t = FR | LO | UP | DB | FX
 
-    let of_int = function
-      | 1 ->
-          FR
-      | 2 ->
-          LO
-      | 3 ->
-          UP
-      | 4 ->
-          DB
-      | 5 ->
-          FX
-      | _ ->
-          failwith "Unexpected Bound flag"
+    let of_int i =
+      if i = C.fr then FR
+      else if i = C.lo then LO
+      else if i = C.up then UP
+      else if i = C.db then DB
+      else if i = C.fx then FX
+      else failwith "Unexpected Bound flag"
 
-    let to_int = function FR -> 1 | LO -> 2 | UP -> 3 | DB -> 4 | FX -> 5
+    let to_int = function
+      | FR ->
+          C.fr
+      | LO ->
+          C.lo
+      | UP ->
+          C.up
+      | DB ->
+          C.db
+      | FX ->
+          C.fx
 
     let t = view ~read:of_int ~write:to_int int
   end
@@ -63,35 +60,28 @@ module M (F : Ctypes.TYPE) = struct
   module Stat = struct
     type t = UNDEF | FEAS | INFEAS | NOFEAS | OPT | UNBND
 
-    let of_int = function
-      | 1 ->
-          UNDEF
-      | 2 ->
-          FEAS
-      | 3 ->
-          INFEAS
-      | 4 ->
-          NOFEAS
-      | 5 ->
-          OPT
-      | 6 ->
-          UNBND
-      | _ ->
-          failwith "Unexpected Status flag"
+    let of_int i =
+      if i = C.undef then UNDEF
+      else if i = C.feas then FEAS
+      else if i = C.infeas then INFEAS
+      else if i = C.nofeas then NOFEAS
+      else if i = C.opt then OPT
+      else if i = C.unbnd then UNBND
+      else failwith "Unexpected Status flag"
 
     let to_int = function
       | UNDEF ->
-          1
+          C.undef
       | FEAS ->
-          2
+          C.feas
       | INFEAS ->
-          3
+          C.infeas
       | NOFEAS ->
-          4
+          C.nofeas
       | OPT ->
-          5
+          C.opt
       | UNBND ->
-          6
+          C.unbnd
 
     let to_string = function
       | UNDEF ->
@@ -110,11 +100,11 @@ module M (F : Ctypes.TYPE) = struct
     let t = view ~read:of_int ~write:to_int int
   end
 
-  (* GLP_ON = 1 and GLP_OFF = 0 *)
+  (* GLP_ON = true and GLP_OFF = false *)
   module BoolInt = struct
-    let of_int i = if i = 0 then false else true
+    let of_int i = if i = C.off then false else true
 
-    let to_int b = if b then 1 else 0
+    let to_int b = if b then C.on else C.off
 
     let t = view ~read:of_int ~write:to_int int
   end
@@ -122,21 +112,25 @@ module M (F : Ctypes.TYPE) = struct
   module Msg = struct
     type t = OFF | ERR | ON | ALL | DBG
 
-    let of_int = function
-      | 0 ->
-          OFF
-      | 1 ->
-          ERR
-      | 2 ->
-          ON
-      | 3 ->
-          ALL
-      | 4 ->
-          DBG
-      | _ ->
-          failwith "Unexpected Msg flag"
+    let of_int i =
+      if i = C.msg_off then OFF
+      else if i = C.msg_err then ERR
+      else if i = C.msg_on then ON
+      else if i = C.msg_all then ALL
+      else if i = C.msg_dbg then DBG
+      else failwith "Unexpected Msg flag"
 
-    let to_int = function OFF -> 0 | ERR -> 1 | ON -> 2 | ALL -> 3 | DBG -> 4
+    let to_int = function
+      | OFF ->
+          C.msg_off
+      | ERR ->
+          C.msg_err
+      | ON ->
+          C.msg_on
+      | ALL ->
+          C.msg_all
+      | DBG ->
+          C.msg_dbg
 
     let t = view ~read:of_int ~write:to_int int
   end
@@ -145,17 +139,19 @@ module M (F : Ctypes.TYPE) = struct
     module Meth = struct
       type t = PRIMAL | DUALP | DUAL
 
-      let of_int = function
-        | 1 ->
-            PRIMAL
-        | 2 ->
-            DUALP
-        | 3 ->
-            DUAL
-        | _ ->
-            failwith "Unexpected Method flag"
+      let of_int i =
+        if i = C.primal then PRIMAL
+        else if i = C.dualp then DUALP
+        else if i = C.dual then DUAL
+        else failwith "Unexpected Method flag"
 
-      let to_int = function PRIMAL -> 1 | DUALP -> 2 | DUAL -> 3
+      let to_int = function
+        | PRIMAL ->
+            C.primal
+        | DUALP ->
+            C.dualp
+        | DUAL ->
+            C.dual
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -163,15 +159,12 @@ module M (F : Ctypes.TYPE) = struct
     module Pt = struct
       type t = STD | PSE
 
-      let of_int = function
-        | 0x11 ->
-            STD
-        | 0x22 ->
-            PSE
-        | _ ->
-            failwith "Unexpected Pricing flag"
+      let of_int i =
+        if i = C.pt_std then STD
+        else if i = C.pt_pse then PSE
+        else failwith "Unexpected Pricing flag"
 
-      let to_int = function STD -> 0x11 | PSE -> 0x22
+      let to_int = function STD -> C.pt_std | PSE -> C.pt_pse
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -179,17 +172,19 @@ module M (F : Ctypes.TYPE) = struct
     module Rt = struct
       type t = STD | HAR | FLIP
 
-      let of_int = function
-        | 0x11 ->
-            STD
-        | 0x22 ->
-            HAR
-        | 0x33 ->
-            FLIP
-        | _ ->
-            failwith "Unexpected Ratio Test flag"
+      let of_int i =
+        if i = C.rt_std then STD
+        else if i = C.rt_har then HAR
+        else if i = C.rt_flip then FLIP
+        else failwith "Unexpected Ratio Test flag"
 
-      let to_int = function STD -> 0x11 | HAR -> 0x22 | FLIP -> 0x33
+      let to_int = function
+        | STD ->
+            C.rt_std
+        | HAR ->
+            C.rt_har
+        | FLIP ->
+            C.rt_flip
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -197,15 +192,12 @@ module M (F : Ctypes.TYPE) = struct
     module An = struct
       type t = AT | NT
 
-      let of_int = function
-        | 1 ->
-            AT
-        | 2 ->
-            NT
-        | _ ->
-            failwith "Unexpected A or N flag"
+      let of_int i =
+        if i = C.use_at then AT
+        else if i = C.use_nt then NT
+        else failwith "Unexpected A or N flag"
 
-      let to_int = function AT -> 1 | NT -> 2
+      let to_int = function AT -> C.use_at | NT -> C.use_nt
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -255,31 +247,25 @@ module M (F : Ctypes.TYPE) = struct
     module Br = struct
       type t = FFV | LFV | MFV | DTH | PCH
 
-      let of_int = function
-        | 1 ->
-            FFV
-        | 2 ->
-            LFV
-        | 3 ->
-            MFV
-        | 4 ->
-            DTH
-        | 5 ->
-            PCH
-        | _ ->
-            failwith "Unexpected Branching Technique flag"
+      let of_int i =
+        if i = C.br_ffv then FFV
+        else if i = C.br_lfv then LFV
+        else if i = C.br_mfv then MFV
+        else if i = C.br_dth then DTH
+        else if i = C.br_pch then PCH
+        else failwith "Unexpected Branching Technique flag"
 
       let to_int = function
         | FFV ->
-            1
+            C.br_ffv
         | LFV ->
-            2
+            C.br_lfv
         | MFV ->
-            3
+            C.br_mfv
         | DTH ->
-            4
+            C.br_dth
         | PCH ->
-            5
+            C.br_pch
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -287,19 +273,22 @@ module M (F : Ctypes.TYPE) = struct
     module Bt = struct
       type t = DFS | BFS | BLB | BPH
 
-      let of_int = function
-        | 1 ->
-            DFS
-        | 2 ->
-            BFS
-        | 3 ->
-            BLB
-        | 4 ->
-            BPH
-        | _ ->
-            failwith "Unexpected Backtracking Technique flag"
+      let of_int i =
+        if i = C.bt_dfs then DFS
+        else if i = C.bt_bfs then BFS
+        else if i = C.bt_blb then BLB
+        else if i = C.bt_bph then BPH
+        else failwith "Unexpected Backtracking Technique flag"
 
-      let to_int = function DFS -> 1 | BFS -> 2 | BLB -> 3 | BPH -> 4
+      let to_int = function
+        | DFS ->
+            C.bt_dfs
+        | BFS ->
+            C.bt_bfs
+        | BLB ->
+            C.bt_blb
+        | BPH ->
+            C.bt_bph
 
       let t = view ~read:of_int ~write:to_int int
     end
@@ -307,17 +296,19 @@ module M (F : Ctypes.TYPE) = struct
     module Pp = struct
       type t = NONE | ROOT | ALL
 
-      let of_int = function
-        | 0 ->
-            NONE
-        | 1 ->
-            ROOT
-        | 2 ->
-            ALL
-        | _ ->
-            failwith "Unexpected Preprocessing flag"
+      let of_int i =
+        if i = C.pp_none then NONE
+        else if i = C.pp_root then ROOT
+        else if i = C.pp_all then ALL
+        else failwith "Unexpected Preprocessing flag"
 
-      let to_int = function NONE -> 0 | ROOT -> 1 | ALL -> 2
+      let to_int = function
+        | NONE ->
+            C.pp_none
+        | ROOT ->
+            C.pp_root
+        | ALL ->
+            C.pp_all
 
       let t = view ~read:of_int ~write:to_int int
     end

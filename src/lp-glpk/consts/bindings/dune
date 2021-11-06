@@ -1,0 +1,4 @@
+(library
+ (name lp_glpk_bindings_consts)
+ (public_name lp-glpk.bindings.consts)
+ (libraries ctypes.stubs ctypes))

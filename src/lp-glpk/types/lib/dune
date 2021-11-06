@@ -7,5 +7,5 @@
  (name lp_glpk_types)
  (public_name lp-glpk.types)
  (flags :standard -w -9-27)
- (synopsis "Ctypes bindings that describe the libglpk FFI constants")
+ (synopsis "Ctypes bindings that describe the libglpk FFI structure types")
  (libraries lp-glpk.bindings.types ctypes.stubs ctypes))
