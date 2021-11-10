@@ -1,0 +1,5 @@
+(library
+ (name lp_glpk_bindings)
+ (synopsis "Ctypes bindings that describe the libglpk FFI")
+ (public_name lp-glpk.bindings)
+ (libraries lp-glpk.types ctypes.stubs ctypes))

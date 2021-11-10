@@ -1,0 +1,30 @@
+(rule
+ (targets g.ml)
+ (deps ../stubgen/ffi_stubgen.exe)
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{deps} -ml))))
+
+(rule
+ (targets lp_glpk_stubs.c)
+ (deps
+  (:stubgen ../stubgen/ffi_stubgen.exe))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{stubgen} -c))))
+
+(library
+ (name lp_glpk_ffi)
+ (public_name lp-glpk.ffi)
+ (modules g m)
+ (foreign_stubs
+  (language c)
+  (names lp_glpk_stubs)
+  ; supress warnings due to following issue of ctypes:
+  ; https://github.com/ocamllabs/ocaml-ctypes/issues/134
+  (flags :standard -Wno-discarded-qualifiers))
+ (c_library_flags
+  (:standard -lglpk))
+ (libraries lp-glpk.bindings lp-glpk.types ctypes.stubs ctypes))

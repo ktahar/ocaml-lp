@@ -1,0 +1,11 @@
+(rule
+ (targets g.ml)
+ (deps ../stubgen/ffi_ml_types_stubgen.exe)
+ (action (with-stdout-to %{targets} (run %{deps}))))
+
+(library
+ (name lp_glpk_types)
+ (public_name lp-glpk.types)
+ (flags :standard -w -9-27)
+ (synopsis "Ctypes bindings that describe the libglpk FFI structure types")
+ (libraries lp-glpk.bindings.types ctypes.stubs ctypes))

@@ -51,20 +51,21 @@ let () =
   else print_endline "Oops, my problem is broken."
 ```
 
+### Notes on solver interfaces
+
+- Since lp-glpk is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
+- For lp-gurobi, compile your application with `-cclib -lgurobiXY` flags, where XY is the version of Gurobi (e.g. 91).
+
 ## Documentation
 
-High level APIs have comments for odoc (or ocamldoc).
+High-level APIs have comments for odoc (or ocamldoc).
 Generated docs can be found [online](https://ktahar.github.io/ocaml-lp/) or in [docs](docs) directory.
-
-## Notes on GLPK interface
-
-- To use this, compile your application with `-cclib -lglpk` flags.
-- Since this is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
 
 ## Development Status
 
-Original author isn't developing this heavily because basic features are completed.
-However, bug-reports, requests, or patches are always welcome via GitHub [issues](https://github.com/ktahar/ocaml-lp/issues) and [pull requests](https://github.com/ktahar/ocaml-lp/pulls).
+Development is not quite active now because basic features are completed.
+However, there are several TODOs.
+Bug-reports, requests, or patches are always welcome via GitHub [issues](https://github.com/ktahar/ocaml-lp/issues) and [pull requests](https://github.com/ktahar/ocaml-lp/pulls).
 
 ### Conformity to LP file format
 
@@ -99,4 +100,4 @@ Some references to LP file format.
 - Manual of [GLPK](https://www.gnu.org/software/glpk/)
 
 ## License
-MIT
+[MIT](LICENSE.md)

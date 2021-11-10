@@ -1,0 +1,4 @@
+(executable
+ (name ffi_stubgen)
+ (modules ffi_stubgen)
+ (libraries lp_glpk_bindings lp_glpk_types ctypes.stubs ctypes))

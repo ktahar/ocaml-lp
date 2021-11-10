@@ -9,9 +9,9 @@ test:
 fmt:
 	dune build @fmt --auto-promote
 
-doc:
+docs:
 	dune build @doc
-	rm -r docs
+	rm -rf docs
 	cp -r _build/default/_doc/_html docs
 	touch docs/.nojekyll
 
