@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Lp_glpk uses stub-generation feature of ctypes, removing necessity of C linker flags on building user application.
 
 ## [0.3.0] - 2021-02-14
 ### Added

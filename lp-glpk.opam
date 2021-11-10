@@ -15,9 +15,8 @@ depends: [
     "dune"  {>= "2.2.0"}
     "lp" {= version}
     "ctypes"
-    "ctypes-foreign"
+    "conf-glpk"
     "alcotest" {with-test}
-    "conf-glpk" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]
