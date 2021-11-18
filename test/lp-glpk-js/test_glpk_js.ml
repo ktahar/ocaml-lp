@@ -1,4 +1,6 @@
 module To_test = struct
+  let g = Lp_glpk_js.require_glpk "glpk.js"
+
   let to_list prob xs =
     List.map
       (fun v -> Lp.PMap.find (Lp.Poly.of_var v) xs)
@@ -6,7 +8,7 @@ module To_test = struct
 
   let solve_lp0 () =
     let p = Lp.read "lp0.lp" in
-    match Lp_glpk.solve p with
+    match Lp_glpk_js.solve ~term_output:false g p with
     | Ok (obj, xs) ->
         obj :: to_list p xs
     | Error _ ->
@@ -14,7 +16,7 @@ module To_test = struct
 
   let solve_milp0 () =
     let p = Lp.read "milp0.lp" in
-    match Lp_glpk.solve p with
+    match Lp_glpk_js.solve ~term_output:false g p with
     | Ok (obj, xs) ->
         obj :: to_list p xs
     | Error _ ->
@@ -33,6 +35,6 @@ let solve_milp0 () =
 
 let () =
   let open Alcotest in
-  run "Glpk"
+  run "GlpkJs"
     [ ("solve lp0", [test_case "solve_lp0" `Quick solve_lp0])
     ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0]) ]

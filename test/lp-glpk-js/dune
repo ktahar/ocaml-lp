@@ -1,0 +1,15 @@
+(rule
+ (targets node_modules)
+ (action
+  (run npm install glpk.js)))
+
+(test
+ (package lp-glpk-js)
+ (name test_glpk_js)
+ (modes js)
+ (libraries lp lp-glpk-js alcotest)
+ (deps
+  node_modules
+  (glob_files *.lp))
+ (action
+  (run node %{dep:test_glpk_js.bc.js})))
