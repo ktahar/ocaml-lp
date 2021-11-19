@@ -6,14 +6,14 @@ class type var =
     method coef : float Js.prop
   end
 
-class type bnd =
+class type row_bound =
   object
     method _type : int Js.prop
     method ub : float Js.prop
     method lb : float Js.prop
   end
 
-class type bound =
+class type col_bound =
   object
     method name : Js.js_string Js.t Js.prop
     method _type : int Js.prop
@@ -42,19 +42,19 @@ class type cnstr =
   object
     method name : Js.js_string Js.t Js.prop
     method vars : var Js.t Js.js_array Js.t Js.prop
-    method bnds : bnd Js.t Js.prop
+    method bnds : row_bound Js.t Js.prop
   end
 
-class type model =
+class type prob =
   object
     method name : Js.js_string Js.t Js.prop
     method objective : objective Js.t Js.prop
     method subjectTo : cnstr Js.t Js.js_array Js.t Js.prop
-    method bounds : bound Js.t Js.js_array Js.t Js.optdef Js.prop
+    method bounds : col_bound Js.t Js.js_array Js.t Js.optdef Js.prop
     method binaries : Js.js_string Js.t Js.js_array Js.t Js.optdef Js.prop
     method generals : Js.js_string Js.t Js.js_array Js.t Js.optdef Js.prop
     (* specified in glpk.js API. but omit here as it's redundant. *)
-    (* method options: options Js.t Js.optdef *)
+    (* method options: options Js.t Js.optdef Js.prop *)
   end
 
 class type res =
@@ -102,9 +102,9 @@ class type glpk =
 
     (* version / solve *)
     method version : Js.js_string Js.t Js.prop
-    method solve : model Js.t -> result Js.t Js.meth
-    method solve_opt : model Js.t -> options Js.t -> result Js.t Js.meth
-    method solve_msglev : model Js.t -> int -> result Js.t Js.meth
+    method solve : prob Js.t -> result Js.t Js.meth
+    method solve_opt : prob Js.t -> options Js.t -> result Js.t Js.meth
+    method solve_msglev : prob Js.t -> int -> result Js.t Js.meth
   end
 
 let require_glpk module_ident : glpk Js.t =
@@ -135,7 +135,7 @@ let js_objective (glpk : glpk Js.t) obj : objective Js.t =
 
 let js_cnstr (glpk : glpk Js.t) cn : cnstr Js.t =
   let vs = Lp.Poly.map_linear js_var (Lp.Cnstr.lhs cn) |> Array.of_list in
-  let bnd t l u : bnd Js.t =
+  let bnd t l u : row_bound Js.t =
     object%js
       val mutable _type = t
       val mutable ub = u
@@ -153,7 +153,7 @@ let js_cnstr (glpk : glpk Js.t) cn : cnstr Js.t =
     val mutable bnds = b
   end
 
-let js_bound (glpk : glpk Js.t) var : bound Js.t =
+let js_bound (glpk : glpk Js.t) var : col_bound Js.t =
   let lb, ub = Lp.Var.to_bound var in
   let t, l, u =
     if lb = Float.neg_infinity && ub = Float.infinity then
@@ -177,7 +177,7 @@ let js_ints vars =
   in
   (to_js c.binary, to_js c.general)
 
-let js_prob glpk prob : model Js.t =
+let js_prob glpk prob : prob Js.t =
   let obj, cnstrs = Lp.Problem.obj_cnstrs prob in
   let vars = Lp.Problem.uniq_vars prob in
   let n = match Lp.Problem.name prob with Some n -> n | None -> "problem" in
@@ -212,20 +212,20 @@ let status_to_str glpk i =
   else if i = glpk##._GLP_UNBND_ then "Unbounded"
   else "Unexpected Status"
 
-let solve ?(term_output = true) (glpk : glpk Js.t) prob =
-  match Lp.Problem.classify prob with
+let solve ?(term_output = true) (glpk : glpk Js.t) problem =
+  match Lp.Problem.classify problem with
   | Lp.Pclass.LP | Lp.Pclass.MILP ->
-      let model = js_prob glpk prob in
-      (* Firebug.console##log model ; *)
+      let prob = js_prob glpk problem in
+      (* Firebug.console##log prob ; *)
       let lev =
         if term_output then glpk##._GLP_MSG_ON_ else glpk##._GLP_MSG_OFF_
       in
-      let res = glpk##solve_msglev model lev in
+      let res = glpk##solve_msglev prob lev in
       (* Firebug.console##log res ; *)
       let r = res##.result in
       let status = r##.status in
       if status = glpk##._GLP_OPT_ then
-        Ok (r##.z, make_pmap (Lp.Problem.uniq_vars prob) r##.vars)
+        Ok (r##.z, make_pmap (Lp.Problem.uniq_vars problem) r##.vars)
       else Error ("Problem is " ^ status_to_str glpk status)
   | _ ->
       Error "glpk.js is only for LP or MILP"
