@@ -1,6 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.4.0] - 2021-11-19
+### Added
+- lp-glpk-js package, interface to GLPK through glpk.js.
+
 ### Changed
 - Lp_glpk uses stub-generation feature of ctypes, removing necessity of C linker flags on building user application.
 

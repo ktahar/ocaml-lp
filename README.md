@@ -13,9 +13,12 @@ Currently supported are [GLPK](https://www.gnu.org/software/glpk/) (GNU Linear P
 opam pin lp --dev-repo
 opam pin lp-glpk --dev-repo
 opam install lp lp-glpk
-# If you have an access to Gurobi:
-# opam pin lp-gurobi --dev-repo
-# opam install lp-gurobi
+## If your application is based on js_of_ocaml:
+opam pin lp-glpk-js --dev-repo
+opam install lp-glpk-js
+## If you have an access to Gurobi:
+opam pin lp-gurobi --dev-repo
+opam install lp-gurobi
 ```
 
 ## Example
@@ -37,7 +40,7 @@ let problem =
 let write () = Lp.write "my_problem.lp" problem
 
 let solve () =
-  (* For Gurobi, use Lp_gurobi instead *)
+  (* For other interfaces, use Lp_glpk_js or Lp_gurobi instead *)
   match Lp_glpk.solve problem with
   | Ok (obj, xs) ->
       Printf.printf "Objective: %.2f\n" obj ;
@@ -54,7 +57,8 @@ let () =
 ### Notes on solver interfaces
 
 - Since lp-glpk is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
-- For lp-gurobi, compile your application with `-cclib -lgurobiXY` flags, where XY is the version of Gurobi (e.g. 91).
+- lp-glpk-js is another interface to GLPK through [glpk.js](https://github.com/jvail/glpk.js/), that is useful for applications based on js_of_ocaml.
+- lp-gurobi is an interface to commercial solver Gurobi. To work with this, compile your application with `-cclib -lgurobiXY` flags, where XY is the version of Gurobi (e.g. 91).
 
 ## Documentation
 
