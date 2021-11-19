@@ -1,0 +1,6 @@
+(library
+ (name lp_glpk_js)
+ (public_name lp-glpk-js)
+ (libraries lp js_of_ocaml)
+ (preprocess
+  (pps js_of_ocaml-ppx)))

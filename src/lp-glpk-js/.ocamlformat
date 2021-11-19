@@ -1,0 +1,2 @@
+profile = ocamlformat
+module-item-spacing = compact

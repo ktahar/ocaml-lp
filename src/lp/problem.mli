@@ -16,6 +16,14 @@ module Pclass : sig
   (** Express the problem class in string. *)
 end
 
+module Vars : sig
+  type t = Var.t list
+
+  type classified = {continuous: t; general: t; binary: t}
+
+  val classify : t -> classified
+end
+
 (** Type for an optimization problem (model). *)
 type t
 
