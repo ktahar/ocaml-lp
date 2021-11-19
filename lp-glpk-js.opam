@@ -16,10 +16,10 @@ depends: [
     "lp" {= version}
     "js_of_ocaml"
     "js_of_ocaml-ppx"
-    "alcotest" {with-test}
-    "conf-npm" {with-test}
+#    "alcotest" {with-test}
+#    "conf-npm" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]
-    [ "dune" "runtest" "-p" name "-j" jobs ] {with-test}
+#    [ "dune" "runtest" "-p" name "-j" jobs ] {with-test}
 ]
