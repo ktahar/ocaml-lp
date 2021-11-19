@@ -116,13 +116,13 @@ class type glpk =
   end
 
 val require_glpk : string -> glpk Js.t
-(** require and instantiate glpk.js interface by string identifier.
+(** require and instantiate glpk.js interface given by a string identifier.
    [let glpk = require_glpk "glpk.js"]
-   is JS-equivalent to
-   {|
-   const GLPK = require("glpk.js");
-   const glpk = GLPK();
-   |}
+   is roughly equivalent to following JS.
+   {[
+   var GLPK = require("glpk.js");
+   var glpk = GLPK();
+   ]}
 *)
 
 val solve :
@@ -132,4 +132,5 @@ val solve :
   -> (float * float Lp.PMap.t, string) Stdlib.result
 (** Solve the problem using GLPK via glpk.js.
     GLPK can solve only linear problems (LP or MILP).
+    glpk.js interface object ({!type:glpk} Js.t) must be given, that can be built with {!val:require_glpk}.
 *)
