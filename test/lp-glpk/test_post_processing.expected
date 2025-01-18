@@ -1,0 +1,2 @@
+Solution: { Test_post_processing.x = [|1.; 0.; 0.; 1.; 0.; 0.|];
+            space_left = 1.; total_amout = 41. }
