@@ -75,7 +75,7 @@ module Simplex = struct
         | _ ->
             failwith "set_cols: integer variable found" )
 
-  let solve_main p =
+  let solve_main update_iocp p =
     let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
@@ -84,8 +84,11 @@ module Simplex = struct
     ignore @@ B.add_rows prob nrows ;
     ignore @@ B.add_cols prob ncols ;
     let smcp = C.make T.Smcp.t in
+    let iocp = C.make T.Iocp.t in
     try
       B.init_smcp (C.addr smcp) ;
+      B.init_iocp (C.addr iocp) ;
+      update_iocp iocp ;
       (* TODO set solver parameters *)
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
@@ -104,10 +107,10 @@ module Simplex = struct
             failwith ("Problem is " ^ T.Stat.to_string status)
     with Failure msg -> B.delete_prob prob ; Error msg
 
-  let solve ?(term_output = true) p =
+  let solve ?(term_output = true) update_iocp p =
     match Problem.classify p with
     | Pclass.LP ->
-        B.set_term_out term_output ; solve_main p
+        B.set_term_out term_output ; solve_main update_iocp p
     | _ ->
         Error "Lp_glpk.Simplex is only for LP"
 end
@@ -135,7 +138,7 @@ module Milp = struct
             set_bounds cj Float.zero Float.one ;
             B.set_col_kind prob cj T.Vt.BV )
 
-  let solve_main p =
+  let solve_main update_iocp p =
     let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
@@ -148,6 +151,7 @@ module Milp = struct
     try
       B.init_smcp (C.addr smcp) ;
       B.init_iocp (C.addr iocp) ;
+      update_iocp iocp ;
       (* TODO set solver parameters *)
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
@@ -176,19 +180,47 @@ module Milp = struct
             failwith ("LP relaxation is " ^ T.Stat.to_string status)
     with Failure msg -> B.delete_prob prob ; Error msg
 
-  let solve ?(term_output = true) p =
+  let solve ?(term_output = true) update_iocp p =
     match Problem.classify p with
     | Pclass.MILP ->
-        B.set_term_out term_output ; solve_main p
+        B.set_term_out term_output ; solve_main update_iocp p
     | _ ->
         Error "Lp_glpk.Milp is only for MILP"
 end
 
-let solve ?(term_output = true) p =
+let solve ?(term_output = true) ?(tol_int : float option) ?(tol_obj = None)
+    ?(tm_lim = None) ?(out_frq = None) ?(out_dly = None) ?(cb_size = None)
+    ?(mip_gap = None) ?(mir_cuts = None) ?(gmi_cuts = None) ?(cov_cuts = None)
+    ?(clq_cuts = None) ?(presolve = None) ?(binarize = None) ?(fp_heur = None)
+    ?(ps_heur = None) ?(ps_tm_lim = None) ?(sr_heur = None) ?(use_sol = None)
+    ?(save_sol = None) ?(alien = None) ?(flip = None) p =
+  let update_iocp iocp =
+    Option.iter (fun x -> C.setf iocp T.Iocp.tol_int x) tol_int ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.tol_obj x) tol_obj ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.tm_lim x) tm_lim ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.out_frq x) out_frq ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.out_dly x) out_dly ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.cb_size x) cb_size ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.mip_gap x) mip_gap ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.mir_cuts x) mir_cuts ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.gmi_cuts x) gmi_cuts ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.cov_cuts x) cov_cuts ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.clq_cuts x) clq_cuts ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.presolve x) presolve ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.binarize x) binarize ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.fp_heur x) fp_heur ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.ps_heur x) ps_heur ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.ps_tm_lim x) ps_tm_lim ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.sr_heur x) sr_heur ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.use_sol x) use_sol ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.save_sol x) save_sol ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.alien x) alien ;
+    Option.iter (fun x -> C.setf iocp T.Iocp.flip x) flip
+  in
   match Problem.classify p with
   | Pclass.LP ->
-      Simplex.solve ~term_output p
+      Simplex.solve ~term_output update_iocp p
   | Pclass.MILP ->
-      Milp.solve ~term_output p
+      Milp.solve ~term_output update_iocp p
   | _ ->
       Error "glpk is only for LP or MILP"
