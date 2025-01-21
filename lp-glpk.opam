@@ -17,6 +17,7 @@ depends: [
     "ctypes" {>= "0.13.0"}
     "conf-glpk"
     "alcotest" {with-test}
+    "ppx_deriving" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]
