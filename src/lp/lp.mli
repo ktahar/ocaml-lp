@@ -232,3 +232,15 @@ val write : ?short:bool -> string -> Problem.t -> unit
 
 val read : string -> Problem.t
 (** Parse an LP file to build the problem. *)
+
+(* Post-processing *)
+
+val compute_term : float PMap.t -> Term.t -> float
+(** Compute the value of a term.
+    @raise Not_found the one of the variable in the term is not in the pmap.
+ *)
+
+val compute_poly : float PMap.t -> Poly.t -> float
+(** Compute the value of a polynom.
+    @raise Not_found the one of the variable in the term is not in the pmap.
+ *)

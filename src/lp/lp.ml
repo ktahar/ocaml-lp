@@ -96,3 +96,17 @@ let write ?(short = false) file problem =
   let ch = open_out file in
   Printf.fprintf ch "%s\n" (Problem.to_string ~short problem) ;
   close_out ch
+
+(* Post-processing *)
+
+let compute_term pmap t =
+  match t with
+  | Term.Const f ->
+      f
+  | Term.Linear (f, x) ->
+      f *. PMap.find (Poly.of_var x) pmap
+  | Term.Quad (f, x, y) ->
+      f *. PMap.find (Poly.of_var x) pmap *. PMap.find (Poly.of_var y) pmap
+
+let compute_poly pmap p =
+  Poly.map (compute_term pmap) p |> List.fold_left ( +. ) 0.

@@ -1,7 +1,9 @@
 (tests
  (package lp-glpk)
- (names test_glpk_ffi test_glpk)
+ (names test_glpk_ffi test_glpk test_post_processing test_nqueens test_jobs)
  (libraries alcotest lp lp-glpk)
+ (preprocess
+  (pps ppx_deriving.map ppx_deriving.show))
  (deps
   (glob_files *.lp))
  (action
