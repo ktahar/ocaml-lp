@@ -90,12 +90,12 @@ let () =
   in
   let result = solve task in
   Format.printf "Solution:\n" ;
-  Format.printf "Completion time: %f\n" result.completion_time ;
+  Format.printf "Completion time: %.6f\n" result.completion_time ;
   Array.iteri
     (fun j job_starts ->
       Array.iteri
         (fun i start_time ->
-          Format.printf "Task %d starts on machine %d at time %f\n" (j + 1)
+          Format.printf "Task %d starts on machine %d at time %.6f\n" (j + 1)
             (i + 1) start_time )
         job_starts )
     result.start_times

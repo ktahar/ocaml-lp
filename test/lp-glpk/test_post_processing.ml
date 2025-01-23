@@ -2,7 +2,7 @@
 
 type task = {n: int; profit: float array; weight: float array; capacity: float}
 
-type 'a instance = {x: 'a array; space_left: 'a; total_amout: 'a}
+type 'a instance = {x: 'a array; space_left: 'a; total_amount: 'a}
 [@@deriving map, show]
 
 let build task : Lp.Problem.t * Lp.Poly.t instance =
@@ -22,7 +22,7 @@ let build task : Lp.Problem.t * Lp.Poly.t instance =
     |> Array.fold_left ( ++ ) (c 0.0)
   in
   ( make (maximize obj) [constr <~ c task.capacity]
-  , {x; space_left= c task.capacity -- constr; total_amout= obj} )
+  , {x; space_left= c task.capacity -- constr; total_amount= obj} )
 
 (* Solve and map solution back to original type *)
 let solve task =
