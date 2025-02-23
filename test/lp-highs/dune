@@ -1,0 +1,10 @@
+; Test for lp-highs is hidden by default.
+; To enable this, rename this file to 'dune'
+(tests
+ (package lp-highs)
+ (names test_highs)
+ (libraries alcotest lp lp-highs)
+ (deps
+  (glob_files *.lp))
+ (action
+  (run %{test} --color=always)))
