@@ -208,7 +208,7 @@ let () =
      the result may differ from previously obtained solutions. *)
   let results = solve_all ~max_trial_n:100 task in
   Printf.printf
-    "The number of solutions to the 8-Queens problem is '%d', up to symmetry\n\n"
+    "The number of solutions to the 8-Queens problem is '%d', up to symmetry.\n\n"
     (List.length results) ;
   (* This value must be unique since we have listed all the results and have sorted. *)
   let all_solutions = enum_all_solutions task results in
