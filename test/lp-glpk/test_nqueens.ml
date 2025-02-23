@@ -158,7 +158,7 @@ let solve_all ?(max_trial_n = Int.max_int) task =
       failwith
         (Printf.sprintf
            "Error: You have exceeded the maximum number of trials (%d) at '%s'"
-           i __FILE__ )
+           max_trial_n __FILE__ )
     else
       let problem = build (cnstrs @ constraints) in
       match Lp_glpk.solve ~term_output:false problem with
