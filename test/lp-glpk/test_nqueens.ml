@@ -69,7 +69,7 @@ let build constraints : Lp.Problem.t =
   make (maximize (c 0.0)) constraints
 
 (** Find one solution.
-   The result is non-deterministic and may vary across different versions of the solver. *)
+    The result is non-deterministic and may vary across different versions of the solver. *)
 let solve1 task =
   let instance = build_domain task in
   let constraints = build_basic_constraints task instance in
