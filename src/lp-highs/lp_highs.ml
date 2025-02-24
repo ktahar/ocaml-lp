@@ -45,19 +45,38 @@ let readsol filename =
   | _ ->
       raise (SolverError "Cannot read HiGHS solver output")
 
-(* Run HiGHS and obtain the output solution. *)
-let solve ?highs_path problem =
+(** Write HiGHS additional options to file *)
+let write_options filepath options =
+  let oc = open_out filepath in
+  let options =
+    options
+    |> List.map (fun (name, value) -> name ^ " = " ^ value)
+    |> String.concat "\n"
+  in
+  Printf.fprintf oc "%s\n" options ;
+  (* write something *)
+  close_out oc
+
+(* Run HiGHS and obtain the output solution.
+   @param options list of additional options to pass to solver.
+ *)
+let solve ?highs_path ?(options = []) problem =
   try
     let highs_path =
       match highs_path with
       | None -> (
         try Sys.getenv "HIGHS_CMD"
-        with Not_found -> raise (SolverError "The path is not set.") )
+        with Not_found ->
+          raise (SolverError "The path to the HiGHS executable is not set.") )
       | Some path ->
           path
     in
     Lp.write "tmp.lp" problem ;
-    let command = highs_path ^ " --solution_file solution.txt tmp.lp" in
+    write_options "options.txt" options ;
+    let args =
+      " tmp.lp --solution_file solution.txt --options_file options.txt"
+    in
+    let command = highs_path ^ args in
     let result = Sys.command command in
     if result <> 0 then raise (SolverError "Failed to execute HiGHS") else () ;
     let obj, sol = readsol "solution.txt" in
