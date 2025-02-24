@@ -1,4 +1,4 @@
-(* Knapsack Problem Example *)
+(* Example for Knapsack Problem *)
 
 type task = {n: int; profit: float array; weight: float array; capacity: float}
 
