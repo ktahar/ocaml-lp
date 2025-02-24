@@ -27,7 +27,7 @@ let build task : Lp.Problem.t * Lp.Poly.t instance =
 (* Solve and map solution back to original type *)
 let solve task =
   let problem, instance = build task in
-  match Lp_glpk.solve ~term_output:false problem with
+  match Lp_highs.solve ~options:[("log_to_console", "false")] problem with
   | Ok (_, pmap) ->
       map_instance (Lp.compute_poly pmap) instance
   | Error msg ->

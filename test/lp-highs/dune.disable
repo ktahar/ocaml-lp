@@ -2,8 +2,10 @@
 ; To enable this, rename this file to 'dune'
 (tests
  (package lp-highs)
- (names test_highs)
+ (names test_highs test_highs_post_processing test_highs_nqueens test_highs_jobs)
  (libraries alcotest lp lp-highs)
+ (preprocess
+  (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq))
  (deps
   (glob_files *.lp))
  (action

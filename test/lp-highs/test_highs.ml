@@ -33,6 +33,6 @@ let solve_milp0 () =
 
 let () =
   let open Alcotest in
-  run "Glpk"
+  run "HiGHS"
     [ ("solve lp0", [test_case "solve_lp0" `Quick solve_lp0])
     ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0]) ]
