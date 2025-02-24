@@ -3,7 +3,7 @@
  (names test_glpk_ffi test_glpk test_post_processing test_nqueens test_jobs)
  (libraries alcotest lp lp-glpk)
  (preprocess
-  (pps ppx_deriving.map ppx_deriving.show))
+  (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq))
  (deps
   (glob_files *.lp))
  (action
