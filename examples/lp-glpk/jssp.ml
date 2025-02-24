@@ -1,4 +1,4 @@
-(* test_jssp.ml *)
+(* Example for Job-Shop Scheduling Problem *)
 
 type task =
   { num_jobs: int
