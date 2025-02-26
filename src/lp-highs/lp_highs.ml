@@ -57,6 +57,14 @@ let write_options filepath options =
   (* write something *)
   close_out oc
 
+let format_timestamp () =
+  let open Unix in
+  let tm = localtime (time ()) in
+  Printf.sprintf "%04d%02d%02d-%02d%02d%02d" (tm.tm_year + 1900) (tm.tm_mon + 1)
+    tm.tm_mday tm.tm_hour tm.tm_min tm.tm_sec
+
+let index = ref 0
+
 (* Run HiGHS and obtain the output solution.
    @param options list of additional options to pass to solver.
  *)
@@ -71,15 +79,22 @@ let solve ?highs_path ?(options = []) problem =
       | Some path ->
           path
     in
-    Lp.write "tmp.lp" problem ;
+    let timestamp =
+      Printf.sprintf "%s-%d-%d" (format_timestamp ()) !index (Unix.getpid ())
+    in
+    incr index ;
+    let filename = Printf.sprintf "tmp-%s.lp" timestamp in
+    Lp.write filename problem ;
     write_options "options.txt" options ;
+    let solution_file = Printf.sprintf "solution-%s.txt" timestamp in
     let args =
-      " tmp.lp --solution_file solution.txt --options_file options.txt"
+      Printf.sprintf " %s --solution_file %s --options_file options.txt"
+        filename solution_file
     in
     let command = highs_path ^ args in
     let result = Sys.command command in
     if result <> 0 then raise (SolverError "Failed to execute HiGHS") else () ;
-    let obj, sol = readsol "solution.txt" in
+    let obj, sol = readsol solution_file in
     Ok
       ( obj
       , List.fold_left
