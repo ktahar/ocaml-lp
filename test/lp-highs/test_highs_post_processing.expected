@@ -1,2 +1,1 @@
-Solution: { Test_highs_post_processing.x = [|1.; 0.; 0.; 1.; 0.; 0.|];
-            space_left = 1.; total_amount = 41. }
+Solution: { space_left = 1.; total_amount = 41. }

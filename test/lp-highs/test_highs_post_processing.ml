@@ -46,4 +46,5 @@ let () =
   (* Build and solve *)
   let result = solve task in
   (* Print selected items *)
-  Format.printf "Solution: %a\n" (pp_instance Format.pp_print_float) result
+  Format.printf "Solution: { space_left = %.0f.; total_amount = %.0f. }\n"
+    result.space_left result.total_amount

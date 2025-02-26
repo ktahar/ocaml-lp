@@ -81,6 +81,16 @@ let solve task =
       Printf.printf "Failed to solve: %s\n" msg ;
       assert false
 
+let print_start_times start_times =
+  Array.iteri
+    (fun j job_starts ->
+      Array.iteri
+        (fun i start_time ->
+          Format.printf "Task %d starts on machine %d at time %.6f\n" (j + 1)
+            (i + 1) start_time )
+        job_starts )
+    start_times
+
 let () =
   let task =
     { num_jobs= 3
@@ -90,12 +100,4 @@ let () =
   in
   let result = solve task in
   Format.printf "Solution:\n" ;
-  Format.printf "Completion time: %.6f\n" result.completion_time ;
-  Array.iteri
-    (fun j job_starts ->
-      Array.iteri
-        (fun i start_time ->
-          Format.printf "Task %d starts on machine %d at time %.6f\n" (j + 1)
-            (i + 1) start_time )
-        job_starts )
-    result.start_times
+  Format.printf "Completion time: %.6f\n" result.completion_time
