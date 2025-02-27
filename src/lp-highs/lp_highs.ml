@@ -54,16 +54,22 @@ let write_options filepath options =
     |> String.concat "\n"
   in
   Printf.fprintf oc "%s\n" options ;
-  (* write something *)
   close_out oc
 
-let format_timestamp () =
-  let open Unix in
-  let tm = localtime (time ()) in
-  Printf.sprintf "%04d%02d%02d-%02d%02d%02d" (tm.tm_year + 1900) (tm.tm_mon + 1)
-    tm.tm_mday tm.tm_hour tm.tm_min tm.tm_sec
-
-let index = ref 0
+(** Insert timestamp "YYYYMMDD-hhmmss-Index-PID" to a given string (filename)
+    with a placeholder. *)
+let format_with_timestamp =
+  let index = ref 0 in
+  fun () ->
+    let open Unix in
+    let tm = localtime (time ()) in
+    let tm =
+      Printf.sprintf "%04d%02d%02d-%02d%02d%02d" (tm.tm_year + 1900)
+        (tm.tm_mon + 1) tm.tm_mday tm.tm_hour tm.tm_min tm.tm_sec
+    in
+    let timestamp = Printf.sprintf "%s-%d-%d" tm !index (Unix.getpid ()) in
+    incr index ;
+    fun format_str -> Printf.sprintf format_str timestamp
 
 (* Run HiGHS and obtain the output solution.
    @param options list of additional options to pass to solver.
@@ -79,19 +85,16 @@ let solve ?highs_path ?(options = []) problem =
       | Some path ->
           path
     in
-    let timestamp =
-      Printf.sprintf "%s-%d-%d" (format_timestamp ()) !index (Unix.getpid ())
+    let format_with_timestamp = format_with_timestamp () in
+    let lp_file = format_with_timestamp "tmp-%s.lp" in
+    let options_file = format_with_timestamp "options-%s.txt" in
+    Lp.write lp_file problem ;
+    write_options options_file options ;
+    let solution_file = format_with_timestamp "solution-%s.txt" in
+    let command =
+      Printf.sprintf "%s %s --solution_file %s --options_file %s" highs_path
+        lp_file solution_file options_file
     in
-    incr index ;
-    let filename = Printf.sprintf "tmp-%s.lp" timestamp in
-    Lp.write filename problem ;
-    write_options "options.txt" options ;
-    let solution_file = Printf.sprintf "solution-%s.txt" timestamp in
-    let args =
-      Printf.sprintf " %s --solution_file %s --options_file options.txt"
-        filename solution_file
-    in
-    let command = highs_path ^ args in
     let result = Sys.command command in
     if result <> 0 then raise (SolverError "Failed to execute HiGHS") else () ;
     let obj, sol = readsol solution_file in
