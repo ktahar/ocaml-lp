@@ -74,7 +74,7 @@ let solve1 task =
   let instance = build_domain task in
   let constraints = build_basic_constraints task instance in
   let problem = build constraints in
-  match Lp_highs.solve ~options:[("log_to_console", "false")] problem with
+  match Lp_highs.solve ~msg:false problem with
   | Ok (_, pmap) ->
       map_instance (Lp.compute_poly pmap) instance
   | Error msg ->
@@ -161,7 +161,7 @@ let solve_all ?(max_trial_n = Int.max_int) task =
            max_trial_n __FILE__ )
     else
       let problem = build (cnstrs @ constraints) in
-      match Lp_highs.solve ~options:[("log_to_console", "false")] problem with
+      match Lp_highs.solve ~msg:false ~keep_files:true problem with
       | Ok (_, pmap) ->
           let answer = map_instance (Lp.compute_poly pmap) instance in
           answer

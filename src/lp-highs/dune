@@ -2,4 +2,4 @@
  (name lp_highs)
  (public_name lp-highs)
  (wrapped false)
- (libraries lp))
+ (libraries lp unix))

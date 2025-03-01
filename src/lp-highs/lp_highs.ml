@@ -1,6 +1,6 @@
 exception SolverError of string
 
-(* Read a file and create a list of strings. *)
+(** Read a file and create a list of strings. *)
 let read_lines filename =
   let ic = open_in filename in
   let rec aux acc =
@@ -11,7 +11,7 @@ let read_lines filename =
   in
   aux []
 
-(* Load the solution file of HiGHS. *)
+(** Load the solution file of HiGHS. *)
 let readsol filename =
   let lines = read_lines filename in
   (* Separate each line and transform them into a tuple (name, float value). *)
@@ -56,28 +56,32 @@ let write_options filepath options =
   Printf.fprintf oc "%s\n" options ;
   close_out oc
 
-(** Insert timestamp "YYYYMMDD-hhmmss-Index-PID" to a given string (filename)
-    with a placeholder. *)
-let format_with_timestamp =
+(** Insert timestamp "YYYYMMDD-hhmmss-PID-Index" to a given filename. *)
+let create_filename =
   let index = ref 0 in
-  fun () ->
+  fun dirname ->
     let open Unix in
     let tm = localtime (time ()) in
-    let tm =
-      Printf.sprintf "%04d%02d%02d-%02d%02d%02d" (tm.tm_year + 1900)
+    let timestamp =
+      Printf.sprintf "%04d%02d%02d-%02d%02d%02d-PID%d-%d" (tm.tm_year + 1900)
         (tm.tm_mon + 1) tm.tm_mday tm.tm_hour tm.tm_min tm.tm_sec
+        (Unix.getpid ()) !index
     in
-    let timestamp = Printf.sprintf "%s-%d-%d" tm !index (Unix.getpid ()) in
     incr index ;
-    fun format_str -> Printf.sprintf format_str timestamp
+    fun filename -> dirname ^ "/" ^ timestamp ^ "-" ^ filename
 
-(* Run HiGHS and obtain the output solution.
-   @param options list of additional options to pass to solver.
+(** Run HiGHS and obtain the output solution.
+    @param msg if False, no log is shown
+    @param time_limit maximum time for solver (in seconds)
+    @param options list of additional options to pass to solver
+    @param keep_files if True, files are saved in the current directory and not deleted after solving
+    @param path path to the solver binary (you can get binaries compiling from source - https://highs.dev)
  *)
-let solve ?highs_path ?(options = []) problem =
+let solve ?path ?(msg = true) ?time_limit ?(keep_files = false) ?(options = [])
+    problem =
   try
     let highs_path =
-      match highs_path with
+      match path with
       | None -> (
         try Sys.getenv "HIGHS_CMD"
         with Not_found ->
@@ -85,12 +89,23 @@ let solve ?highs_path ?(options = []) problem =
       | Some path ->
           path
     in
-    let format_with_timestamp = format_with_timestamp () in
-    let lp_file = format_with_timestamp "tmp-%s.lp" in
-    let options_file = format_with_timestamp "options-%s.txt" in
+    let dir = if keep_files then "." else Filename.temp_dir "highs-" "" in
+    let create_filename = create_filename dir in
+    let lp_file = create_filename "problem.lp" in
     Lp.write lp_file problem ;
+    let options_file = create_filename "options.txt" in
+    let options =
+      if msg then options else ("log_to_console", "false") :: options
+    in
+    let options =
+      match time_limit with
+      | None ->
+          options
+      | Some time_limit ->
+          ("time_limit", string_of_float time_limit) :: options
+    in
     write_options options_file options ;
-    let solution_file = format_with_timestamp "solution-%s.txt" in
+    let solution_file = create_filename "solution.txt" in
     let command =
       Printf.sprintf "%s %s --solution_file %s --options_file %s" highs_path
         lp_file solution_file options_file

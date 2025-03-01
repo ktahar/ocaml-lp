@@ -1,7 +1,10 @@
 (** High-level interface to HiGHS. *)
 
 val solve :
-  ?highs_path:string
+     ?path:string
+  -> ?msg:bool
+  -> ?time_limit:float
+  -> ?keep_files:bool
   -> ?options:(string * string) list
   -> Lp.Problem.t
   -> (float * float Lp.PMap.t, string) result
