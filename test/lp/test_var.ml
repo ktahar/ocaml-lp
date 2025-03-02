@@ -13,7 +13,7 @@ let to_string_list = List.map Var.to_string
 
 let to_bound_string_list =
   List.map (fun x ->
-      Option.value ~default:"" (Var.to_bound_string ~short:true x))
+      Option.value ~default:"" (Var.to_bound_string ~short:true x) )
 
 module To_test = struct
   let sort0 () = sort [x_10_1; y; x_1_1; x_2_1; x_0_1] |> to_string_list

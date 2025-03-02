@@ -1,5 +1,4 @@
 open Ctypes
-
 module T = Lp_glpk_types.M
 
 module M (F : Ctypes.FOREIGN) = struct
@@ -20,7 +19,8 @@ module M (F : Ctypes.FOREIGN) = struct
 
   let get_prob_name = foreign "glp_get_prob_name" (prob @-> returning string)
 
-  let set_obj_dir = foreign "glp_set_obj_dir" (prob @-> T.Dir.t @-> returning void)
+  let set_obj_dir =
+    foreign "glp_set_obj_dir" (prob @-> T.Dir.t @-> returning void)
 
   let get_obj_dir = foreign "glp_get_obj_dir" (prob @-> returning T.Dir.t)
 
@@ -83,7 +83,8 @@ module M (F : Ctypes.FOREIGN) = struct
   let set_col_kind =
     foreign "glp_set_col_kind" (prob @-> int @-> T.Vt.t @-> returning void)
 
-  let get_col_kind = foreign "glp_get_col_kind" (prob @-> int @-> returning T.Vt.t)
+  let get_col_kind =
+    foreign "glp_get_col_kind" (prob @-> int @-> returning T.Vt.t)
 
   let get_num_rows = foreign "glp_get_num_rows" (prob @-> returning int)
 

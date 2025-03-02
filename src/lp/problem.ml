@@ -37,7 +37,7 @@ module Vars = struct
   let has_integer vars =
     List.exists
       (fun x ->
-        match x with {Var.attr= Var.Continuous _; _} -> false | _ -> true)
+        match x with {Var.attr= Var.Continuous _; _} -> false | _ -> true )
       vars
 
   let to_vtype_string vars =

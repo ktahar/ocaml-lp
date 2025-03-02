@@ -80,7 +80,7 @@ let make_binary name = make ~integer:true ~lb:Float.zero ~ub:Float.one name
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity) name num
     =
   Array.init num (fun i ->
-      make ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]))
+      make ~integer ~lb ~ub (String.concat "_" [name; string_of_int i]) )
 
 let to_string v = v.name
 

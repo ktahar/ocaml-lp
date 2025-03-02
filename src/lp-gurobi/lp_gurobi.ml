@@ -93,7 +93,7 @@ let add_constraints env model vars =
           add_constr env model cr.linds cr.lvals cr.sense cr.rhs cr.cname
       | _ ->
           add_qconstr env model cr.linds cr.lvals cr.qrows cr.qcols cr.qvals
-            cr.sense cr.rhs cr.cname)
+            cr.sense cr.rhs cr.cname )
 
 let solve ?(write_fname = "") ?(term_output = true) problem =
   let obj, cnstrs = Problem.obj_cnstrs problem in
