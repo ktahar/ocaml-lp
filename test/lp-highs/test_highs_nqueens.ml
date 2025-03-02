@@ -161,7 +161,7 @@ let solve_all ?(max_trial_n = Int.max_int) task =
            max_trial_n __FILE__ )
     else
       let problem = build (cnstrs @ constraints) in
-      match Lp_highs.solve ~msg:false ~keep_files:true problem with
+      match Lp_highs.solve ~msg:false problem with
       | Ok (_, pmap) ->
           let answer = map_instance (Lp.compute_poly pmap) instance in
           answer
