@@ -1,4 +1,4 @@
-.PHONY: build test fmt doc clean
+.PHONY: build test fmt docs clean
 
 build:
 	dune build
