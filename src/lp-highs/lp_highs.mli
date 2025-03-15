@@ -27,4 +27,6 @@ val solve :
     @param options A list of additional options to pass to the solver.
     @param keep_files If [true], files are saved in the current directory and not deleted after solving.
            [false] by [default].
+    @return The pair of the status and the pair of the objective value and the assignments:
+           [(status, (objective, assignments))].
 *)

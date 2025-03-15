@@ -72,6 +72,8 @@ let write_options filepath options =
     @param options A list of additional options to pass to the solver.
     @param keep_files If [true], files are saved in the current directory and not deleted after solving.
            [false] by [default].
+    @return The pair of the status and the pair of the objective value and the assignments:
+           [(status, (objective, assignments))].
 *)
 let solve ?path ?(msg = true) ?log_path ?time_limit ?(keep_files = false)
     ?gap_rel ?gap_abs ?(options = []) problem =
