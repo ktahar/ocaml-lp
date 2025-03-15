@@ -6,9 +6,14 @@
 (rule
  (targets ffi_ml_consts_stubgen.c)
  (deps ./ffi_consts_stubgen.exe)
- (action (with-stdout-to %{targets} (run %{deps}))))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{deps}))))
 
 (rule
  (targets ffi_ml_consts_stubgen.exe)
- (deps    (:c ./ffi_ml_consts_stubgen.c))
- (action (run %{cc} %{c} -I %{lib:ctypes:.} -I %{ocaml_where} -o %{targets})))
+ (deps
+  (:c ./ffi_ml_consts_stubgen.c))
+ (action
+  (run %{cc} %{c} -I %{lib:ctypes:.} -I %{ocaml_where} -o %{targets})))

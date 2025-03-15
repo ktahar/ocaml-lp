@@ -27,34 +27,34 @@ module To_test = struct
         ++ (y *~ y)
         ++ (c 5. *~ x *~ y)
         ++ (c 10. *~ x)
-        ++ (c 5. *~ y) ))
+        ++ (c 5. *~ y) ) )
 
   let dot0 () =
     Poly.(
       equiv
         (dot ((c 2. *~ x) ++ y) (x ++ c 3.))
-        ((c 2. *~ x *~ x) ++ (c 3. *~ y)))
+        ((c 2. *~ x *~ x) ++ (c 3. *~ y)) )
 
   let divt0 () =
     let t2x = Term.(mul (c 2.) (var "x")) in
     Poly.(
       equiv
         (divt ((c 2. *~ x *~ x) ++ (c 4. *~ x *~ y) ++ (c 6. *~ x)) t2x)
-        (x ++ (c 2. *~ y) ++ c 3.))
+        (x ++ (c 2. *~ y) ++ c 3.) )
 
   let div0 () =
     Poly.(
       equiv
         (div ((c 2. *~ x *~ x) ++ (c 7. *~ x) -- c 15.) (x ++ c 5.))
-        ((c 2. *~ x) -- c 3.))
+        ((c 2. *~ x) -- c 3.) )
 
   let div1 () =
     Poly.(
       equiv
         (div
            ((c 6. *~ x *~ x) ++ (((c 2. *~ (a ++ b)) ++ c 3.) *~ x) ++ a ++ b)
-           ((c 2. *~ x) ++ c 1.))
-        ((c 3. *~ x) ++ a ++ b))
+           ((c 2. *~ x) ++ c 1.) )
+        ((c 3. *~ x) ++ a ++ b) )
 end
 
 let equiv0 () = Alcotest.(check bool) "equiv0" true (To_test.equiv0 ())

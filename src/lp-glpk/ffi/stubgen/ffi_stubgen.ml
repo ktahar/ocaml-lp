@@ -8,7 +8,7 @@ let () =
     Arg.(
       parse
         [ ("-ml", Set generate_ml, "Generate ML")
-        ; ("-c", Set generate_c, "Generate C") ])
+        ; ("-c", Set generate_c, "Generate C") ] )
       (fun _ -> failwith "unexpected anonymous argument")
       "stubgen [-ml|-c]"
   in

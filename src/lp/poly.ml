@@ -24,19 +24,19 @@ let binary name = [Term.var ~integer:true ~lb:Float.zero ~ub:Float.one name]
 let range ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
     ?(start = 0) stop name =
   Array.init (stop - start) (fun i ->
-      var ~integer ~lb ~ub (String.concat "_" [name; string_of_int (start + i)]))
+      var ~integer ~lb ~ub (String.concat "_" [name; string_of_int (start + i)]) )
 
 let range2 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
     ?(start0 = 0) ?(start1 = 0) stop0 stop1 name =
   Array.init (stop0 - start0) (fun i ->
       range ~integer ~lb ~ub ~start:start1 stop1
-        (String.concat "_" [name; string_of_int (start0 + i)]))
+        (String.concat "_" [name; string_of_int (start0 + i)]) )
 
 let range3 ?(integer = false) ?(lb = Float.zero) ?(ub = Float.infinity)
     ?(start0 = 0) ?(start1 = 0) ?(start2 = 0) stop0 stop1 stop2 name =
   Array.init (stop0 - start0) (fun i ->
       range2 ~integer ~lb ~ub ~start0:start1 ~start1:start2 stop1 stop2
-        (String.concat "_" [name; string_of_int (start0 + i)]))
+        (String.concat "_" [name; string_of_int (start0 + i)]) )
 
 let rangeb = range ~integer:true ~lb:Float.zero ~ub:Float.one
 
@@ -49,7 +49,7 @@ let rangev ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start = 0) stop name =
       let l = if Array.length lb > 0 then lb.(i) else Float.zero in
       let u = if Array.length ub > 0 then ub.(i) else Float.infinity in
       var ~integer ~lb:l ~ub:u
-        (String.concat "_" [name; string_of_int (start + i)]))
+        (String.concat "_" [name; string_of_int (start + i)]) )
 
 let range2v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
     ?(start1 = 0) stop0 stop1 name =
@@ -57,7 +57,7 @@ let range2v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
       let l = if Array.length lb > 0 then lb.(i) else [||] in
       let u = if Array.length ub > 0 then ub.(i) else [||] in
       rangev ~integer ~lb:l ~ub:u ~start:start1 stop1
-        (String.concat "_" [name; string_of_int (start0 + i)]))
+        (String.concat "_" [name; string_of_int (start0 + i)]) )
 
 let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
     ?(start1 = 0) ?(start2 = 0) stop0 stop1 stop2 name =
@@ -65,7 +65,7 @@ let range3v ?(integer = false) ?(lb = [||]) ?(ub = [||]) ?(start0 = 0)
       let l = if Array.length lb > 0 then lb.(i) else [||] in
       let u = if Array.length ub > 0 then ub.(i) else [||] in
       range2v ~integer ~lb:l ~ub:u ~start0:start1 ~start1:start2 stop1 stop2
-        (String.concat "_" [name; string_of_int (start0 + i)]))
+        (String.concat "_" [name; string_of_int (start0 + i)]) )
 
 let concat a = List.concat (Array.to_list a)
 
@@ -228,8 +228,7 @@ let collision p =
   let sorted = sort p in
   let res =
     List.fold_left
-      (fun coll_term t ->
-        (fst coll_term || Term.collision (snd coll_term) t, t))
+      (fun coll_term t -> (fst coll_term || Term.collision (snd coll_term) t, t))
       (false, Term.zero) sorted
   in
   fst res
@@ -247,7 +246,7 @@ let to_string ?(short = false) p =
          ["["] @ ts_string cp.quad @ ["]"]
      | _ ->
          ts_string (cp.const @ cp.linear)
-         @ ["+"; "["] @ ts_string cp.quad @ ["]"])
+         @ ["+"; "["] @ ts_string cp.quad @ ["]"] )
 
 let neg p = List.map Term.neg p
 
@@ -347,7 +346,7 @@ let map_linear f =
       | Term.Linear (c, v) ->
           f c v
       | _ ->
-          failwith "non-linear term encountered")
+          failwith "non-linear term encountered" )
 
 let mapi = List.mapi
 
@@ -362,7 +361,7 @@ let iter_linear_exn f =
       | Term.Linear (c, v) ->
           f c v
       | _ ->
-          failwith "non-linear term encountered")
+          failwith "non-linear term encountered" )
 
 let iteri = List.iteri
 

@@ -2,5 +2,4 @@
  (names knapsack jssp nqueens)
  (libraries lp lp-glpk)
  (preprocess
-  (pps ppx_deriving.map ppx_deriving.show))
-)
+  (pps ppx_deriving.map ppx_deriving.show)))
