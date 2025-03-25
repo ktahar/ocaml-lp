@@ -144,7 +144,7 @@ module Milp = struct
             set_bounds cj Float.zero Float.one ;
             B.set_col_kind prob cj T.Vt.BV )
 
-  let solve_main p set_smcp =
+  let solve_main p set_smcp set_iocp =
     let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
@@ -158,7 +158,7 @@ module Milp = struct
       B.init_smcp (C.addr smcp) ;
       B.init_iocp (C.addr iocp) ;
       set_smcp smcp ;
-      (* TODO set solver parameters *)
+      set_iocp iocp ;
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
       set_cols prob vars ;
@@ -185,7 +185,11 @@ module Milp = struct
     with Failure msg -> B.delete_prob prob ; Error msg
 
   let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
-      ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None) p =
+      ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None)
+      ?(br_tech = None) ?(bt_tech = None) ?(pp_tech = None) ?(sr_heur = None)
+      ?(fp_heur = None) ?(ps_heur = None) ?(ps_tm_lim = None) ?(gmi_cuts = None)
+      ?(mir_cuts = None) ?(cov_cuts = None) ?(clq_cuts = None) ?(mip_gap = None)
+      ?(tm_lim_int = None) p =
     let set_smcp smcp =
       Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
       Option.iter (C.setf smcp T.Smcp.meth) meth ;
@@ -194,9 +198,26 @@ module Milp = struct
       Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
       Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
     in
+    let set_iocp iocp =
+      Option.iter (C.setf iocp T.Iocp.msg_lev) msg_lev ;
+      Option.iter (C.setf iocp T.Iocp.br_tech) br_tech ;
+      Option.iter (C.setf iocp T.Iocp.bt_tech) bt_tech ;
+      Option.iter (C.setf iocp T.Iocp.pp_tech) pp_tech ;
+      Option.iter (C.setf iocp T.Iocp.sr_heur) sr_heur ;
+      Option.iter (C.setf iocp T.Iocp.fp_heur) fp_heur ;
+      Option.iter (C.setf iocp T.Iocp.ps_heur) ps_heur ;
+      Option.iter (C.setf iocp T.Iocp.ps_tm_lim) ps_tm_lim ;
+      Option.iter (C.setf iocp T.Iocp.gmi_cuts) gmi_cuts ;
+      Option.iter (C.setf iocp T.Iocp.mir_cuts) mir_cuts ;
+      Option.iter (C.setf iocp T.Iocp.cov_cuts) cov_cuts ;
+      Option.iter (C.setf iocp T.Iocp.clq_cuts) clq_cuts ;
+      Option.iter (C.setf iocp T.Iocp.mip_gap) mip_gap ;
+      Option.iter (C.setf iocp T.Iocp.tm_lim) tm_lim_int
+    in
     match Problem.classify p with
     | Pclass.MILP | Pclass.LP ->
-        B.set_term_out term_output ; solve_main p set_smcp
+        B.set_term_out term_output ;
+        solve_main p set_smcp set_iocp
     | _ ->
         Error "Lp_glpk.Milp is only for LP or MILP"
 end
