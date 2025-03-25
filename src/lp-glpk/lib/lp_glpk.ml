@@ -164,21 +164,19 @@ module Milp = struct
       match B.simplex prob (C.addr smcp) with
       | OK | EITLIM | ETMLIM -> (
         match B.get_status prob with
-        | T.Stat.OPT | T.Stat.FEAS -> (
-            let ret = B.intopt prob (C.addr iocp) in
-            (* TODO handle some of non-zero return values *)
-            if ret <> 0 then failwith "non-zero return value from intopt"
-            else
-              match B.mip_status prob with
-              | T.Stat.OPT ->
-                  let obj = B.mip_obj_val prob in
-                  let xs =
-                    make_pmap vars (fun i -> B.mip_col_val prob (i + 1))
-                  in
-                  B.delete_prob prob ;
-                  Ok (obj, xs)
-              | status ->
-                  failwith ("MILP is " ^ T.Stat.to_string status) )
+        | OPT | FEAS -> (
+          match B.intopt prob (C.addr iocp) with
+          | OK | EFAIL | EMIPGAP | ETMLIM -> (
+            match B.mip_status prob with
+            | OPT | FEAS ->
+                let obj = B.mip_obj_val prob in
+                let xs = make_pmap vars (fun i -> B.mip_col_val prob (i + 1)) in
+                B.delete_prob prob ;
+                Ok (obj, xs)
+            | status ->
+                failwith ("MILP is " ^ T.Stat.to_string status) )
+          | _ ->
+              failwith "non-zero return value from intopt" )
         | status ->
             failwith ("LP relaxation is " ^ T.Stat.to_string status) )
       | _ ->
@@ -187,10 +185,10 @@ module Milp = struct
 
   let solve ?(term_output = true) p =
     match Problem.classify p with
-    | Pclass.MILP ->
+    | Pclass.MILP | Pclass.LP ->
         B.set_term_out term_output ; solve_main p
     | _ ->
-        Error "Lp_glpk.Milp is only for MILP"
+        Error "Lp_glpk.Milp is only for LP or MILP"
 end
 
 let solve ?(term_output = true) p =

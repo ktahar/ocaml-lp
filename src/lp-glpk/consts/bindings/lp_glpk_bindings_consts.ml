@@ -47,6 +47,12 @@ module M (F : Ctypes.TYPE) = struct
 
   let enodfs = F.(constant "GLP_ENODFS" int)
 
+  let eroot = F.(constant "GLP_EROOT" int)
+
+  let emipgap = F.(constant "GLP_EMIPGAP" int)
+
+  let estop = F.(constant "GLP_ESTOP" int)
+
   let undef = F.(constant "GLP_UNDEF" int)
 
   let feas = F.(constant "GLP_FEAS" int)

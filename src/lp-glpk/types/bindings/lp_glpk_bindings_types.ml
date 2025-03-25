@@ -305,6 +305,53 @@ module M (F : Ctypes.TYPE) = struct
     let () = seal t
   end
 
+  module IntoptReturn = struct
+    type t =
+      | OK
+      | EBOUND
+      | EROOT
+      | ENOPFS
+      | ENODFS
+      | EFAIL
+      | EMIPGAP
+      | ETMLIM
+      | ESTOP
+
+    let of_int i =
+      if i = 0 then OK
+      else if i = C.ebound then EBOUND
+      else if i = C.eroot then EROOT
+      else if i = C.enopfs then ENOPFS
+      else if i = C.enodfs then ENODFS
+      else if i = C.efail then EFAIL
+      else if i = C.emipgap then EMIPGAP
+      else if i = C.etmlim then ETMLIM
+      else if i = C.estop then ESTOP
+      else failwith "Unexpected "
+
+    let to_int = function
+      | OK ->
+          0
+      | EBOUND ->
+          C.ebound
+      | EROOT ->
+          C.eroot
+      | ENOPFS ->
+          C.enopfs
+      | ENODFS ->
+          C.enodfs
+      | EFAIL ->
+          C.efail
+      | EMIPGAP ->
+          C.emipgap
+      | ETMLIM ->
+          C.etmlim
+      | ESTOP ->
+          C.estop
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
   module Iocp = struct
     module Br = struct
       type t = FFV | LFV | MFV | DTH | PCH

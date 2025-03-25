@@ -103,7 +103,8 @@ module M (F : Ctypes.FOREIGN) = struct
   let simplex =
     foreign "glp_simplex" (prob @-> ptr T.Smcp.t @-> returning T.SimplexReturn.t)
 
-  let intopt = foreign "glp_intopt" (prob @-> ptr T.Iocp.t @-> returning int)
+  let intopt =
+    foreign "glp_intopt" (prob @-> ptr T.Iocp.t @-> returning T.IntoptReturn.t)
 
   let get_status = foreign "glp_get_status" (prob @-> returning T.Stat.t)
 
