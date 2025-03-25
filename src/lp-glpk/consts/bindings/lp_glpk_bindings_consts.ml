@@ -25,6 +25,28 @@ module M (F : Ctypes.TYPE) = struct
 
   let fx = F.(constant "GLP_FX" int)
 
+  let ebadb = F.(constant "GLP_EBADB" int)
+
+  let esing = F.(constant "GLP_ESING" int)
+
+  let econd = F.(constant "GLP_ECOND" int)
+
+  let ebound = F.(constant "GLP_EBOUND" int)
+
+  let efail = F.(constant "GLP_EFAIL" int)
+
+  let eobjll = F.(constant "GLP_EOBJLL" int)
+
+  let eobjul = F.(constant "GLP_EOBJUL" int)
+
+  let eitlim = F.(constant "GLP_EITLIM" int)
+
+  let etmlim = F.(constant "GLP_ETMLIM" int)
+
+  let enopfs = F.(constant "GLP_ENOPFS" int)
+
+  let enodfs = F.(constant "GLP_ENODFS" int)
+
   let undef = F.(constant "GLP_UNDEF" int)
 
   let feas = F.(constant "GLP_FEAS" int)

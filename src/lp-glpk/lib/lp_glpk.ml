@@ -90,10 +90,8 @@ module Simplex = struct
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
       set_cols prob vars ;
-      let ret = B.simplex prob (C.addr smcp) in
-      (* TODO handle some of non-zero return values *)
-      if ret <> 0 then failwith "non-zero return value from simplex"
-      else
+      match B.simplex prob (C.addr smcp) with
+      | OK | ETMLIM | EITLIM -> (
         match B.get_status prob with
         | T.Stat.OPT ->
             let obj = B.get_obj_val prob in
@@ -101,7 +99,9 @@ module Simplex = struct
             B.delete_prob prob ;
             Ok (obj, xs)
         | status ->
-            failwith ("Problem is " ^ T.Stat.to_string status)
+            failwith ("Problem is " ^ T.Stat.to_string status) )
+      | _ ->
+          failwith "non-zero return value from simplex"
     with Failure msg -> B.delete_prob prob ; Error msg
 
   let solve ?(term_output = true) p =
@@ -152,10 +152,8 @@ module Milp = struct
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
       set_cols prob vars ;
-      let ret = B.simplex prob (C.addr smcp) in
-      (* TODO handle some of non-zero return values *)
-      if ret <> 0 then failwith "non-zero return value from simplex"
-      else
+      match B.simplex prob (C.addr smcp) with
+      | OK | EITLIM | ETMLIM -> (
         match B.get_status prob with
         | T.Stat.OPT -> (
             let ret = B.intopt prob (C.addr iocp) in
@@ -173,7 +171,9 @@ module Milp = struct
               | status ->
                   failwith ("MILP is " ^ T.Stat.to_string status) )
         | status ->
-            failwith ("LP relaxation is " ^ T.Stat.to_string status)
+            failwith ("LP relaxation is " ^ T.Stat.to_string status) )
+      | _ ->
+          failwith "non-zero return value from simplex"
     with Failure msg -> B.delete_prob prob ; Error msg
 
   let solve ?(term_output = true) p =
