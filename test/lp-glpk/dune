@@ -1,6 +1,6 @@
 (tests
  (package lp-glpk)
- (names test_glpk_ffi test_glpk test_nqueens)
+ (names test_glpk_ffi test_glpk test_nqueens test_iterlimit)
  (libraries alcotest lp lp-glpk)
  (preprocess
   (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq))
