@@ -144,7 +144,7 @@ module Milp = struct
             set_bounds cj Float.zero Float.one ;
             B.set_col_kind prob cj T.Vt.BV )
 
-  let solve_main p =
+  let solve_main p set_smcp =
     let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
@@ -157,6 +157,7 @@ module Milp = struct
     try
       B.init_smcp (C.addr smcp) ;
       B.init_iocp (C.addr iocp) ;
+      set_smcp smcp ;
       (* TODO set solver parameters *)
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
@@ -183,10 +184,19 @@ module Milp = struct
           failwith "non-zero return value from simplex"
     with Failure msg -> B.delete_prob prob ; Error msg
 
-  let solve ?(term_output = true) p =
+  let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
+      ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None) p =
+    let set_smcp smcp =
+      Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
+      Option.iter (C.setf smcp T.Smcp.meth) meth ;
+      Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
+      Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
+      Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
+      Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
+    in
     match Problem.classify p with
     | Pclass.MILP | Pclass.LP ->
-        B.set_term_out term_output ; solve_main p
+        B.set_term_out term_output ; solve_main p set_smcp
     | _ ->
         Error "Lp_glpk.Milp is only for LP or MILP"
 end
