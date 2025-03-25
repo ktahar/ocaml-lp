@@ -93,7 +93,7 @@ module Simplex = struct
       match B.simplex prob (C.addr smcp) with
       | OK | ETMLIM | EITLIM -> (
         match B.get_status prob with
-        | T.Stat.OPT ->
+        | T.Stat.OPT | T.Stat.FEAS ->
             let obj = B.get_obj_val prob in
             let xs = make_pmap vars (fun i -> B.get_col_prim prob (i + 1)) in
             B.delete_prob prob ;
