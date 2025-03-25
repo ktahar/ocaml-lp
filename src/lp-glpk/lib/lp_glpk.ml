@@ -75,7 +75,7 @@ module Simplex = struct
         | _ ->
             failwith "set_cols: integer variable found" )
 
-  let solve_main p =
+  let solve_main p set_smcp =
     let obj, cnstrs = Problem.obj_cnstrs p in
     let vars = Problem.uniq_vars p in
     let nrows = List.length cnstrs in
@@ -86,7 +86,7 @@ module Simplex = struct
     let smcp = C.make T.Smcp.t in
     try
       B.init_smcp (C.addr smcp) ;
-      (* TODO set solver parameters *)
+      set_smcp smcp ;
       set_obj prob vars obj ;
       set_cnstrs prob vars cnstrs ;
       set_cols prob vars ;
@@ -104,10 +104,19 @@ module Simplex = struct
           failwith "non-zero return value from simplex"
     with Failure msg -> B.delete_prob prob ; Error msg
 
-  let solve ?(term_output = true) p =
+  let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
+      ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None) p =
+    let set_smcp smcp =
+      Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
+      Option.iter (C.setf smcp T.Smcp.meth) meth ;
+      Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
+      Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
+      Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
+      Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
+    in
     match Problem.classify p with
     | Pclass.LP ->
-        B.set_term_out term_output ; solve_main p
+        B.set_term_out term_output ; solve_main p set_smcp
     | _ ->
         Error "Lp_glpk.Simplex is only for LP"
 end
@@ -155,7 +164,7 @@ module Milp = struct
       match B.simplex prob (C.addr smcp) with
       | OK | EITLIM | ETMLIM -> (
         match B.get_status prob with
-        | T.Stat.OPT -> (
+        | T.Stat.OPT | T.Stat.FEAS -> (
             let ret = B.intopt prob (C.addr iocp) in
             (* TODO handle some of non-zero return values *)
             if ret <> 0 then failwith "non-zero return value from intopt"
