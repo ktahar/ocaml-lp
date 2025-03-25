@@ -62,13 +62,13 @@ module Milp : sig
 
     If the function is called without parameters, the default parameters from GLPK will be used.
 
-    Generic parameters
+    {b Generic parameters}
 
     @param term_output Enable/disable terminal output.
     @param msg_lev Message level for terminal output.
 
 
-    Simplex parameters
+    {b Simplex parameters} 
 
     @param meth Simplex method option.
     @param pricing Pricing technique.
@@ -76,7 +76,7 @@ module Milp : sig
     @param it_lim Simplex iteration limit.
     @param tm_lim Simplex searching time limit, in milliseconds.
 
-    Integer solver parameter
+    {b Mixed Integer solver parameter}
 
     @param br_tech Branching technique option
     @param bt_tech Backtracking technique option
