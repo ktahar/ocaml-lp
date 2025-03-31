@@ -5,7 +5,7 @@
   test_glpk
   test_nqueens
   test_iterlimit
-  test_milp_feasable)
+  test_milp_feasible)
  (libraries alcotest lp lp-glpk)
  (preprocess
   (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq))

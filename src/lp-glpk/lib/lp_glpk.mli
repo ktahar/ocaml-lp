@@ -52,6 +52,8 @@ module Milp : sig
     -> ?mir_cuts:bool option
     -> ?cov_cuts:bool option
     -> ?clq_cuts:bool option
+    -> ?tol_int:float option
+    -> ?tol_obj:float option
     -> ?mip_gap:float option
     -> ?tm_lim_int:int option
     -> Lp.Problem.t
@@ -68,7 +70,7 @@ module Milp : sig
     @param msg_lev Message level for terminal output.
 
 
-    {b Simplex parameters} 
+    {b Simplex parameters}
 
     @param meth Simplex method option.
     @param pricing Pricing technique.
@@ -89,7 +91,9 @@ module Milp : sig
     @param mir_cuts Mixed integer rounding (MIR) cut option
     @param cov_cuts Mixed cover cut option
     @param clq_cuts Clique cut option
-    @param mip_gap The relative mip gap tolerance. If the relative mip gap for currently known best integer feasible solution falls below this tolerance, the solver terminates the search. This allows obtainig suboptimal integer feasible solutions if solving the problem to optimality takes too long time.
+    @param tol_int Abs. tolerance to check integer feasibility
+    @param tol_obj Rel. tolerance in evaluating objective
+    @param mip_gap The relative mip gap tolerance. If the relative mip gap for currently known best integer feasible solution falls below this tolerance, the solver terminates the search. This allows obtaining suboptimal integer feasible solutions if solving the problem to optimality takes too long time.
     @param tm_lim_int Searching time limit, in milliseconds.
 
     @return

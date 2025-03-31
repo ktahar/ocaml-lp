@@ -7,6 +7,6 @@ let () =
   in
   match Lp_glpk.Simplex.solve ~it_lim:(Some 0) ~term_output:false pb with
   | Ok (obj, res) ->
-      Option.iter (Printf.printf "%f %f\n" obj) (Lp.PMap.find_opt x res)
+      Option.iter (Printf.printf "%.1f %.1f\n" obj) (Lp.PMap.find_opt x res)
   | _ ->
       failwith "failing test"

@@ -188,8 +188,8 @@ module Milp = struct
       ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None)
       ?(br_tech = None) ?(bt_tech = None) ?(pp_tech = None) ?(sr_heur = None)
       ?(fp_heur = None) ?(ps_heur = None) ?(ps_tm_lim = None) ?(gmi_cuts = None)
-      ?(mir_cuts = None) ?(cov_cuts = None) ?(clq_cuts = None) ?(mip_gap = None)
-      ?(tm_lim_int = None) p =
+      ?(mir_cuts = None) ?(cov_cuts = None) ?(clq_cuts = None) ?(tol_int = None)
+      ?(tol_obj = None) ?(mip_gap = None) ?(tm_lim_int = None) p =
     let set_smcp smcp =
       Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
       Option.iter (C.setf smcp T.Smcp.meth) meth ;
@@ -211,6 +211,8 @@ module Milp = struct
       Option.iter (C.setf iocp T.Iocp.mir_cuts) mir_cuts ;
       Option.iter (C.setf iocp T.Iocp.cov_cuts) cov_cuts ;
       Option.iter (C.setf iocp T.Iocp.clq_cuts) clq_cuts ;
+      Option.iter (C.setf iocp T.Iocp.tol_int) tol_int ;
+      Option.iter (C.setf iocp T.Iocp.tol_obj) tol_obj ;
       Option.iter (C.setf iocp T.Iocp.mip_gap) mip_gap ;
       Option.iter (C.setf iocp T.Iocp.tm_lim) tm_lim_int
     in
