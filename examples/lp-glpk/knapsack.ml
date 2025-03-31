@@ -1,25 +1,27 @@
 (* Example for Knapsack Problem *)
+type item = {profit: float; weight: float}
 
-type task = {n: int; profit: float array; weight: float array; capacity: float}
+type task = {items: item list; capacity: float}
 
 type 'a instance = {x: 'a array; space_left: 'a; total_amount: 'a}
 [@@deriving map, show]
 
 let build task : Lp.Problem.t * Lp.Poly.t instance =
-  assert (task.n = Array.length task.weight) ;
-  assert (task.n = Array.length task.profit) ;
+  let n = List.length task.items in
   let open Lp in
   let x =
-    Array.init task.n (fun i ->
+    Array.init n (fun i ->
         Printf.sprintf "x_%d" i |> Lp.Poly.var ~integer:true ~lb:0. ~ub:1. )
   in
+  (* Calculate constraints directly from the items list *)
   let constr =
-    Array.map2 (fun x_i w_i -> x_i *~ c w_i) x task.weight
-    |> Array.fold_left ( ++ ) (c 0.0)
+    List.mapi (fun i item -> x.(i) *~ c item.weight) task.items
+    |> List.fold_left ( ++ ) (c 0.0)
   in
+  (* Calculate objective directly from the items list *)
   let obj =
-    Array.map2 (fun x_i c_i -> x_i *~ c c_i) x task.profit
-    |> Array.fold_left ( ++ ) (c 0.0)
+    List.mapi (fun i item -> x.(i) *~ c item.profit) task.items
+    |> List.fold_left ( ++ ) (c 0.0)
   in
   ( make (maximize obj) [constr <~ c task.capacity]
   , {x; space_left= c task.capacity -- constr; total_amount= obj} )
@@ -27,7 +29,7 @@ let build task : Lp.Problem.t * Lp.Poly.t instance =
 (* Solve and map solution back to original type *)
 let solve task =
   let problem, instance = build task in
-  match Lp_glpk.solve ~term_output:false problem with
+  match Lp_glpk.Milp.solve problem with
   | Ok (_, pmap) ->
       map_instance (Lp.compute_poly pmap) instance
   | Error msg ->
@@ -38,9 +40,13 @@ let solve task =
 let () =
   (* Create instance *)
   let task =
-    { n= 6
-    ; profit= [|10.; 13.; 18.; 31.; 7.; 15.|]
-    ; weight= [|11.; 15.; 20.; 35.; 10.; 33.|]
+    { items=
+        [ {profit= 10.; weight= 11.}
+        ; {profit= 13.; weight= 15.}
+        ; {profit= 18.; weight= 20.}
+        ; {profit= 31.; weight= 35.}
+        ; {profit= 7.; weight= 10.}
+        ; {profit= 15.; weight= 33.} ]
     ; capacity= 47. }
   in
   (* Build and solve *)

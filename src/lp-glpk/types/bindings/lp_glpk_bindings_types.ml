@@ -5,6 +5,7 @@ module M (F : Ctypes.TYPE) = struct
   open F
 
   module Dir = struct
+    (* Optimization direction*)
     type t = MIN | MAX
 
     let of_int i =
@@ -18,6 +19,7 @@ module M (F : Ctypes.TYPE) = struct
   end
 
   module Vt = struct
+    (* Variable type: CV for continous variable, IV integer variable, BV Boolean variable *)
     type t = CV | IV | BV
 
     let of_int i =
@@ -57,7 +59,67 @@ module M (F : Ctypes.TYPE) = struct
     let t = view ~read:of_int ~write:to_int int
   end
 
+  module SimplexReturn = struct
+    type t =
+      | OK
+      | EBADB
+      | ESING
+      | ECOND
+      | EBOUND
+      | EFAIL
+      | EOBJLL
+      | EOBJUL
+      | EITLIM
+      | ETMLIM
+      | ENOPFS
+      | ENODFS
+
+    let of_int i =
+      if i = 0 then OK
+      else if i = C.ebadb then EBADB
+      else if i = C.esing then ESING
+      else if i = C.econd then ECOND
+      else if i = C.ebound then EBOUND
+      else if i = C.efail then EFAIL
+      else if i = C.eobjll then EOBJLL
+      else if i = C.eobjul then EOBJUL
+      else if i = C.eitlim then EITLIM
+      else if i = C.etmlim then ETMLIM
+      else if i = C.enopfs then ENOPFS
+      else if i = C.enodfs then ENODFS
+      else failwith "Unexpected return code"
+
+    let to_int = function
+      | OK ->
+          0
+      | EBADB ->
+          C.ebadb
+      | ESING ->
+          C.esing
+      | ECOND ->
+          C.econd
+      | EBOUND ->
+          C.ebound
+      | EFAIL ->
+          C.efail
+      | EOBJLL ->
+          C.eobjll
+      | EOBJUL ->
+          C.eobjul
+      | EITLIM ->
+          C.eitlim
+      | ETMLIM ->
+          C.etmlim
+      | ENOPFS ->
+          C.enopfs
+      | ENODFS ->
+          C.enodfs
+
+    let t = view ~read:of_int ~write:to_int int
+  end
+
   module Stat = struct
+    (* Solution status after solving *)
     type t = UNDEF | FEAS | INFEAS | NOFEAS | OPT | UNBND
 
     let of_int i =
@@ -241,6 +303,53 @@ module M (F : Ctypes.TYPE) = struct
     let aorn = field t "aorn" An.t
 
     let () = seal t
+  end
+
+  module IntoptReturn = struct
+    type t =
+      | OK
+      | EBOUND
+      | EROOT
+      | ENOPFS
+      | ENODFS
+      | EFAIL
+      | EMIPGAP
+      | ETMLIM
+      | ESTOP
+
+    let of_int i =
+      if i = 0 then OK
+      else if i = C.ebound then EBOUND
+      else if i = C.eroot then EROOT
+      else if i = C.enopfs then ENOPFS
+      else if i = C.enodfs then ENODFS
+      else if i = C.efail then EFAIL
+      else if i = C.emipgap then EMIPGAP
+      else if i = C.etmlim then ETMLIM
+      else if i = C.estop then ESTOP
+      else failwith "Unexpected "
+
+    let to_int = function
+      | OK ->
+          0
+      | EBOUND ->
+          C.ebound
+      | EROOT ->
+          C.eroot
+      | ENOPFS ->
+          C.enopfs
+      | ENODFS ->
+          C.enodfs
+      | EFAIL ->
+          C.efail
+      | EMIPGAP ->
+          C.emipgap
+      | ETMLIM ->
+          C.etmlim
+      | ESTOP ->
+          C.estop
+
+    let t = view ~read:of_int ~write:to_int int
   end
 
   module Iocp = struct

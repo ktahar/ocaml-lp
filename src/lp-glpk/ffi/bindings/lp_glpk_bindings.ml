@@ -100,9 +100,11 @@ module M (F : Ctypes.FOREIGN) = struct
 
   let init_iocp = foreign "glp_init_iocp" (ptr T.Iocp.t @-> returning void)
 
-  let simplex = foreign "glp_simplex" (prob @-> ptr T.Smcp.t @-> returning int)
+  let simplex =
+    foreign "glp_simplex" (prob @-> ptr T.Smcp.t @-> returning T.SimplexReturn.t)
 
-  let intopt = foreign "glp_intopt" (prob @-> ptr T.Iocp.t @-> returning int)
+  let intopt =
+    foreign "glp_intopt" (prob @-> ptr T.Iocp.t @-> returning T.IntoptReturn.t)
 
   let get_status = foreign "glp_get_status" (prob @-> returning T.Stat.t)
 
