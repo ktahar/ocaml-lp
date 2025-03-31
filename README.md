@@ -99,9 +99,10 @@ which are typically available on commercial solvers.
 
 Some references to LP file format.
 
-- [CPLEX](https://www.ibm.com/docs/en/icos/12.7.1.0?topic=cplex-lp-file-format-algebraic-representation)
+- [CPLEX](https://www.ibm.com/docs/en/icos/22.1.2?topic=cplex-lp-file-format-algebraic-representation)
 - [Gurobi](https://www.gurobi.com/documentation/9.1/refman/lp_format.html)
 - Manual of [GLPK](https://www.gnu.org/software/glpk/)
 
 ## License
+
 [MIT](LICENSE.md)
