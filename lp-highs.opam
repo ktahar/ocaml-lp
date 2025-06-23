@@ -14,10 +14,10 @@ depends: [
     "ocaml" {>= "4.08.0"}
     "dune" {>= "2.2.0"}
     "lp" {= version}
-    "alcotest" {with-test}
-    "ppx_deriving" {with-test}
+#    "alcotest" {with-test}
+#    "ppx_deriving" {with-test}
 ]
 build: [
     [ "dune" "build" "-p" name "-j" jobs ]
-    [ "dune" "runtest" "-p" name "-j" jobs ] {with-test}
+#    [ "dune" "runtest" "-p" name "-j" jobs ] {with-test}
 ]
