@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-06-22
+### Added
+- lp-highs package, interface to HiGHS (thanks @sano-jin).
+- post-processing utility functions compute_term and compute_poly (thanks @adelaett).
+
 ## [0.4.0] - 2021-11-19
 ### Added
 - lp-glpk-js package, interface to GLPK through glpk.js.
