@@ -5,7 +5,7 @@ This library helps the modeling of Linear Programming (LP) and Mixed Integer Pro
 This package is an optional solver-interface to HiGHS.
 """
 maintainer: "Kosuke Tahara <ksk.tahara@gmail.com>"
-authors: [ "Jin Sano <sano@ueda.info.waseda.ac.jp>"  "Kosuke Tahara <ksk.tahara@gmail.com>" ]
+authors: [ "Jin Sano <sano@ueda.info.waseda.ac.jp>" "Kosuke Tahara <ksk.tahara@gmail.com>" ]
 license: "MIT"
 homepage: "https://github.com/ktahar/ocaml-lp"
 bug-reports: "https://github.com/ktahar/ocaml-lp/issues"
