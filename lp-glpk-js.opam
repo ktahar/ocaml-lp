@@ -11,7 +11,7 @@ homepage: "https://github.com/ktahar/ocaml-lp"
 bug-reports: "https://github.com/ktahar/ocaml-lp/issues"
 dev-repo: "git+https://github.com/ktahar/ocaml-lp.git"
 depends: [
-    "ocaml" {>= "4.08.0"}
+    "ocaml" {>= "5.1.0"}
     "dune"  {>= "2.2.0"}
     "lp" {= version}
     "js_of_ocaml"

@@ -7,6 +7,9 @@
 - lp-highs package, interface to HiGHS (thanks @sano-jin).
 - post-processing utility functions compute_term and compute_poly (thanks @adelaett).
 
+### Changed
+- Supported OCaml version is now >= 5.1.0.
+
 ## [0.4.0] - 2021-11-19
 ### Added
 - lp-glpk-js package, interface to GLPK through glpk.js.
