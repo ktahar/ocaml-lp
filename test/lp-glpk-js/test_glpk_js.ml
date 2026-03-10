@@ -1,5 +1,13 @@
 module To_test = struct
-  let g = Lp_glpk_js.require_glpk "glpk.js"
+  let g : Lp_glpk_js.glpk Js_of_ocaml.Js.t option ref = ref None
+  let set_glpk glpk = g := Some glpk
+
+  let get_glpk () =
+    match !g with
+    | Some glpk ->
+        glpk
+    | None ->
+        failwith "glpk.js is not initialized"
 
   let to_list prob xs =
     List.map
@@ -8,7 +16,7 @@ module To_test = struct
 
   let solve_lp0 () =
     let p = Lp.read "lp0.lp" in
-    match Lp_glpk_js.solve ~term_output:false g p with
+    match Lp_glpk_js.solve ~term_output:false (get_glpk ()) p with
     | Ok (obj, xs) ->
         obj :: to_list p xs
     | Error _ ->
@@ -16,10 +24,21 @@ module To_test = struct
 
   let solve_milp0 () =
     let p = Lp.read "milp0.lp" in
-    match Lp_glpk_js.solve ~term_output:false g p with
+    match Lp_glpk_js.solve ~term_output:false (get_glpk ()) p with
     | Ok (obj, xs) ->
         obj :: to_list p xs
     | Error _ ->
+        []
+
+  let solve_lp0_async () =
+    let p = Lp.read "lp0.lp" in
+    let r = ref None in
+    Lp_glpk_js.solve_async ~term_output:false (get_glpk ()) p (fun x ->
+        r := Some x ) ;
+    match !r with
+    | Some (Ok (obj, xs)) ->
+        obj :: to_list p xs
+    | Some (Error _) | None ->
         []
 end
 
@@ -33,8 +52,19 @@ let solve_milp0 () =
     [-1.75; 1.0; -5.5; 5.25; 3.0]
     (To_test.solve_milp0 ())
 
-let () =
+let solve_lp0_async () =
+  Alcotest.(check (list (float 1e-7)))
+    "solve_lp0_async" [1.2; 0.0; 1.2]
+    (To_test.solve_lp0_async ())
+
+let run_tests () =
   let open Alcotest in
   run "GlpkJs"
     [ ("solve lp0", [test_case "solve_lp0" `Quick solve_lp0])
-    ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0]) ]
+    ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0])
+    ; ("solve lp0 async", [test_case "solve_lp0_async" `Quick solve_lp0_async])
+    ]
+
+let () =
+  Lp_glpk_js.require_glpk_async "glpk.js/node" (fun glpk ->
+      To_test.set_glpk glpk ; run_tests () )

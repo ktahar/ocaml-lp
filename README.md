@@ -58,6 +58,10 @@ let () =
 
 - Since lp-glpk is tested only on GLPK version 4.65 and 5+, something may fail on older versions.
 - lp-glpk-js is another interface to GLPK through [glpk.js](https://github.com/jvail/glpk.js/), that is useful for applications based on js_of_ocaml.
+  The JS test is optional and not part of default `dune runtest`. For local development, install the JS dependency outside dune with `make setup-lp-glpk-js` and then run `make test-lp-glpk-js` or `dune build @runtest_lp_glpk_js`.
+  The current test setup pins `glpk.js` to `5.0.0`.
+  For compatibility, `Lp_glpk_js.require_glpk_async` supports both the legacy `4.x` module shape and the `5.x` async constructor, while `require_glpk` remains available for synchronous `4.x` initialization.
+  Likewise, `Lp_glpk_js.solve_async` supports both synchronous and Promise-based `glpk.solve`.
 - lp-gurobi is an interface to commercial solver Gurobi. To work with this, compile your application with `-cclib -lgurobiXY` flags, where XY is the version of Gurobi (e.g. 91).
 
 ## Documentation

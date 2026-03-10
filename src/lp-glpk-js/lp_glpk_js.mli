@@ -113,6 +113,16 @@ val require_glpk : string -> glpk Js.t
    var GLPK = require("glpk.js");
    var glpk = GLPK();
    ]}
+   For glpk.js 5.x (async constructor), this function raises
+   [Failure] and {!val:require_glpk_async} must be used.
+*)
+
+val require_glpk_async :
+  ?on_error:(Js.Unsafe.any -> unit) -> string -> (glpk Js.t -> unit) -> unit
+(** require and instantiate glpk.js asynchronously using callbacks.
+    This supports both legacy synchronous modules (glpk.js 4.x) and
+    async modules (glpk.js 5.x). If the constructor is synchronous,
+    [on_ready] is called immediately.
 *)
 
 val solve :
@@ -122,5 +132,19 @@ val solve :
   -> (float * float Lp.PMap.t, string) Stdlib.result
 (** Solve the problem using GLPK via glpk.js.
     GLPK can solve only linear problems (LP or MILP).
-    glpk.js interface object ({!type:glpk} Js.t) must be given, that can be built with {!val:require_glpk}.
+    glpk.js interface object ({!type:glpk} Js.t) must be given, that can be built with
+    {!val:require_glpk_async} or {!val:require_glpk}.
+    If [glpk.solve] is asynchronous (e.g. glpk.js 5.x browser entry), this function
+    returns [Error] and {!val:solve_async} should be used.
+*)
+
+val solve_async :
+     ?on_error:(Js.Unsafe.any -> unit)
+  -> ?term_output:bool
+  -> glpk Js.t
+  -> Lp.Problem.t
+  -> ((float * float Lp.PMap.t, string) Stdlib.result -> unit)
+  -> unit
+(** Solve the problem with callback-based async support.
+    Works with both synchronous and Promise-based [glpk.solve].
 *)

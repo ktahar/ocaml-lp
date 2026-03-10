@@ -22,6 +22,7 @@ tags
 *.cmxa
 
 _build/
+test/lp-glpk-js/node_modules/
 
 *.byte
 *.native
