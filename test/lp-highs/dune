@@ -1,9 +1,5 @@
 (executables
- (names
-   test_highs
-   test_highs_knapsack
-   test_highs_nqueens
-   test_highs_jobs)
+ (names test_highs test_highs_knapsack test_highs_nqueens test_highs_jobs)
  (libraries alcotest lp lp-highs)
  (preprocess
   (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq)))
@@ -52,6 +48,7 @@
  (action
   (progn
    (run %{dep:test_highs.exe} --color=always)
-   (diff %{dep:test_highs_knapsack.output} %{dep:test_highs_knapsack.expected})
+   (diff %{dep:test_highs_knapsack.output}
+     %{dep:test_highs_knapsack.expected})
    (diff %{dep:test_highs_nqueens.output} %{dep:test_highs_nqueens.expected})
    (diff %{dep:test_highs_jobs.output} %{dep:test_highs_jobs.expected}))))

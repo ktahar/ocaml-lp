@@ -36,7 +36,7 @@ For development, clone this repository and use local path pins:
 
 ```bash
 # 1. Install dependencies from local opam files:
-opam install . --deps-only --with-test
+opam install . --deps-only --with-test --with-dev-setup
 # 2. Pin packages you want to develop to the current checkout:
 opam pin add lp .
 opam pin add lp-glpk .
