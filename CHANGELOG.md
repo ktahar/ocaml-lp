@@ -1,6 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- lp-highs: ctypes interface.
+
+### Fixed
+- lp-glpk, lp-glpk-js, lp-gurobi: bug of not handling constant term in objective.
 
 ## [0.5.0] - 2025-06-22
 ### Added

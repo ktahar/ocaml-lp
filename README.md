@@ -51,11 +51,11 @@ make test # dune runtest
 # 4. Run optional solver-specific tests:
 make test-lp-glpk-js # dune build @runtest_lp_glpk_js
 make test-lp-highs # dune build @runtest_lp_highs
-# 5. Install packages from current working-dir source.
-# (When you want the packages to be installed, e.g., when you want to test them in REPL.)
-opam install lp --working-dir # or opam reinstall lp --working-dir
-# 6. Run examples:
+# 5. Run examples:
 dune exec examples/lp-glpk/knapsack.exe
+# 6. After edit, rebuild local packages from current working-dir source:
+# (When you want to update installed packages, e.g., to test them in REPL.)
+opam install lp --working-dir # or opam reinstall lp --working-dir
 ```
 
 ### Build and install HiGHS
@@ -105,8 +105,9 @@ that is useful for applications based on js_of_ocaml.
 
 The test of lp-glpk-js is optional and not part of default `dune runtest`.
 For local development, install the JS dependency outside dune with `make setup-lp-glpk-js` and then run `make test-lp-glpk-js` or `dune build @runtest_lp_glpk_js`.
-The current test setup pins `glpk.js` to `5.0.0`.
-For compatibility, `Lp_glpk_js.require_glpk_async` supports both the legacy `4.x` module shape and the `5.x` async constructor, while `require_glpk` remains available for synchronous `4.x` initialization.
+The current test setup pins glpk.js version to 5.0.0.
+
+For compatibility, `Lp_glpk_js.require_glpk_async` supports both the legacy 4.x module shape and the 5.x async constructor, while `require_glpk` remains available for synchronous 4.x initialization.
 Likewise, `Lp_glpk_js.solve_async` supports both synchronous and Promise-based `glpk.solve`.
 
 #### lp-highs
