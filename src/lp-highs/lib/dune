@@ -1,0 +1,4 @@
+(library
+ (name lp_highs)
+ (public_name lp-highs)
+ (libraries lp lp-highs.ffi lp-highs.types ctypes))

@@ -1,5 +1,3 @@
-let prefix = "lp_glpk_stub"
-
 let prologue = "#include <glpk.h>"
 
 let () =

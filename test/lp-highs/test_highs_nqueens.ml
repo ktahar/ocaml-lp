@@ -105,20 +105,20 @@ let enum_symmetric_configs placement =
   let n = Array.length placement - 1 in
   Array.to_list placement
   |> List.mapi (fun i row ->
-         Array.to_list row
-         |> List.mapi (fun j prev ->
-                if prev >= 0.99 then
-                  (* Symmetric to the given position by rotation and reflection. *)
-                  Some
-                    ( (i, j)
-                    , (i, n - j)
-                    , (n - i, j)
-                    , (n - i, n - j)
-                    , (j, i)
-                    , (n - j, i)
-                    , (j, n - i)
-                    , (n - j, n - i) )
-                else None ) )
+      Array.to_list row
+      |> List.mapi (fun j prev ->
+          if prev >= 0.99 then
+            (* Symmetric to the given position by rotation and reflection. *)
+            Some
+              ( (i, j)
+              , (i, n - j)
+              , (n - i, j)
+              , (n - i, n - j)
+              , (j, i)
+              , (n - j, i)
+              , (j, n - i)
+              , (n - j, n - i) )
+          else None ) )
   |> List.concat
   |> List.filter_map (fun x -> x)
   |> split8 |> list_of_8tuple

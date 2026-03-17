@@ -5,6 +5,9 @@ tags
 # LP solution file
 *.sol
 
+# Solver log file
+*.log
+
 # OCaml
 *.o
 *.cmo
