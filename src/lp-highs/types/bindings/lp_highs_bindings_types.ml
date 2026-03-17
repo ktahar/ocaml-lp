@@ -94,6 +94,23 @@ module M (F : Ctypes.TYPE) = struct
     let t = view ~read:of_int ~write:to_int HighsInt.t
   end
 
+  module HessianFormat = struct
+    type t = TRIANGULAR | SQUARE
+
+    let of_int i =
+      if i = C.hessian_format_triangular then TRIANGULAR
+      else if i = C.hessian_format_square then SQUARE
+      else failwith "Unexpected HiGHS Hessian format"
+
+    let to_int = function
+      | TRIANGULAR ->
+          C.hessian_format_triangular
+      | SQUARE ->
+          C.hessian_format_square
+
+    let t = view ~read:of_int ~write:to_int HighsInt.t
+  end
+
   module VarType = struct
     type t =
       | CONTINUOUS

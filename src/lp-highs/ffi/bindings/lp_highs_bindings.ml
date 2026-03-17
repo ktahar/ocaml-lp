@@ -52,6 +52,15 @@ module M (F : Ctypes.FOREIGN) = struct
       @-> ptr T.HighsInt.t @-> ptr T.HighsInt.t @-> ptr double
       @-> ptr T.VarType.t @-> returning T.Status.t )
 
+  let pass_model =
+    foreign "Highs_passModel"
+      ( highs @-> T.HighsInt.t @-> T.HighsInt.t @-> T.HighsInt.t
+      @-> T.HighsInt.t @-> T.MatrixFormat.t @-> T.HessianFormat.t
+      @-> T.ObjSense.t @-> double @-> ptr double @-> ptr double @-> ptr double
+      @-> ptr double @-> ptr double @-> ptr T.HighsInt.t @-> ptr T.HighsInt.t
+      @-> ptr double @-> ptr T.HighsInt.t @-> ptr T.HighsInt.t @-> ptr double
+      @-> ptr T.VarType.t @-> returning T.Status.t )
+
   let run = foreign "Highs_run" (highs @-> returning T.Status.t)
 
   let get_solution =

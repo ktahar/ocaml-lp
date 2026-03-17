@@ -138,6 +138,8 @@ module Cmd = struct
           Error (Printexc.to_string exn)
     in
     match Lp.Problem.classify problem with
+    | Lp.Pclass.MIQP ->
+        Error "Lp_highs.Cmd.solve doesn't support MIQP"
     | Lp.Pclass.QCP | Lp.Pclass.MIQCP ->
         Error
           "Lp_highs.Cmd.solve doesn't support quadratically constrained \
@@ -152,20 +154,31 @@ module Ctypes = struct
   module B = Lp_highs_ffi.M
   open Lp
 
-  type model_data =
-    { vars: Var.t list
-    ; ncols: int
-    ; nrows: int
+  type linear_constraint_data =
+    { nrows: int
     ; nnz: int
-    ; sense: T.ObjSense.t
-    ; col_cost: float C.CArray.t
-    ; col_lower: float C.CArray.t
-    ; col_upper: float C.CArray.t
     ; row_lower: float C.CArray.t
     ; row_upper: float C.CArray.t
     ; a_start: T.HighsInt.t C.CArray.t
     ; a_index: T.HighsInt.t C.CArray.t
-    ; a_value: float C.CArray.t
+    ; a_value: float C.CArray.t }
+
+  type hessian_data =
+    { q_nnz: int
+    ; q_start: T.HighsInt.t C.CArray.t
+    ; q_index: T.HighsInt.t C.CArray.t
+    ; q_value: float C.CArray.t }
+
+  type model_data =
+    { vars: Var.t list
+    ; ncols: int
+    ; sense: T.ObjSense.t
+    ; obj_offset: float
+    ; col_cost: float C.CArray.t
+    ; col_lower: float C.CArray.t
+    ; col_upper: float C.CArray.t
+    ; linear: linear_constraint_data
+    ; hessian: hessian_data option
     ; integrality: T.VarType.t C.CArray.t option }
 
   let make_pmap vars values =
@@ -273,27 +286,17 @@ module Ctypes = struct
     | None ->
         raise (SolverError ("cannot find variable " ^ v.Var.name))
 
-  let build_model_data highs problem pclass =
-    let obj, cnstrs = Problem.obj_cnstrs problem in
-    let vars = Problem.uniq_vars problem in
+  let build_col_data highs_inf vars pclass =
     let ncols = List.length vars in
-    let nrows = List.length cnstrs in
-    let var_index = build_var_index vars in
-    let highs_inf = B.get_infinity highs in
     let col_cost = C.CArray.make C.double ncols in
     let col_lower = C.CArray.make C.double ncols in
     let col_upper = C.CArray.make C.double ncols in
-    let row_lower = C.CArray.make C.double nrows in
-    let row_upper = C.CArray.make C.double nrows in
     let integrality =
       match pclass with
       | Problem.Pclass.MILP ->
           Some (C.CArray.make T.VarType.t ncols)
       | _ ->
           None
-    in
-    let sense =
-      if Objective.is_max obj then T.ObjSense.MAXIMIZE else T.ObjSense.MINIMIZE
     in
     List.iteri
       (fun j var ->
@@ -319,9 +322,19 @@ module Ctypes = struct
             in
             C.CArray.set data j vt )
       vars ;
-    Poly.iter_linear_exn
+    (col_cost, col_lower, col_upper, integrality)
+
+  let set_linear_objective_coefficients col_cost var_index obj =
+    let dec = Poly.decompose (Objective.to_poly obj) in
+    List.iter2
       (fun c v -> C.CArray.set col_cost (idx_var var_index v) c)
-      (Objective.to_poly obj) ;
+      dec.lcs dec.lvs ;
+    dec.const
+
+  let build_linear_constraints highs_inf var_index ncols cnstrs =
+    let nrows = List.length cnstrs in
+    let row_lower = C.CArray.make C.double nrows in
+    let row_upper = C.CArray.make C.double nrows in
     let col_entries = Array.make ncols [] in
     List.iteri
       (fun i cnstr ->
@@ -362,49 +375,149 @@ module Ctypes = struct
           incr pos )
         entries
     done ;
+    {nrows; nnz; row_lower; row_upper; a_start; a_index; a_value}
+
+  let build_hessian var_index ncols obj =
+    let dec = Poly.decompose (Objective.to_poly obj) in
+    let entries = Hashtbl.create (max 8 (List.length dec.qcs)) in
+    let add_entry row col value =
+      (* Merge duplicate (row, col) Hessian entries caused by repeated terms. *)
+      let key = (row, col) in
+      let old = Option.value ~default:0.0 (Hashtbl.find_opt entries key) in
+      Hashtbl.replace entries key (old +. value)
+    in
+    let rec add_quad_terms qcs qv0s qv1s =
+      match (qcs, qv0s, qv1s) with
+      | coeff :: qcs_rest, v0 :: qv0s_rest, v1 :: qv1s_rest ->
+          let i = idx_var var_index v0 in
+          let j = idx_var var_index v1 in
+          (* HiGHS objective is 0.5*x'Qx + c'x, so diagonal terms use 2*c.
+             HiGHS expects one triangular entry per cross term, so keep
+             only the lower-triangular location (row >= col). *)
+          ( if i = j then add_entry i i (2.0 *. coeff)
+            else
+              let row, col = if i > j then (i, j) else (j, i) in
+              add_entry row col coeff ) ;
+          add_quad_terms qcs_rest qv0s_rest qv1s_rest
+      | [], [], [] ->
+          ()
+      | _ ->
+          raise (SolverError "invalid quadratic objective decomposition")
+    in
+    add_quad_terms dec.qcs dec.qv0s dec.qv1s ;
+    let col_entries = Array.make ncols [] in
+    Hashtbl.iter
+      (fun (row, col) value ->
+        if value <> 0.0 then
+          col_entries.(col) <- (row, value) :: col_entries.(col) )
+      entries ;
+    let q_nnz =
+      Array.fold_left (fun acc es -> acc + List.length es) 0 col_entries
+    in
+    let q_start = C.CArray.make T.HighsInt.t ncols in
+    let q_index = C.CArray.make T.HighsInt.t q_nnz in
+    let q_value = C.CArray.make C.double q_nnz in
+    let pos = ref 0 in
+    for col = 0 to ncols - 1 do
+      C.CArray.set q_start col !pos ;
+      let es =
+        List.sort
+          (fun (row0, _) (row1, _) -> Int.compare row0 row1)
+          col_entries.(col)
+      in
+      List.iter
+        (fun (row, value) ->
+          C.CArray.set q_index !pos row ;
+          C.CArray.set q_value !pos value ;
+          incr pos )
+        es
+    done ;
+    {q_nnz; q_start; q_index; q_value}
+
+  let build_model_data highs problem pclass =
+    let obj, cnstrs = Problem.obj_cnstrs problem in
+    let vars = Problem.uniq_vars problem in
+    let ncols = List.length vars in
+    let var_index = build_var_index vars in
+    let highs_inf = B.get_infinity highs in
+    let sense =
+      if Objective.is_max obj then T.ObjSense.MAXIMIZE else T.ObjSense.MINIMIZE
+    in
+    let col_cost, col_lower, col_upper, integrality =
+      build_col_data highs_inf vars pclass
+    in
+    let obj_offset = set_linear_objective_coefficients col_cost var_index obj in
+    let linear = build_linear_constraints highs_inf var_index ncols cnstrs in
+    let hessian =
+      match pclass with
+      | Problem.Pclass.QP ->
+          Some (build_hessian var_index ncols obj)
+      | _ ->
+          None
+    in
     { vars
     ; ncols
-    ; nrows
-    ; nnz
     ; sense
+    ; obj_offset
     ; col_cost
     ; col_lower
     ; col_upper
-    ; row_lower
-    ; row_upper
-    ; a_start
-    ; a_index
-    ; a_value
+    ; linear
+    ; hessian
     ; integrality }
 
   let solve_model highs data =
-    let pass_status =
-      match data.integrality with
-      | None ->
-          B.pass_lp highs data.ncols data.nrows data.nnz T.MatrixFormat.COLWISE
-            data.sense 0.0
-            (C.CArray.start data.col_cost)
-            (C.CArray.start data.col_lower)
-            (C.CArray.start data.col_upper)
-            (C.CArray.start data.row_lower)
-            (C.CArray.start data.row_upper)
-            (C.CArray.start data.a_start)
-            (C.CArray.start data.a_index)
-            (C.CArray.start data.a_value)
-      | Some integrality ->
-          B.pass_mip highs data.ncols data.nrows data.nnz T.MatrixFormat.COLWISE
-            data.sense 0.0
-            (C.CArray.start data.col_cost)
-            (C.CArray.start data.col_lower)
-            (C.CArray.start data.col_upper)
-            (C.CArray.start data.row_lower)
-            (C.CArray.start data.row_upper)
-            (C.CArray.start data.a_start)
-            (C.CArray.start data.a_index)
-            (C.CArray.start data.a_value)
-            (C.CArray.start integrality)
+    let pass_stage, pass_status =
+      match (data.hessian, data.integrality) with
+      | None, None ->
+          ( "Highs_passLp"
+          , B.pass_lp highs data.ncols data.linear.nrows data.linear.nnz
+              T.MatrixFormat.COLWISE data.sense data.obj_offset
+              (C.CArray.start data.col_cost)
+              (C.CArray.start data.col_lower)
+              (C.CArray.start data.col_upper)
+              (C.CArray.start data.linear.row_lower)
+              (C.CArray.start data.linear.row_upper)
+              (C.CArray.start data.linear.a_start)
+              (C.CArray.start data.linear.a_index)
+              (C.CArray.start data.linear.a_value) )
+      | None, Some integrality ->
+          ( "Highs_passMip"
+          , B.pass_mip highs data.ncols data.linear.nrows data.linear.nnz
+              T.MatrixFormat.COLWISE data.sense data.obj_offset
+              (C.CArray.start data.col_cost)
+              (C.CArray.start data.col_lower)
+              (C.CArray.start data.col_upper)
+              (C.CArray.start data.linear.row_lower)
+              (C.CArray.start data.linear.row_upper)
+              (C.CArray.start data.linear.a_start)
+              (C.CArray.start data.linear.a_index)
+              (C.CArray.start data.linear.a_value)
+              (C.CArray.start integrality) )
+      | Some hessian, None ->
+          ( "Highs_passModel"
+          , B.pass_model highs data.ncols data.linear.nrows data.linear.nnz
+              hessian.q_nnz T.MatrixFormat.COLWISE T.HessianFormat.TRIANGULAR
+              data.sense data.obj_offset
+              (C.CArray.start data.col_cost)
+              (C.CArray.start data.col_lower)
+              (C.CArray.start data.col_upper)
+              (C.CArray.start data.linear.row_lower)
+              (C.CArray.start data.linear.row_upper)
+              (C.CArray.start data.linear.a_start)
+              (C.CArray.start data.linear.a_index)
+              (C.CArray.start data.linear.a_value)
+              (C.CArray.start hessian.q_start)
+              (C.CArray.start hessian.q_index)
+              (C.CArray.start hessian.q_value)
+              (C.from_voidp T.VarType.t C.null) )
+      | Some _, Some _ ->
+          raise
+            (SolverError
+               "internal error: simultaneous Hessian and integrality are \
+                unsupported" )
     in
-    check_status "Highs_passLp/Highs_passMip" pass_status ;
+    check_status pass_stage pass_status ;
     check_status "Highs_run" (B.run highs) ;
     let model_status = B.get_model_status highs in
     match model_status with
@@ -439,7 +552,7 @@ module Ctypes = struct
       ?(options = []) problem =
     let pclass = Problem.classify problem in
     match pclass with
-    | Problem.Pclass.LP | Problem.Pclass.MILP ->
+    | Problem.Pclass.LP | Problem.Pclass.MILP | Problem.Pclass.QP ->
         let highs = B.create () in
         if highs = C.null then Error "Highs_create returned null"
         else
@@ -452,12 +565,12 @@ module Ctypes = struct
                 let data = build_model_data highs problem pclass in
                 solve_model highs data
               with SolverError msg | Failure msg -> Error msg )
-    | Problem.Pclass.QP ->
-        (* TODO: Add convex QP support via Highs_passModel by passing Hessian
-           data (q_start/q_index/q_value). *)
-        Error "Lp_highs.Ctypes.solve supports only LP or MILP"
-    | _ ->
-        Error "Lp_highs.Ctypes.solve supports only LP or MILP"
+    | Problem.Pclass.MIQP ->
+        Error "Lp_highs.Ctypes.solve doesn't support MIQP"
+    | Problem.Pclass.QCP | Problem.Pclass.MIQCP ->
+        Error
+          "Lp_highs.Ctypes.solve doesn't support quadratically constrained \
+           problems"
 end
 
 let solve ?path ?(msg = true) ?log_path ?time_limit ?(keep_files = false)

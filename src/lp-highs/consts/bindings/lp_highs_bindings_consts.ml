@@ -31,6 +31,11 @@ module M (F : Ctypes.TYPE) = struct
 
   let matrix_format_rowwise = F.(constant "kHighsMatrixFormatRowwise" int)
 
+  let hessian_format_triangular =
+    F.(constant "kHighsHessianFormatTriangular" int)
+
+  let hessian_format_square = F.(constant "kHighsHessianFormatSquare" int)
+
   let model_status_notset = F.(constant "kHighsModelStatusNotset" int)
 
   let model_status_load_error = F.(constant "kHighsModelStatusLoadError" int)

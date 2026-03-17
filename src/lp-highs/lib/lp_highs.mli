@@ -13,6 +13,8 @@ module Cmd : sig
     -> Lp.Problem.t
     -> (float * float Lp.PMap.t, string) result
   (** Run HiGHS command and obtain the output solution.
+      This backend supports LP, MILP, and convex QP.
+      MIQP and quadratically constrained classes (QCP/MIQCP) are unsupported.
       @param path Path to the solver binary.
       @param msg If [false], no log is shown on console.
       @param log_path Path to the log file.
@@ -36,7 +38,8 @@ module Ctypes : sig
     -> Lp.Problem.t
     -> (float * float Lp.PMap.t, string) result
   (** Run HiGHS through the C API and obtain the output solution.
-      This backend supports LP and MILP.
+      This backend supports LP, MILP, and convex QP.
+      MIQP and quadratically constrained classes (QCP/MIQCP) are unsupported.
       @param msg If [false], disables console logging in HiGHS.
       @param log_path Path to the HiGHS log file.
       @param time_limit Maximum time allowed for the solver (in seconds).
