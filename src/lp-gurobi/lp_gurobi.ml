@@ -43,7 +43,7 @@ let rec idx_var (v : Var.t) = function
   | [] ->
       failwith (Printf.sprintf "cannot find %s in vars" v.name)
   | hd :: rest ->
-      if hd = v then 0 else 1 + idx_var v rest
+      if hd.Var.name = v.Var.name then 0 else 1 + idx_var v rest
 
 let idx vars = List.map (fun v -> idx_var v vars)
 
@@ -98,14 +98,16 @@ let add_constraints env model vars =
           add_qconstr env model cr.linds cr.lvals cr.qrows cr.qcols cr.qvals
             cr.sense cr.rhs cr.cname )
 
+let has_solution env model = get_int_attr env model "SolCount" > 0
+
 let solve ?(write_fname = "") ?(term_output = true) problem =
   let obj, cnstrs = Problem.obj_cnstrs problem in
   let dobj = Poly.decompose (Objective.to_poly obj) in
   let vars = Problem.uniq_vars problem in
   let vattr = Var_attrs.make obj vars in
   let env = empty_env () in
-  set_term_output env term_output ;
   try
+    set_term_output env term_output ;
     let name = Option.value ~default:"model" (Problem.name problem) in
     let model =
       new_model env name vattr.objs vattr.lbs vattr.ubs vattr.types vattr.names
@@ -120,6 +122,12 @@ let solve ?(write_fname = "") ?(term_output = true) problem =
       optimize env model ;
       match get_status env model with
       | OPTIMAL ->
+          let obj = get_obj_val env model in
+          let xs = make_pmap vars (get_obj_x env model @@ List.length vars) in
+          free_model env model ;
+          free_env env ;
+          Ok (obj, xs)
+      | _ when has_solution env model ->
           let obj = get_obj_val env model in
           let xs = make_pmap vars (get_obj_x env model @@ List.length vars) in
           free_model env model ;
