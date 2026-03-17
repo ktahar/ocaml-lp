@@ -44,14 +44,17 @@ opam pin add lp-glpk-js .
 opam pin add lp-highs .
 opam pin add lp-gurobi .
 # 3. Build and run tests:
+# If HiGHS is installed under `~/.local`, export `HIGHS_INCLUDE_DIR` and `HIGHS_LIB_DIR` first.
+# (See "Build and install HiGHS" below.)
 make # dune build
 make test # dune runtest
 # 4. Run optional solver-specific tests:
-# If HiGHS is installed under `~/.local`, export `HIGHS_INCLUDE_DIR` and `HIGHS_LIB_DIR` first
-# (see "Build and install HiGHS" below).
 make test-lp-glpk-js # dune build @runtest_lp_glpk_js
 make test-lp-highs # dune build @runtest_lp_highs
-# 5. Run examples:
+# 5. Install packages from current working-dir source.
+# (When you want the packages to be installed, e.g., when you want to test them in REPL.)
+opam install lp --working-dir # or opam reinstall lp --working-dir
+# 6. Run examples:
 dune exec examples/lp-glpk/knapsack.exe
 ```
 
