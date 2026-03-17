@@ -71,6 +71,8 @@ val free_model : env -> model -> unit
 
 val set_int_attr : env -> model -> string -> int -> unit
 
+val set_dbl_attr : env -> model -> string -> float -> unit
+
 val get_int_attr : env -> model -> string -> int
 
 val set_minimize : env -> model -> unit

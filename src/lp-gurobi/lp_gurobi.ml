@@ -77,6 +77,9 @@ let set_dir env model obj =
   if Objective.is_max obj then set_maximize env model
   else set_minimize env model
 
+let set_obj_const env model dobj =
+  set_dbl_attr env model "ObjCon" dobj.Poly.const
+
 let add_obj_qterms env model vars dobj =
   let open Lp.Poly in
   match dobj.qcs with
@@ -109,6 +112,7 @@ let solve ?(write_fname = "") ?(term_output = true) problem =
     in
     try
       set_dir env model obj ;
+      set_obj_const env model dobj ;
       add_obj_qterms env model vars dobj ;
       add_constraints env model vars cnstrs ;
       update_model env model ;

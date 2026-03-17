@@ -162,6 +162,12 @@ let _set_int_attr =
 let set_int_attr env model name value =
   check env (_set_int_attr model name value)
 
+let _set_dbl_attr =
+  foreign "GRBsetdblattr" (model @-> string @-> double @-> returning int)
+
+let set_dbl_attr env model name value =
+  check env (_set_dbl_attr model name value)
+
 let _get_int_attr =
   foreign "GRBgetintattr" (model @-> string @-> ptr int @-> returning int)
 
