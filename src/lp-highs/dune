@@ -1,5 +1,0 @@
-(library
- (name lp_highs)
- (public_name lp-highs)
- (wrapped false)
- (libraries lp unix))

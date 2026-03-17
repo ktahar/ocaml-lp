@@ -1,4 +1,4 @@
-.PHONY: build test fmt docs clean setup-lp-glpk-js test-lp-glpk-js
+.PHONY: build test fmt format docs clean setup-lp-glpk-js test-lp-glpk-js test-lp-highs
 
 build:
 	dune build
@@ -12,7 +12,13 @@ setup-lp-glpk-js:
 test-lp-glpk-js: setup-lp-glpk-js
 	dune build @runtest_lp_glpk_js
 
+test-lp-highs:
+	dune build @runtest_lp_highs
+
 fmt:
+	dune build @fmt --auto-promote
+
+format:
 	dune build @fmt --auto-promote
 
 docs:

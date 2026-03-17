@@ -1,0 +1,4 @@
+(executable
+ (name ffi_stubgen)
+ (modules ffi_stubgen)
+ (libraries lp-highs.bindings lp-highs.types ctypes.stubs ctypes))

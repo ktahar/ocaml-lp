@@ -1,0 +1,5 @@
+(library
+ (name lp_highs_bindings)
+ (synopsis "Ctypes bindings that describe the libhighs C API")
+ (public_name lp-highs.bindings)
+ (libraries lp-highs.types ctypes.stubs ctypes))

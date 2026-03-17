@@ -1,0 +1,29 @@
+(rule
+ (targets g.ml)
+ (deps ../stubgen/ffi_stubgen.exe)
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{deps} -ml))))
+
+(rule
+ (targets lp_highs_stubs.c)
+ (deps
+  (:stubgen ../stubgen/ffi_stubgen.exe))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{stubgen} -c))))
+
+(library
+ (name lp_highs_ffi)
+ (public_name lp-highs.ffi)
+ (modules g m)
+ (foreign_stubs
+  (language c)
+  (names lp_highs_stubs)
+  (flags :standard -Wno-discarded-qualifiers)
+  (include_dirs %{env:HIGHS_INCLUDE_DIR=/usr/local/include/highs}))
+ (c_library_flags
+  (:standard -L%{env:HIGHS_LIB_DIR=/usr/local/lib} -lhighs))
+ (libraries lp-highs.bindings lp-highs.types ctypes.stubs ctypes))

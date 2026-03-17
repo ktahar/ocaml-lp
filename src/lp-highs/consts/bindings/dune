@@ -1,0 +1,4 @@
+(library
+ (name lp_highs_bindings_consts)
+ (public_name lp-highs.bindings.consts)
+ (libraries ctypes.stubs ctypes))

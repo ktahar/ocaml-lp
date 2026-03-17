@@ -1,0 +1,14 @@
+(rule
+ (targets g.ml)
+ (deps ../stubgen/ffi_ml_consts_stubgen.exe)
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{deps}))))
+
+(library
+ (name lp_highs_consts)
+ (public_name lp-highs.consts)
+ (flags :standard -w -9-27)
+ (synopsis "Ctypes bindings that describe the libhighs C API constants")
+ (libraries lp-highs.bindings.consts ctypes.stubs ctypes))

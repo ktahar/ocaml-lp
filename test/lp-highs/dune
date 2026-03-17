@@ -1,0 +1,57 @@
+(executables
+ (names
+   test_highs
+   test_highs_knapsack
+   test_highs_nqueens
+   test_highs_jobs)
+ (libraries alcotest lp lp-highs)
+ (preprocess
+  (pps ppx_deriving.map ppx_deriving.show ppx_deriving.ord ppx_deriving.eq)))
+
+(rule
+ (targets test_highs_knapsack.output)
+ (deps
+  test_highs_knapsack.exe
+  (glob_files *.lp))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{dep:test_highs_knapsack.exe}))))
+
+(rule
+ (targets test_highs_nqueens.output)
+ (deps
+  test_highs_nqueens.exe
+  (glob_files *.lp))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{dep:test_highs_nqueens.exe}))))
+
+(rule
+ (targets test_highs_jobs.output)
+ (deps
+  test_highs_jobs.exe
+  (glob_files *.lp))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run %{dep:test_highs_jobs.exe}))))
+
+(rule
+ (alias runtest_lp_highs)
+ (deps
+  test_highs.exe
+  test_highs_knapsack.output
+  test_highs_nqueens.output
+  test_highs_jobs.output
+  test_highs_knapsack.expected
+  test_highs_nqueens.expected
+  test_highs_jobs.expected
+  (glob_files *.lp))
+ (action
+  (progn
+   (run %{dep:test_highs.exe} --color=always)
+   (diff %{dep:test_highs_knapsack.output} %{dep:test_highs_knapsack.expected})
+   (diff %{dep:test_highs_nqueens.output} %{dep:test_highs_nqueens.expected})
+   (diff %{dep:test_highs_jobs.output} %{dep:test_highs_jobs.expected}))))
