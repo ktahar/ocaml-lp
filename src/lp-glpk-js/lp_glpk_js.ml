@@ -144,9 +144,8 @@ let js_var c v : var Js.t =
   end
 
 let js_objective (glpk : glpk Js.t) obj : objective Js.t =
-  let vs =
-    Lp.Poly.map_linear js_var (Lp.Objective.to_poly obj) |> Array.of_list
-  in
+  let dec = Lp.Poly.decompose (Lp.Objective.to_poly obj) in
+  let vs = List.map2 js_var dec.lcs dec.lvs |> Array.of_list in
   let d =
     if Lp.Objective.is_max obj then glpk##._GLP_MAX_ else glpk##._GLP_MIN_
   in
@@ -242,8 +241,12 @@ let solve_raw glpk prob lev : Js.Unsafe.any =
 let solve_result glpk problem (res : result Js.t) =
   let r = res##.result in
   let status = r##.status in
+  let obj_const =
+    let obj = Lp.Problem.objective problem in
+    Lp.Poly.decompose (Lp.Objective.to_poly obj) |> fun dec -> dec.const
+  in
   if status = glpk##._GLP_OPT_ then
-    Ok (r##.z, make_pmap (Lp.Problem.uniq_vars problem) r##.vars)
+    Ok (r##.z +. obj_const, make_pmap (Lp.Problem.uniq_vars problem) r##.vars)
   else Error ("Problem is " ^ status_to_str glpk status)
 
 let solve ?(term_output = true) (glpk : glpk Js.t) problem =

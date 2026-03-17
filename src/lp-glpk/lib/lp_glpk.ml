@@ -26,9 +26,9 @@ let rec idx_var (v : Var.t) = function
 let set_obj prob vars obj =
   if Objective.is_max obj then B.set_obj_dir prob T.Dir.MAX
   else B.set_obj_dir prob T.Dir.MIN ;
-  Poly.iter_linear_exn
-    (fun c v -> B.set_obj_coef prob (idx_var v vars) c)
-    (Objective.to_poly obj)
+  let dec = Poly.decompose (Objective.to_poly obj) in
+  B.set_obj_coef prob 0 dec.const ;
+  List.iter2 (fun c v -> B.set_obj_coef prob (idx_var v vars) c) dec.lcs dec.lvs
 
 let set_cnstr prob vars i cnstr =
   let ri = i + 1 in

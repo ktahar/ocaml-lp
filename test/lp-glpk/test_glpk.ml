@@ -19,6 +19,10 @@ module To_test = struct
         obj :: to_list p xs
     | Error _ ->
         []
+
+  let solve_obj filename =
+    let p = Lp.read filename in
+    match Lp_glpk.solve p with Ok (obj, _) -> Ok obj | Error msg -> Error msg
 end
 
 let solve_lp0 () =
@@ -31,8 +35,25 @@ let solve_milp0 () =
     [-1.75; 1.0; -5.5; 5.25; 3.0]
     (To_test.solve_milp0 ())
 
+let solve_lp_const () =
+  match To_test.solve_obj "lp_const.lp" with
+  | Ok obj ->
+      Alcotest.(check (float 1e-7)) "solve_lp_const" 9.0 obj
+  | Error msg ->
+      Alcotest.failf "solve_lp_const failed: %s" msg
+
+let solve_milp_const () =
+  match To_test.solve_obj "milp_const.lp" with
+  | Ok obj ->
+      Alcotest.(check (float 1e-7)) "solve_milp_const" 6.0 obj
+  | Error msg ->
+      Alcotest.failf "solve_milp_const failed: %s" msg
+
 let () =
   let open Alcotest in
   run "Glpk"
     [ ("solve lp0", [test_case "solve_lp0" `Quick solve_lp0])
-    ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0]) ]
+    ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0])
+    ; ("solve lp_const", [test_case "solve_lp_const" `Quick solve_lp_const])
+    ; ( "solve milp_const"
+      , [test_case "solve_milp_const" `Quick solve_milp_const] ) ]
