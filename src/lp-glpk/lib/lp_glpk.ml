@@ -21,7 +21,7 @@ let rec idx_var (v : Var.t) = function
   | [] ->
       failwith (Printf.sprintf "cannot find %s in vars" v.name)
   | hd :: rest ->
-      if hd = v then 1 else 1 + idx_var v rest
+      if hd.Var.name = v.Var.name then 1 else 1 + idx_var v rest
 
 let set_obj prob vars obj =
   if Objective.is_max obj then B.set_obj_dir prob T.Dir.MAX
@@ -102,7 +102,11 @@ module Simplex = struct
             failwith ("Problem is " ^ T.Stat.to_string status) )
       | _ ->
           failwith "non-zero return value from simplex"
-    with Failure msg -> B.delete_prob prob ; Error msg
+    with
+    | Failure msg ->
+        B.delete_prob prob ; Error msg
+    | e ->
+        B.delete_prob prob ; raise e
 
   let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
       ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None) p =
@@ -182,7 +186,11 @@ module Milp = struct
             failwith ("LP relaxation is " ^ T.Stat.to_string status) )
       | _ ->
           failwith "non-zero return value from simplex"
-    with Failure msg -> B.delete_prob prob ; Error msg
+    with
+    | Failure msg ->
+        B.delete_prob prob ; Error msg
+    | e ->
+        B.delete_prob prob ; raise e
 
   let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
       ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None)
