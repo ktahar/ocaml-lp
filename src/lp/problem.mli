@@ -64,8 +64,18 @@ val vname_list : t -> string list
 val classify : t -> Pclass.t
 (** Classify the problem into {!type:Pclass.t}. *)
 
+val validation_errors : t -> string list
+(** Validate the problem and return all error messages.
+    Empty list means the problem is valid.
+*)
+
+val validate_result : t -> (unit, string) result
+(** Validate the problem and return [Ok ()] if valid, or [Error msg]
+    where [msg] concatenates all validation errors.
+*)
+
 val validate : t -> bool
-(** Validate the problem. [true] (false) means the problem is valid (invalid). *)
+(** Validate the problem. [true] ([false]) means the problem is valid (invalid). *)
 
 val to_string : ?short:bool -> t -> string
 (** Express the problem in LP file format string. *)

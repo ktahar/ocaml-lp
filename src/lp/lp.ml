@@ -81,6 +81,10 @@ let make = Problem.make
 (* model validation and classification *)
 let validate = Problem.validate
 
+let validation_errors = Problem.validation_errors
+
+let validate_result = Problem.validate_result
+
 let classify = Problem.classify
 
 let vname_list = Problem.vname_list

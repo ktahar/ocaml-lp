@@ -58,6 +58,13 @@ let set_cnstr prob vars i cnstr =
 
 let set_cnstrs prob vars = List.iteri (set_cnstr prob vars)
 
+let validate_problem p =
+  match Problem.validate_result p with
+  | Ok () ->
+      Ok ()
+  | Error msg ->
+      Error ("Invalid problem: " ^ msg)
+
 module Simplex = struct
   let set_cols prob =
     List.iteri (fun j var ->
@@ -110,19 +117,23 @@ module Simplex = struct
 
   let solve ?(term_output = true) ?(msg_lev = None) ?(meth = None)
       ?(pricing = None) ?(r_test = None) ?(it_lim = None) ?(tm_lim = None) p =
-    let set_smcp smcp =
-      Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
-      Option.iter (C.setf smcp T.Smcp.meth) meth ;
-      Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
-      Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
-      Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
-      Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
-    in
-    match Problem.classify p with
-    | Pclass.LP ->
-        B.set_term_out term_output ; solve_main p set_smcp
-    | _ ->
-        Error "Lp_glpk.Simplex is only for LP"
+    match validate_problem p with
+    | Error msg ->
+        Error msg
+    | Ok () -> (
+        let set_smcp smcp =
+          Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
+          Option.iter (C.setf smcp T.Smcp.meth) meth ;
+          Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
+          Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
+          Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
+          Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
+        in
+        match Problem.classify p with
+        | Pclass.LP ->
+            B.set_term_out term_output ; solve_main p set_smcp
+        | _ ->
+            Error "Lp_glpk.Simplex is only for LP" )
 end
 
 module Milp = struct
@@ -198,45 +209,53 @@ module Milp = struct
       ?(fp_heur = None) ?(ps_heur = None) ?(ps_tm_lim = None) ?(gmi_cuts = None)
       ?(mir_cuts = None) ?(cov_cuts = None) ?(clq_cuts = None) ?(tol_int = None)
       ?(tol_obj = None) ?(mip_gap = None) ?(tm_lim_int = None) p =
-    let set_smcp smcp =
-      Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
-      Option.iter (C.setf smcp T.Smcp.meth) meth ;
-      Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
-      Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
-      Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
-      Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
-    in
-    let set_iocp iocp =
-      Option.iter (C.setf iocp T.Iocp.msg_lev) msg_lev ;
-      Option.iter (C.setf iocp T.Iocp.br_tech) br_tech ;
-      Option.iter (C.setf iocp T.Iocp.bt_tech) bt_tech ;
-      Option.iter (C.setf iocp T.Iocp.pp_tech) pp_tech ;
-      Option.iter (C.setf iocp T.Iocp.sr_heur) sr_heur ;
-      Option.iter (C.setf iocp T.Iocp.fp_heur) fp_heur ;
-      Option.iter (C.setf iocp T.Iocp.ps_heur) ps_heur ;
-      Option.iter (C.setf iocp T.Iocp.ps_tm_lim) ps_tm_lim ;
-      Option.iter (C.setf iocp T.Iocp.gmi_cuts) gmi_cuts ;
-      Option.iter (C.setf iocp T.Iocp.mir_cuts) mir_cuts ;
-      Option.iter (C.setf iocp T.Iocp.cov_cuts) cov_cuts ;
-      Option.iter (C.setf iocp T.Iocp.clq_cuts) clq_cuts ;
-      Option.iter (C.setf iocp T.Iocp.tol_int) tol_int ;
-      Option.iter (C.setf iocp T.Iocp.tol_obj) tol_obj ;
-      Option.iter (C.setf iocp T.Iocp.mip_gap) mip_gap ;
-      Option.iter (C.setf iocp T.Iocp.tm_lim) tm_lim_int
-    in
-    match Problem.classify p with
-    | Pclass.MILP | Pclass.LP ->
-        B.set_term_out term_output ;
-        solve_main p set_smcp set_iocp
-    | _ ->
-        Error "Lp_glpk.Milp is only for LP or MILP"
+    match validate_problem p with
+    | Error msg ->
+        Error msg
+    | Ok () -> (
+        let set_smcp smcp =
+          Option.iter (C.setf smcp T.Smcp.msg_lev) msg_lev ;
+          Option.iter (C.setf smcp T.Smcp.meth) meth ;
+          Option.iter (C.setf smcp T.Smcp.pricing) pricing ;
+          Option.iter (C.setf smcp T.Smcp.r_test) r_test ;
+          Option.iter (C.setf smcp T.Smcp.it_lim) it_lim ;
+          Option.iter (C.setf smcp T.Smcp.tm_lim) tm_lim
+        in
+        let set_iocp iocp =
+          Option.iter (C.setf iocp T.Iocp.msg_lev) msg_lev ;
+          Option.iter (C.setf iocp T.Iocp.br_tech) br_tech ;
+          Option.iter (C.setf iocp T.Iocp.bt_tech) bt_tech ;
+          Option.iter (C.setf iocp T.Iocp.pp_tech) pp_tech ;
+          Option.iter (C.setf iocp T.Iocp.sr_heur) sr_heur ;
+          Option.iter (C.setf iocp T.Iocp.fp_heur) fp_heur ;
+          Option.iter (C.setf iocp T.Iocp.ps_heur) ps_heur ;
+          Option.iter (C.setf iocp T.Iocp.ps_tm_lim) ps_tm_lim ;
+          Option.iter (C.setf iocp T.Iocp.gmi_cuts) gmi_cuts ;
+          Option.iter (C.setf iocp T.Iocp.mir_cuts) mir_cuts ;
+          Option.iter (C.setf iocp T.Iocp.cov_cuts) cov_cuts ;
+          Option.iter (C.setf iocp T.Iocp.clq_cuts) clq_cuts ;
+          Option.iter (C.setf iocp T.Iocp.tol_int) tol_int ;
+          Option.iter (C.setf iocp T.Iocp.tol_obj) tol_obj ;
+          Option.iter (C.setf iocp T.Iocp.mip_gap) mip_gap ;
+          Option.iter (C.setf iocp T.Iocp.tm_lim) tm_lim_int
+        in
+        match Problem.classify p with
+        | Pclass.MILP | Pclass.LP ->
+            B.set_term_out term_output ;
+            solve_main p set_smcp set_iocp
+        | _ ->
+            Error "Lp_glpk.Milp is only for LP or MILP" )
 end
 
 let solve ?(term_output = true) p =
-  match Problem.classify p with
-  | Pclass.LP ->
-      Simplex.solve ~term_output p
-  | Pclass.MILP ->
-      Milp.solve ~term_output p
-  | _ ->
-      Error "glpk is only for LP or MILP"
+  match validate_problem p with
+  | Error msg ->
+      Error msg
+  | Ok () -> (
+    match Problem.classify p with
+    | Pclass.LP ->
+        Simplex.solve ~term_output p
+    | Pclass.MILP ->
+        Milp.solve ~term_output p
+    | _ ->
+        Error "glpk is only for LP or MILP" )

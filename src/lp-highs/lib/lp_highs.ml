@@ -1,7 +1,14 @@
 exception SolverError of string
 
+let validate_problem problem =
+  match Lp.Problem.validate_result problem with
+  | Ok () ->
+      Ok ()
+  | Error msg ->
+      Error ("Invalid problem: " ^ msg)
+
 module Cmd = struct
-  (** Read a file and create a list of strings. *)
+  (* Read a file and create a list of strings. *)
   let read_lines filename =
     let ic = open_in filename in
     let rec aux acc =
@@ -12,7 +19,7 @@ module Cmd = struct
     in
     aux []
 
-  (** Read the solution file of HiGHS. *)
+  (* Read the solution file of HiGHS. *)
   let readsol filename =
     let lines = read_lines filename in
     let status =
@@ -57,7 +64,7 @@ module Cmd = struct
     | _ ->
         raise (SolverError "Cannot read HiGHS solver output.")
 
-  (** Write HiGHS additional options to file. *)
+  (* Write HiGHS additional options to file. *)
   let write_options filepath options =
     let options =
       ("write_solution_style", "0") :: options
@@ -70,82 +77,83 @@ module Cmd = struct
 
   let solve ?(path = "highs") ?(msg = true) ?log_path ?time_limit
       ?(keep_files = false) ?gap_rel ?gap_abs ?(options = []) problem =
-    let solve_main () =
-      try
-        let tmp_dirname = Filename.temp_dir "ocaml-lp-highs-" "" in
-        let create_filename filename =
-          Filename.concat (if keep_files then "." else tmp_dirname) filename
+    match validate_problem problem with
+    | Error msg ->
+        Error msg
+    | Ok () -> (
+        let solve_main () =
+          try
+            let tmp_dirname = Filename.temp_dir "ocaml-lp-highs-" "" in
+            let create_filename filename =
+              Filename.concat (if keep_files then "." else tmp_dirname) filename
+            in
+            let log_filename =
+              match log_path with
+              | None ->
+                  Filename.concat tmp_dirname "HiGHS.log"
+              | Some path ->
+                  path
+            in
+            let problem_filename = create_filename "problem.lp" in
+            Lp.write problem_filename problem ;
+            let options_filename = create_filename "options.txt" in
+            let set_float_options name float_opt options_acc =
+              match float_opt with
+              | None ->
+                  options_acc
+              | Some value ->
+                  (name, string_of_float value) :: options_acc
+            in
+            let options =
+              (if msg then options else ("log_to_console", "false") :: options)
+              |> set_float_options "time_limit" time_limit
+              |> set_float_options "mip_rel_gap" gap_rel
+              |> set_float_options "mip_abs_gap" gap_abs
+              |> List.cons ("log_file", log_filename)
+            in
+            write_options options_filename options ;
+            let solution_filename = create_filename "solution.txt" in
+            let command =
+              Printf.sprintf "%s %s --solution_file %s --options_file %s" path
+                problem_filename solution_filename options_filename
+            in
+            let result = Sys.command command in
+            (* HiGHS return code semantics - 0: success, 1: warning
+              (see: https://github.com/ERGO-Code/HiGHS/issues/527#issuecomment-946575028)
+              Values other than 0/1 are treated as command failure
+              (e.g. command-not-found from the shell). *)
+            if result <> 0 && result <> 1 then
+              raise
+                (SolverError
+                   (Printf.sprintf
+                      "Error while executing HiGHS (exit code %d), use \
+                       ?msg:true for more details."
+                      result ) )
+            else () ;
+            let obj, sol = readsol solution_filename in
+            Ok
+              ( obj
+              , List.fold_left
+                  (fun m (k, v) -> Lp.PMap.add k v m)
+                  Lp.PMap.empty
+                  (List.map (fun (v, x) -> (Lp.var v, x)) sol) )
+          with
+          | SolverError msg ->
+              Error msg
+          | Sys_error msg | Failure msg | Invalid_argument msg ->
+              Error msg
+          | exn ->
+              Error (Printexc.to_string exn)
         in
-        let log_filename =
-          match log_path with
-          | None ->
-              Filename.concat tmp_dirname "HiGHS.log"
-          | Some path ->
-              path
-        in
-        let problem_filename = create_filename "problem.lp" in
-        Lp.write problem_filename problem ;
-        let options_filename = create_filename "options.txt" in
-        let set_float_options name float_opt options_acc =
-          match float_opt with
-          | None ->
-              options_acc
-          | Some value ->
-              (name, string_of_float value) :: options_acc
-        in
-        let options =
-          (if msg then options else ("log_to_console", "false") :: options)
-          |> set_float_options "time_limit" time_limit
-          |> set_float_options "mip_rel_gap" gap_rel
-          |> set_float_options "mip_abs_gap" gap_abs
-          |> List.cons ("log_file", log_filename)
-        in
-        write_options options_filename options ;
-        let solution_filename = create_filename "solution.txt" in
-        let command =
-          Printf.sprintf "%s %s --solution_file %s --options_file %s" path
-            problem_filename solution_filename options_filename
-        in
-        let result = Sys.command command in
-        (* HiGHS return code semantics
-       (see: https://github.com/ERGO-Code/HiGHS/issues/527#issuecomment-946575028)
-       -  0: success
-       -  1: warning
-       Values other than 0/1 are treated as command failure
-       (e.g. command-not-found from the shell).
-    *)
-        if result <> 0 && result <> 1 then
-          raise
-            (SolverError
-               (Printf.sprintf
-                  "Error while executing HiGHS (exit code %d), use ?msg:true \
-                   for more details."
-                  result ) )
-        else () ;
-        let obj, sol = readsol solution_filename in
-        Ok
-          ( obj
-          , List.fold_left
-              (fun m (k, v) -> Lp.PMap.add k v m)
-              Lp.PMap.empty
-              (List.map (fun (v, x) -> (Lp.var v, x)) sol) )
-      with
-      | SolverError msg ->
-          Error msg
-      | Sys_error msg | Failure msg | Invalid_argument msg ->
-          Error msg
-      | exn ->
-          Error (Printexc.to_string exn)
-    in
-    match Lp.Problem.classify problem with
-    | Lp.Pclass.MIQP ->
-        Error "Lp_highs.Cmd.solve doesn't support MIQP"
-    | Lp.Pclass.QCP | Lp.Pclass.MIQCP ->
-        Error
-          "Lp_highs.Cmd.solve doesn't support quadratically constrained \
-           problems"
-    | _ ->
-        solve_main ()
+        match Lp.Problem.classify problem with
+        | Lp.Pclass.MIQP ->
+            Error "Lp_highs.Cmd.solve doesn't support MIQP"
+        | Lp.Pclass.QCP | Lp.Pclass.MIQCP ->
+            Error
+              "Lp_highs.Cmd.solve doesn't support quadratically constrained \
+               problems"
+        | _ ->
+            solve_main () )
 end
 
 module Ctypes = struct
@@ -550,27 +558,31 @@ module Ctypes = struct
 
   let solve ?(msg = true) ?log_path ?time_limit ?gap_rel ?gap_abs
       ?(options = []) problem =
-    let pclass = Problem.classify problem in
-    match pclass with
-    | Problem.Pclass.LP | Problem.Pclass.MILP | Problem.Pclass.QP ->
-        let highs = B.create () in
-        if highs = C.null then Error "Highs_create returned null"
-        else
-          Fun.protect
-            ~finally:(fun () -> B.destroy highs)
-            (fun () ->
-              try
-                apply_options highs ~msg ?log_path ?time_limit ?gap_rel ?gap_abs
-                  ~options () ;
-                let data = build_model_data highs problem pclass in
-                solve_model highs data
-              with SolverError msg | Failure msg -> Error msg )
-    | Problem.Pclass.MIQP ->
-        Error "Lp_highs.Ctypes.solve doesn't support MIQP"
-    | Problem.Pclass.QCP | Problem.Pclass.MIQCP ->
-        Error
-          "Lp_highs.Ctypes.solve doesn't support quadratically constrained \
-           problems"
+    match validate_problem problem with
+    | Error msg ->
+        Error msg
+    | Ok () -> (
+        let pclass = Problem.classify problem in
+        match pclass with
+        | Problem.Pclass.LP | Problem.Pclass.MILP | Problem.Pclass.QP ->
+            let highs = B.create () in
+            if highs = C.null then Error "Highs_create returned null"
+            else
+              Fun.protect
+                ~finally:(fun () -> B.destroy highs)
+                (fun () ->
+                  try
+                    apply_options highs ~msg ?log_path ?time_limit ?gap_rel
+                      ?gap_abs ~options () ;
+                    let data = build_model_data highs problem pclass in
+                    solve_model highs data
+                  with SolverError msg | Failure msg -> Error msg )
+        | Problem.Pclass.MIQP ->
+            Error "Lp_highs.Ctypes.solve doesn't support MIQP"
+        | Problem.Pclass.QCP | Problem.Pclass.MIQCP ->
+            Error
+              "Lp_highs.Ctypes.solve doesn't support quadratically constrained \
+               problems" )
 end
 
 let solve ?path ?(msg = true) ?log_path ?time_limit ?(keep_files = false)

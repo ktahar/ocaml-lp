@@ -4,6 +4,9 @@
 ### Added
 - lp-highs: ctypes interface.
 
+### Changed
+- All solver backends validates the model and early-returns when invalid.
+
 ### Fixed
 - lp-glpk, lp-glpk-js, lp-gurobi: bug of not handling constant term in objective.
 

@@ -101,44 +101,54 @@ let add_constraints env model vars =
 let has_solution env model = get_int_attr env model "SolCount" > 0
 
 let solve ?(write_fname = "") ?(term_output = true) problem =
-  let obj, cnstrs = Problem.obj_cnstrs problem in
-  let dobj = Poly.decompose (Objective.to_poly obj) in
-  let vars = Problem.uniq_vars problem in
-  let vattr = Var_attrs.make obj vars in
-  let env = empty_env () in
-  try
-    set_term_output env term_output ;
-    let name = Option.value ~default:"model" (Problem.name problem) in
-    let model =
-      new_model env name vattr.objs vattr.lbs vattr.ubs vattr.types vattr.names
-    in
-    try
-      set_dir env model obj ;
-      set_obj_const env model dobj ;
-      add_obj_qterms env model vars dobj ;
-      add_constraints env model vars cnstrs ;
-      update_model env model ;
-      if String.length write_fname > 0 then write env model write_fname else () ;
-      optimize env model ;
-      match get_status env model with
-      | OPTIMAL ->
-          let obj = get_obj_val env model in
-          let xs = make_pmap vars (get_obj_x env model @@ List.length vars) in
-          free_model env model ;
-          free_env env ;
-          Ok (obj, xs)
-      | _ when has_solution env model ->
-          let obj = get_obj_val env model in
-          let xs = make_pmap vars (get_obj_x env model @@ List.length vars) in
-          free_model env model ;
-          free_env env ;
-          Ok (obj, xs)
-      | stat ->
-          failwith ("Problem is " ^ Stat.to_string stat)
-    with e -> free_model env model ; raise e
-  with
-  | Gurobi_error msg | Failure msg ->
-      free_env env ; Error msg
-  | e ->
-      (* unexpected exception *)
-      free_env env ; raise e
+  match Problem.validate_result problem with
+  | Error msg ->
+      Error ("Invalid problem: " ^ msg)
+  | Ok () -> (
+      let obj, cnstrs = Problem.obj_cnstrs problem in
+      let dobj = Poly.decompose (Objective.to_poly obj) in
+      let vars = Problem.uniq_vars problem in
+      let vattr = Var_attrs.make obj vars in
+      let env = empty_env () in
+      try
+        set_term_output env term_output ;
+        let name = Option.value ~default:"model" (Problem.name problem) in
+        let model =
+          new_model env name vattr.objs vattr.lbs vattr.ubs vattr.types
+            vattr.names
+        in
+        try
+          set_dir env model obj ;
+          set_obj_const env model dobj ;
+          add_obj_qterms env model vars dobj ;
+          add_constraints env model vars cnstrs ;
+          update_model env model ;
+          if String.length write_fname > 0 then write env model write_fname
+          else () ;
+          optimize env model ;
+          match get_status env model with
+          | OPTIMAL ->
+              let obj = get_obj_val env model in
+              let xs =
+                make_pmap vars (get_obj_x env model @@ List.length vars)
+              in
+              free_model env model ;
+              free_env env ;
+              Ok (obj, xs)
+          | _ when has_solution env model ->
+              let obj = get_obj_val env model in
+              let xs =
+                make_pmap vars (get_obj_x env model @@ List.length vars)
+              in
+              free_model env model ;
+              free_env env ;
+              Ok (obj, xs)
+          | stat ->
+              failwith ("Problem is " ^ Stat.to_string stat)
+        with e -> free_model env model ; raise e
+      with
+      | Gurobi_error msg | Failure msg ->
+          free_env env ; Error msg
+      | e ->
+          (* unexpected exception *)
+          free_env env ; raise e )

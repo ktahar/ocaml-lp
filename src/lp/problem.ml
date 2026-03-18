@@ -73,9 +73,34 @@ module Cnstrs = struct
     in
     "subject to\n" ^ body
 
-  let has_constant cs = List.exists Cnstr.constant cs
-
   let degree cs = cs |> List.map Cnstr.degree |> List.fold_left max 0
+
+  let constant_error i cnstr =
+    if not (Cnstr.constant cnstr) then None
+    else
+      let name =
+        match Cnstr.name cnstr with
+        | "" ->
+            Printf.sprintf "constraint#%d" (i + 1)
+        | n ->
+            "constraint '" ^ n ^ "'"
+      in
+      let rhs = Cnstr.rhs cnstr in
+      let eps = 10. *. epsilon_float in
+      let status =
+        if Cnstr.is_eq cnstr then
+          if Float.abs rhs < eps then "redundant" else "infeasible"
+        else if rhs >= -.eps then "redundant"
+        else "infeasible"
+      in
+      let relation =
+        if Cnstr.is_eq cnstr then Printf.sprintf "0 = %.18g" rhs
+        else Printf.sprintf "0 <= %.18g" rhs
+      in
+      Some (Printf.sprintf "%s is constant (%s): %s" name status relation)
+
+  let validation_errors cs =
+    cs |> List.mapi constant_error |> List.filter_map Fun.id
 end
 
 type t = {name: string option; obj: Objective.t; cnstrs: Cnstr.t list}
@@ -107,11 +132,7 @@ let uniq_vars_struct p =
 let collision p =
   let uniqn = List.length (uniq_vars p) in
   let uniql = List.length (uniq_vars_struct p) in
-  if uniqn = uniql then false
-  else (
-    Printf.printf "collision: uniq vars: %d uniq vars (struct): %d\n" uniqn
-      uniql ;
-    true )
+  uniqn <> uniql
 
 let vname_list p = List.map Var.to_string (uniq_vars p)
 
@@ -126,7 +147,29 @@ let classify p =
   else if odeg = 2 then Pclass.QP
   else Pclass.LP
 
-let validate p = not (collision p || Cnstrs.has_constant (cnstrs p))
+let collision_error p =
+  if collision p then
+    let uniqn = List.length (uniq_vars p) in
+    let uniql = List.length (uniq_vars_struct p) in
+    Some
+      (Printf.sprintf
+         "variable name collision: %d unique names but %d distinct variable \
+          definitions"
+         uniqn uniql )
+  else None
+
+let validation_errors p =
+  let errs = Cnstrs.validation_errors (cnstrs p) in
+  match collision_error p with Some msg -> msg :: errs | None -> errs
+
+let validate_result p =
+  match validation_errors p with
+  | [] ->
+      Ok ()
+  | errs ->
+      Error (String.concat "; " errs)
+
+let validate p = match validate_result p with Ok () -> true | Error _ -> false
 
 let to_string ?(short = false) p =
   let obj = Objective.to_string ~short (objective p) in

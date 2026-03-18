@@ -81,6 +81,9 @@ module To_test = struct
   let validate_bad0 () = Lp.validate bad0
   let validate_bad1 () = Lp.validate bad1
   let validate_miqcp0 () = Lp.validate miqcp0
+  let validate_result_lp0 () = Lp.validate_result lp0
+  let validate_result_bad0 () = Lp.validate_result bad0
+  let validation_errors_bad1 () = Lp.validation_errors bad1
 
   let classify_lp0 () =
     match Lp.classify lp0 with Lp.Pclass.LP -> true | _ -> false
@@ -117,6 +120,27 @@ let validate_bad1 () =
 
 let validate_miqcp0 () =
   Alcotest.(check bool) "validate_miqcp0" true (To_test.validate_miqcp0 ())
+
+let validate_result_lp0 () =
+  match To_test.validate_result_lp0 () with
+  | Ok () ->
+      ()
+  | Error msg ->
+      Alcotest.failf "validate_result_lp0 failed unexpectedly: %s" msg
+
+let validate_result_bad0 () =
+  match To_test.validate_result_bad0 () with
+  | Ok () ->
+      Alcotest.fail "validate_result_bad0 should fail"
+  | Error msg ->
+      Alcotest.(check bool)
+        "validate_result_bad0 has message" true
+        (String.length msg > 0)
+
+let validation_errors_bad1 () =
+  Alcotest.(check bool)
+    "validation_errors_bad1 non-empty" true
+    (To_test.validation_errors_bad1 () <> [])
 
 let classify_lp0 () =
   Alcotest.(check bool) "classify_lp0" true (To_test.classify_lp0 ())
@@ -177,6 +201,12 @@ let () =
     ; ("bad0 validation", [test_case "validate_bad0" `Quick validate_bad0])
     ; ("bad1 validation", [test_case "validate_bad1" `Quick validate_bad1])
     ; ("miqcp0 validation", [test_case "validate_miqcp0" `Quick validate_miqcp0])
+    ; ( "validate_result lp0"
+      , [test_case "validate_result_lp0" `Quick validate_result_lp0] )
+    ; ( "validate_result bad0"
+      , [test_case "validate_result_bad0" `Quick validate_result_bad0] )
+    ; ( "validation_errors bad1"
+      , [test_case "validation_errors_bad1" `Quick validation_errors_bad1] )
     ; ("lp0 classification", [test_case "classify_lp0" `Quick classify_lp0])
     ; ( "miqcp0 classification"
       , [test_case "classify_miqcp0" `Quick classify_miqcp0] )

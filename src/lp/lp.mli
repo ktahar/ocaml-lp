@@ -213,6 +213,16 @@ val make : ?name:string -> Objective.t -> Cnstr.t list -> Problem.t
 val validate : Problem.t -> bool
 (** Validate the problem. [true] ([false]) means the problem is valid (invalid). *)
 
+val validation_errors : Problem.t -> string list
+(** Validate the problem and return all error messages.
+    Empty list means the problem is valid.
+*)
+
+val validate_result : Problem.t -> (unit, string) result
+(** Validate the problem and return [Ok ()] if valid,
+    or [Error msg] where [msg] concatenates all validation errors.
+*)
+
 val classify : Problem.t -> Pclass.t
 (** Classify the problem into {!type:Pclass.t}. *)
 

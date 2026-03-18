@@ -29,15 +29,7 @@ let take_vars = function
 
 let degree = function Eq (_, lhs, _) | Ineq (_, lhs, _) -> Poly.degree lhs
 
-let constant c =
-  if degree c > 0 then false
-  else (
-    ( match c with
-    | Eq (Some n, _, _) | Ineq (Some n, _, _) ->
-        Printf.printf "constraint %s is constant\n" n
-    | _ ->
-        print_endline "a constraint is constant" ) ;
-    true )
+let constant c = degree c = 0
 
 let eq ?(eps = 10. *. epsilon_float) ?(name = "") lhs rhs =
   let l, r = simplify_sides ~eps lhs rhs in

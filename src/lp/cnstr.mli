@@ -13,7 +13,7 @@ val degree : t -> int
 (** Get degree of a constraint. *)
 
 val constant : t -> bool
-(** Check if the constraint is constant (no variable), and then invalid. *)
+(** Check whether the constraint is constant (no variable term). *)
 
 val eq : ?eps:float -> ?name:string -> Poly.t -> Poly.t -> t
 (** Build an equality constraint. Optional [name] can be given.

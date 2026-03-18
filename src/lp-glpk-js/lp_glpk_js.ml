@@ -249,42 +249,57 @@ let solve_result glpk problem (res : result Js.t) =
     Ok (r##.z +. obj_const, make_pmap (Lp.Problem.uniq_vars problem) r##.vars)
   else Error ("Problem is " ^ status_to_str glpk status)
 
+let validate_problem problem =
+  match Lp.Problem.validate_result problem with
+  | Ok () ->
+      Ok ()
+  | Error msg ->
+      Error ("Invalid problem: " ^ msg)
+
 let solve ?(term_output = true) (glpk : glpk Js.t) problem =
-  match Lp.Problem.classify problem with
-  | Lp.Pclass.LP | Lp.Pclass.MILP ->
-      let prob = js_prob glpk problem in
-      (* Firebug.console##log prob ; *)
-      let lev =
-        if term_output then glpk##._GLP_MSG_ON_ else glpk##._GLP_MSG_OFF_
-      in
-      let res = solve_raw glpk prob lev in
-      let then_ = Js.Unsafe.get res "then" in
-      if is_function then_ then
-        Error "glpk.solve is asynchronous; use solve_async"
-      else solve_result glpk problem (Js.Unsafe.coerce res)
-  | _ ->
-      Error "glpk.js is only for LP or MILP"
+  match validate_problem problem with
+  | Error msg ->
+      Error msg
+  | Ok () -> (
+    match Lp.Problem.classify problem with
+    | Lp.Pclass.LP | Lp.Pclass.MILP ->
+        let prob = js_prob glpk problem in
+        (* Firebug.console##log prob ; *)
+        let lev =
+          if term_output then glpk##._GLP_MSG_ON_ else glpk##._GLP_MSG_OFF_
+        in
+        let res = solve_raw glpk prob lev in
+        let then_ = Js.Unsafe.get res "then" in
+        if is_function then_ then
+          Error "glpk.solve is asynchronous; use solve_async"
+        else solve_result glpk problem (Js.Unsafe.coerce res)
+    | _ ->
+        Error "glpk.js is only for LP or MILP" )
 
 let solve_async
     ?(on_error = fun _ -> failwith "glpk.js asynchronous solve failed")
     ?(term_output = true) (glpk : glpk Js.t) problem on_ready =
-  match Lp.Problem.classify problem with
-  | Lp.Pclass.LP | Lp.Pclass.MILP ->
-      let prob = js_prob glpk problem in
-      let lev =
-        if term_output then glpk##._GLP_MSG_ON_ else glpk##._GLP_MSG_OFF_
-      in
-      let res = solve_raw glpk prob lev in
-      let then_ = Js.Unsafe.get res "then" in
-      if is_function then_ then
-        let on_resolve =
-          Js.wrap_callback (fun r ->
-              on_ready (solve_result glpk problem (Js.Unsafe.coerce r)) )
+  match validate_problem problem with
+  | Error msg ->
+      on_ready (Error msg)
+  | Ok () -> (
+    match Lp.Problem.classify problem with
+    | Lp.Pclass.LP | Lp.Pclass.MILP ->
+        let prob = js_prob glpk problem in
+        let lev =
+          if term_output then glpk##._GLP_MSG_ON_ else glpk##._GLP_MSG_OFF_
         in
-        let on_reject = Js.wrap_callback on_error in
-        ignore
-          (Js.Unsafe.meth_call res "then"
-             [|Js.Unsafe.inject on_resolve; Js.Unsafe.inject on_reject|] )
-      else on_ready (solve_result glpk problem (Js.Unsafe.coerce res))
-  | _ ->
-      on_ready (Error "glpk.js is only for LP or MILP")
+        let res = solve_raw glpk prob lev in
+        let then_ = Js.Unsafe.get res "then" in
+        if is_function then_ then
+          let on_resolve =
+            Js.wrap_callback (fun r ->
+                on_ready (solve_result glpk problem (Js.Unsafe.coerce r)) )
+          in
+          let on_reject = Js.wrap_callback on_error in
+          ignore
+            (Js.Unsafe.meth_call res "then"
+               [|Js.Unsafe.inject on_resolve; Js.Unsafe.inject on_reject|] )
+        else on_ready (solve_result glpk problem (Js.Unsafe.coerce res))
+    | _ ->
+        on_ready (Error "glpk.js is only for LP or MILP") )
