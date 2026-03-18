@@ -248,14 +248,10 @@ module Milp = struct
 end
 
 let solve ?(term_output = true) p =
-  match validate_problem p with
-  | Error msg ->
-      Error msg
-  | Ok () -> (
-    match Problem.classify p with
-    | Pclass.LP ->
-        Simplex.solve ~term_output p
-    | Pclass.MILP ->
-        Milp.solve ~term_output p
-    | _ ->
-        Error "glpk is only for LP or MILP" )
+  match Problem.classify p with
+  | Pclass.LP ->
+      Simplex.solve ~term_output p
+  | Pclass.MILP ->
+      Milp.solve ~term_output p
+  | _ ->
+      Error "glpk is only for LP or MILP"
