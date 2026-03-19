@@ -47,8 +47,8 @@ opam pin add lp-gurobi .
 make # dune build
 make test # dune runtest
 # 4. Run optional solver-specific tests:
-make test-lp-glpk-js # dune build @runtest_lp_glpk_js
-make test-lp-highs # dune build @runtest_lp_highs
+make test-glpk-js # dune build @runtest_glpk_js
+make test-highs # dune build @runtest_highs
 # 5. Run examples:
 dune exec examples/lp-glpk/knapsack.exe
 # 6. After editing, rebuild local packages from the current working-directory source:
@@ -102,7 +102,7 @@ lp-glpk-js is another interface to GLPK through [glpk.js](https://github.com/jva
 that is useful for applications based on js_of_ocaml.
 
 The tests for lp-glpk-js are optional and not part of the default `dune runtest`.
-For local development, install the JS dependency outside dune with `make setup-lp-glpk-js` and then run `make test-lp-glpk-js` or `dune build @runtest_lp_glpk_js`.
+For local development, install the JS dependency outside dune with `make setup-glpk-js` and then run `make test-glpk-js` or `dune build @runtest_glpk_js`.
 The current test setup pins glpk.js to version 5.0.0.
 
 For compatibility, `Lp_glpk_js.require_glpk_async` supports both the legacy 4.x module shape and the 5.x async constructor, while `require_glpk` remains available for synchronous 4.x initialization.
@@ -112,7 +112,7 @@ Likewise, `Lp_glpk_js.solve_async` supports both synchronous and Promise-based `
 
 The test of lp-highs is optional and not part of default `dune runtest`.
 For local development, build/install HiGHS as above, install `lp-highs`,
-and then run `make test-lp-highs` or `dune build @runtest_lp_highs`.
+and then run `make test-highs` or `dune build @runtest_highs`.
 
 #### lp-gurobi
 

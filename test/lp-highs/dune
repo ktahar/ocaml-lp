@@ -35,7 +35,7 @@
    (run %{dep:test_highs_jobs.exe}))))
 
 (rule
- (alias runtest_lp_highs)
+ (alias runtest_highs)
  (deps
   test_highs.exe
   test_highs_knapsack.output

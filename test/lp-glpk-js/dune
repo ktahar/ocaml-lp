@@ -4,7 +4,7 @@
  (libraries lp lp-glpk-js alcotest))
 
 (rule
- (alias runtest_lp_glpk_js)
+ (alias runtest_glpk_js)
  (deps
   test_glpk_js.bc.js
   node_modules/glpk.js/package.json
