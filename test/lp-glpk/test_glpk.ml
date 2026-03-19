@@ -29,11 +29,25 @@ let solve_lp0 () =
   Alcotest.(check (list (float 1e-7)))
     "solve_lp0" [1.2; 0.0; 1.2] (To_test.solve_lp0 ())
 
+let solve_lp1 () =
+  match To_test.solve_obj "lp1.lp" with
+  | Ok obj ->
+      Alcotest.(check (float 1e-5)) "solve_lp1" 265.0 obj
+  | Error msg ->
+      Alcotest.failf "solve_lp1 failed: %s" msg
+
 let solve_milp0 () =
   Alcotest.(check (list (float 1e-7)))
     "solve_milp0"
     [-1.75; 1.0; -5.5; 5.25; 3.0]
     (To_test.solve_milp0 ())
+
+let solve_milp1 () =
+  match To_test.solve_obj "milp1.lp" with
+  | Ok obj ->
+      Alcotest.(check (float 1e-5)) "solve_milp1" 142.0 obj
+  | Error msg ->
+      Alcotest.failf "solve_milp1 failed: %s" msg
 
 let solve_lp_const () =
   match To_test.solve_obj "lp_const.lp" with
@@ -53,7 +67,9 @@ let () =
   let open Alcotest in
   run "Glpk"
     [ ("solve lp0", [test_case "solve_lp0" `Quick solve_lp0])
+    ; ("solve lp1", [test_case "solve_lp1" `Quick solve_lp1])
     ; ("solve milp0", [test_case "solve_milp0" `Quick solve_milp0])
+    ; ("solve milp1", [test_case "solve_milp1" `Quick solve_milp1])
     ; ("solve lp_const", [test_case "solve_lp_const" `Quick solve_lp_const])
     ; ( "solve milp_const"
       , [test_case "solve_milp_const" `Quick solve_milp_const] ) ]

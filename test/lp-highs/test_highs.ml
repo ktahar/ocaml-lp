@@ -17,6 +17,9 @@ module To_test = struct
     | Error msg ->
         Error msg
 
+  let solve_obj_float ?(cmd = false) filename =
+    match solve_obj ~cmd filename with Ok obj -> obj | Error _ -> nan
+
   let solve_lp0 ?(cmd = false) () =
     let p = Lp.read "lp0.lp" in
     match solve ~cmd p with
@@ -32,9 +35,6 @@ module To_test = struct
         obj :: to_list p xs
     | Error _ ->
         []
-
-  let solve_qp0 ?(cmd = false) () =
-    match solve_obj ~cmd "qp0.lp" with Ok obj -> obj | Error _ -> nan
 end
 
 let contains s sub =
@@ -56,6 +56,16 @@ let solve_lp0_cmd () =
     "solve_lp0_cmd" [1.2; 0.0; 1.2]
     (To_test.solve_lp0 ~cmd:true ())
 
+let solve_lp1_default () =
+  Alcotest.(check (float 1e-5))
+    "solve_lp1_default" 265.0
+    (To_test.solve_obj_float "lp1.lp")
+
+let solve_lp1_cmd () =
+  Alcotest.(check (float 1e-5))
+    "solve_lp1_cmd" 265.0
+    (To_test.solve_obj_float ~cmd:true "lp1.lp")
+
 let solve_milp0_default () =
   Alcotest.(check (list (float 1e-7)))
     "solve_milp0_default"
@@ -68,14 +78,30 @@ let solve_milp0_cmd () =
     [-1.75; 1.0; -5.5; 5.25; 3.0]
     (To_test.solve_milp0 ~cmd:true ())
 
+let solve_milp1_default () =
+  Alcotest.(check (float 1e-5))
+    "solve_milp1_default" 142.0
+    (To_test.solve_obj_float "milp1.lp")
+
+let solve_milp1_cmd () =
+  Alcotest.(check (float 1e-5))
+    "solve_milp1_cmd" 142.0
+    (To_test.solve_obj_float ~cmd:true "milp1.lp")
+
 let solve_qp0_default () =
   Alcotest.(check (float 1e-6))
-    "solve_qp0_default" 2.11111111111111 (To_test.solve_qp0 ())
+    "solve_qp0_default" 2.11111111111111
+    (To_test.solve_obj_float "qp0.lp")
 
 let solve_qp0_cmd () =
   Alcotest.(check (float 1e-6))
     "solve_qp0_cmd" 2.11111111111111
-    (To_test.solve_qp0 ~cmd:true ())
+    (To_test.solve_obj_float ~cmd:true "qp0.lp")
+
+let solve_qp1_default () =
+  Alcotest.(check (float 1e-1))
+    "solve_qp1_default" 331.2
+    (To_test.solve_obj_float "qp1.lp")
 
 let solve_qp1_default_cmd_consistent () =
   let obj_default =
@@ -140,14 +166,21 @@ let () =
     [ ( "solve lp0"
       , [ test_case "solve_lp0_default" `Quick solve_lp0_default
         ; test_case "solve_lp0_cmd" `Quick solve_lp0_cmd ] )
+    ; ( "solve lp1"
+      , [ test_case "solve_lp1_default" `Quick solve_lp1_default
+        ; test_case "solve_lp1_cmd" `Quick solve_lp1_cmd ] )
     ; ( "solve milp0"
       , [ test_case "solve_milp0_default" `Quick solve_milp0_default
         ; test_case "solve_milp0_cmd" `Quick solve_milp0_cmd ] )
+    ; ( "solve milp1"
+      , [ test_case "solve_milp1_default" `Quick solve_milp1_default
+        ; test_case "solve_milp1_cmd" `Quick solve_milp1_cmd ] )
     ; ( "solve qp0"
       , [ test_case "solve_qp0_default" `Quick solve_qp0_default
         ; test_case "solve_qp0_cmd" `Quick solve_qp0_cmd ] )
     ; ( "solve qp1"
-      , [ test_case "solve_qp1_default_cmd_consistent" `Quick
+      , [ test_case "solve_qp1_default" `Quick solve_qp1_default
+        ; test_case "solve_qp1_default_cmd_consistent" `Quick
             solve_qp1_default_cmd_consistent ] )
     ; ( "solve qp_nonconvex"
       , [ test_case "solve_qp_nonconvex_rejected" `Quick
