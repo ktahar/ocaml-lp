@@ -109,9 +109,14 @@ let solve ?(write_fname = "") ?(term_output = true) problem =
       let dobj = Poly.decompose (Objective.to_poly obj) in
       let vars = Problem.uniq_vars problem in
       let vattr = Var_attrs.make obj vars in
-      let env = empty_env () in
+      (* Gurobi prints its license banner when an environment starts, so the
+         output flag is set on the unstarted environment and the environment
+         is started afterwards; otherwise [~term_output:false] could not keep
+         that banner off the terminal. *)
+      let env = empty_env ~start:false () in
       try
         set_term_output env term_output ;
+        start_env env ;
         let name = Option.value ~default:"model" (Problem.name problem) in
         let model =
           new_model env name vattr.objs vattr.lbs vattr.ubs vattr.types
